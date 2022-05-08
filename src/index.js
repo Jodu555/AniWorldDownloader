@@ -11,6 +11,7 @@ const urls = [];
         const episode = episodes[i];
         for (let j = 1; j < episode + 1; j++) {
             const obj = {
+                folder: `Season ${season}`,
                 file: `${title} St.${season} Flg.${j}`,
                 url: start + `staffel-${season}/episode-${j}`
             };
