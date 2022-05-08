@@ -1,0 +1,20 @@
+{
+	"name": "aniworlddownloader",
+	"version": "1.0.0",
+	"description": "Just a simple little program to download the aniworld videos",
+	"main": "index.js",
+	"scripts": {
+		"start": "node src/index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Jodu555/AniWorldDownloader.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Jodu555/AniWorldDownloader/issues"
+	},
+	"homepage": "https://github.com/Jodu555/AniWorldDownloader#readme"
+}
