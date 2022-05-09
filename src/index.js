@@ -26,7 +26,44 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 })();
 
 async function startBrowser(obj) {
+    const browser = await puppeteer.launch({
+        headless: false,
+        executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe' // Windows
+    });
+    const page = await this.browser.newPage();
+    const client = await page.target().createCDPSession();
 
+
+    // await client.send('Network.enable');
+    await client.send('Network.setRequestInterception', {
+        patterns: [{
+            urlPattern: '*'
+        }]
+    });
+
+    client.on('Network.requestIntercepted', async ({
+        interceptionId,
+        request,
+        responseHeaders,
+        resourceType
+    }) => {
+        if (request.url.includes('m3u8') && request.url.includes('master')) {
+            //TODO: Start the m3u8 file
+        }
+        client.send('Network.continueInterceptedRequest', {
+            interceptionId
+        });
+    });
+    await page.goto(obj.url);
+
+    await page.evaluate(() => {
+        // localStorage.setItem('mature', 'true')
+        // localStorage.setItem('video-muted', '{"default":false}')
+        // localStorage.setItem('volume', '0.5')
+        // localStorage.setItem('video-quality', '{"default":"chunked"}')
+    });
+
+    await wait(15000);
 }
 
 async function startDownloading(obj) {
