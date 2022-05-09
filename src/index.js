@@ -4,6 +4,8 @@ const start = 'https://aniworld.to/anime/stream/the-irregular-at-magic-high-scho
 
 const urls = [];
 
+const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
+
 (async () => {
 
     for (let i = 0; i < seasons; i++) {
@@ -22,3 +24,11 @@ const urls = [];
     console.log(urls);
 
 })();
+
+async function startBrowser(obj) {
+
+}
+
+async function startDownloading(obj) {
+
+}
