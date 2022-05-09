@@ -1,3 +1,15 @@
+// // puppeteer-extra is a drop-in replacement for puppeteer,
+// // it augments the installed puppeteer with plugin functionality
+// const puppeteer = require('puppeteer-extra')
+
+// // Add adblocker plugin, which will transparently block ads in all pages you
+// // create using puppeteer.
+// const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
+// puppeteer.use(AdblockerPlugin())
+
+
+const puppeteer = require('puppeteer')
+
 const seasons = 2, episodes = [26, 13];
 const title = 'The Irregular at Magic High School';
 const start = 'https://aniworld.to/anime/stream/the-irregular-at-magic-high-school/';
@@ -21,16 +33,22 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         }
     }
 
-    console.log(urls);
+    // console.log(urls);
+    console.log(urls[0]);
+    startBrowser(urls[0]);
 
 })();
 
 async function startBrowser(obj) {
+    const pathToExtension = 'C:\Users\Jodu555\AppData\Local\Google\Chrome\User Data\Default\Extensions\cfhdojbkjhnklbpkdaibdccddilifddb\3.12_0';
     const browser = await puppeteer.launch({
         headless: false,
-        executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe' // Windows
+        executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe', // Windows
+        args: [
+            `--load-extension=${pathToExtension}`,
+        ],
     });
-    const page = await this.browser.newPage();
+    const page = await browser.newPage();
     const client = await page.target().createCDPSession();
 
 
@@ -48,6 +66,7 @@ async function startBrowser(obj) {
         resourceType
     }) => {
         if (request.url.includes('m3u8') && request.url.includes('master')) {
+            console.log('INFO', request.url);
             //TODO: Start the m3u8 file
         }
         client.send('Network.continueInterceptedRequest', {
@@ -63,9 +82,11 @@ async function startBrowser(obj) {
         // localStorage.setItem('video-quality', '{"default":"chunked"}')
     });
 
-    await wait(15000);
+    // await wait(15000);
+
+    // console.log('Finished');
 }
 
-async function startDownloading(obj) {
+async function startDownloading(obj, m3u8URL) {
 
 }
