@@ -7,6 +7,8 @@
 // const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 // puppeteer.use(AdblockerPlugin())
 
+const fs = require('fs');
+
 
 const puppeteer = require('puppeteer')
 
@@ -19,6 +21,10 @@ const urls = [];
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 (async () => {
+    // const pathToExtension = `C:/Users/Jodu555/AppData/Local/Google/Chrome/User Data/Default/Extensions/cfhdojbkjhnklbpkdaibdccddilifddb/3.12_0`;
+    // console.log(fs.readdirSync(pathToExtension));
+
+    // return;
 
     for (let i = 0; i < seasons; i++) {
         const season = i + 1;
@@ -40,16 +46,23 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 })();
 
 async function startBrowser(obj) {
-    const pathToExtension = 'C:\Users\Jodu555\AppData\Local\Google\Chrome\User Data\Default\Extensions\cfhdojbkjhnklbpkdaibdccddilifddb\3.12_0';
+    // const pathToExtension = 'C:\Users\Jodu555\AppData\Local\Google\Chrome\User Data\Default\Extensions\cfhdojbkjhnklbpkdaibdccddilifddb\3.12_0';
+    const pathToExtension = `C:\\Users\\Jodu555\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\cfhdojbkjhnklbpkdaibdccddilifddb\\3.12_0`;
+    // const pathToExtension = `C:/Users/Jodu555/AppData/Local/Google/Chrome/User Data/Default/Extensions/cfhdojbkjhnklbpkdaibdccddilifddb/3.12_0`;
     const browser = await puppeteer.launch({
         headless: false,
+        devtools: true,
         executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe', // Windows
         args: [
+            `--disable-extensions-except=${pathToExtension}`,
             `--load-extension=${pathToExtension}`,
         ],
     });
+    await wait(4000);
     const page = await browser.newPage();
     const client = await page.target().createCDPSession();
+
+
 
 
     // await client.send('Network.enable');
@@ -65,7 +78,8 @@ async function startBrowser(obj) {
         responseHeaders,
         resourceType
     }) => {
-        if (request.url.includes('m3u8') && request.url.includes('master')) {
+        console.log(request.url);
+        if (request.url.includes('m3u8')) {
             console.log('INFO', request.url);
             //TODO: Start the m3u8 file
         }
@@ -73,6 +87,7 @@ async function startBrowser(obj) {
             interceptionId
         });
     });
+    await wait(900);
     await page.goto(obj.url);
 
     await page.evaluate(() => {
