@@ -58,11 +58,27 @@ async function startBrowser(obj) {
             `--load-extension=${pathToExtension}`,
         ],
     });
-    await wait(4000);
+    await wait(2000);
+    //To Close the initial adblock opener website
+    (await browser.pages()).forEach(p => {
+        if (p.url().includes('chrome-extension'))
+            p.close();
+    });
+    await wait(1000);
     const page = await browser.newPage();
     const client = await page.target().createCDPSession();
 
+    // await page.setRequestInterception(true);
+    // page.on('request', request => {
+    //     if (request.resourceType() == 'image' || request.resourceType() == 'stylesheet' || request.resourceType() == 'font')
+    //         return request.continue();
 
+    //     if (request.url().includes('m3u8') || request.url().includes('delivery'))
+    //         console.log(request.resourceType(), request.url());
+
+    //     request.continue()
+
+    // });
 
 
     // await client.send('Network.enable');
@@ -78,8 +94,8 @@ async function startBrowser(obj) {
         responseHeaders,
         resourceType
     }) => {
-        console.log(request.url);
         if (request.url.includes('m3u8')) {
+            console.log(request.method, request.url);
             console.log('INFO', request.url);
             //TODO: Start the m3u8 file
         }
@@ -87,7 +103,7 @@ async function startBrowser(obj) {
             interceptionId
         });
     });
-    await wait(900);
+    await wait(1000);
     await page.goto(obj.url);
 
     await page.evaluate(() => {
