@@ -10,7 +10,9 @@
 const fs = require('fs');
 
 
-const puppeteer = require('puppeteer')
+const puppeteer = require('puppeteer-extra')
+const stealth = require("puppeteer-extra-plugin-stealth")();
+puppeteer.use(stealth);
 
 const seasons = 2, episodes = [26, 13];
 const title = 'The Irregular at Magic High School';
@@ -50,6 +52,7 @@ async function startBrowser(obj) {
     const pathToExtension = `C:\\Users\\Jodu555\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\cfhdojbkjhnklbpkdaibdccddilifddb\\3.12_0`;
     // const pathToExtension = `C:/Users/Jodu555/AppData/Local/Google/Chrome/User Data/Default/Extensions/cfhdojbkjhnklbpkdaibdccddilifddb/3.12_0`;
     const browser = await puppeteer.launch({
+        defaultViewport: null,
         headless: false,
         devtools: true,
         executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe', // Windows
@@ -73,45 +76,39 @@ async function startBrowser(obj) {
     //     if (request.resourceType() == 'image' || request.resourceType() == 'stylesheet' || request.resourceType() == 'font')
     //         return request.continue();
 
-    //     if (request.url().includes('m3u8') || request.url().includes('delivery'))
+    //     if (request.url().includes('m3u8') || request.url().includes('delivery')) {
     //         console.log(request.resourceType(), request.url());
+    //         request.continue()
+    //     }
 
     //     request.continue()
 
     // });
 
 
-    // await client.send('Network.enable');
+    await client.send('Network.enable');
     await client.send('Network.setRequestInterception', {
         patterns: [{
             urlPattern: '*'
         }]
     });
 
-    client.on('Network.requestIntercepted', async ({
+    await client.on('Network.requestIntercepted', async ({
         interceptionId,
         request,
         responseHeaders,
         resourceType
     }) => {
+        console.log(request.url);
         if (request.url.includes('m3u8')) {
-            console.log(request.method, request.url);
-            console.log('INFO', request.url);
-            //TODO: Start the m3u8 file
+            console.log(request.url);
         }
+
         client.send('Network.continueInterceptedRequest', {
             interceptionId
         });
     });
-    await wait(1000);
     await page.goto(obj.url);
-
-    await page.evaluate(() => {
-        // localStorage.setItem('mature', 'true')
-        // localStorage.setItem('video-muted', '{"default":false}')
-        // localStorage.setItem('volume', '0.5')
-        // localStorage.setItem('video-quality', '{"default":"chunked"}')
-    });
 
     // await wait(15000);
 
