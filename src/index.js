@@ -116,5 +116,10 @@ async function startBrowser(obj) {
 }
 
 async function startDownloading(obj, m3u8URL) {
-
+    const m3u8ToMp4 = require("m3u8-to-mp4");
+    const converter = new m3u8ToMp4();
+    await converter
+        .setInputFile(m3u8URL)
+        .setOutputFile('output.mp4')
+        .start();
 }
