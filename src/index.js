@@ -8,6 +8,7 @@
 // puppeteer.use(AdblockerPlugin())
 
 const fs = require('fs');
+const path = require('path');
 
 
 const puppeteer = require('puppeteer-extra')
@@ -19,6 +20,11 @@ const title = 'The Irregular at Magic High School';
 const start = 'https://aniworld.to/anime/stream/the-irregular-at-magic-high-school/';
 
 const urls = [];
+
+const m3Urls = [
+    'https://delivery-node-kassab.voe-network.net/hls/,6oarmxfuum33cszcr365fkr7wyxqk4lwisu3jl7tny7ucyk2wq5tg5zqvvxa,.urlset/master.m3u8',
+    'https://delivery-node-handal.voe-network.net/hls/,6oarnztao43lcszcrycmlpbaw3anaic6f7663enx52wugtt7sum6rldbyfcq,.urlset/master.m3u8'
+]
 
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
@@ -42,8 +48,13 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     }
 
     // console.log(urls);
-    console.log(urls[0]);
-    startBrowser(urls[0]);
+    // console.log(urls[0]);
+
+    let i = 0;
+    for (const m3url of m3Urls) {
+        await startDownloading(urls[i], m3url)
+        i++;
+    }
 
 })();
 
@@ -116,10 +127,13 @@ async function startBrowser(obj) {
 }
 
 async function startDownloading(obj, m3u8URL) {
+    const downloadPath = path.join(process.cwd(), 'Downloads', title, obj.folder.replace(' ', '-'));
+    console.log(obj, m3u8URL);
+    fs.mkdirSync(downloadPath, { recursive: true });
     const m3u8ToMp4 = require("m3u8-to-mp4");
     const converter = new m3u8ToMp4();
     await converter
         .setInputFile(m3u8URL)
-        .setOutputFile('output.mp4')
+        .setOutputFile(path.join(downloadPath, obj.file.replaceAll('.', '#') + '.mp4'))
         .start();
 }
