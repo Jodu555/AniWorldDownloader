@@ -71,7 +71,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         }
     }
 
-    //NOTE: here must be the season before to delete the items 
+    //NOTE: here must be the season before to delete the items
     urls.splice(0, episodes[0])
     console.log(urls);
 
