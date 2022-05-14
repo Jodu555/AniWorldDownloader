@@ -45,13 +45,14 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         }
     }
 
+    startBrowser(urls[0]);
+
+    return;
+
     //NOTE: here must be the season before to delete the items
     urls.splice(0, episodes[0])
     // console.log(urls);
 
-
-
-    return;
 
     let i = 0;
     for (const m3url of m3Urls) {
@@ -63,13 +64,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 })();
 
-function downloadMovie(url, name) {
-    const downloadPath = path.join(process.cwd(), 'Downloads', title, 'Movies');
-    fs.mkdirSync(downloadPath, { recursive: true });
-    console.log('Start');
-    await deepM3u8Conversion(url, path.join(downloadPath, name + '.mp4'));
-    console.log('Finished');
-}
+
 
 async function startBrowser(obj) {
     // const pathToExtension = 'C:\Users\Jodu555\AppData\Local\Google\Chrome\User Data\Default\Extensions\cfhdojbkjhnklbpkdaibdccddilifddb\3.12_0';
@@ -137,6 +132,14 @@ async function startBrowser(obj) {
     // await wait(15000);
 
     // console.log('Finished');
+}
+
+async function downloadMovie(name, url) {
+    const downloadPath = path.join(process.cwd(), 'Downloads', title, 'Movies');
+    fs.mkdirSync(downloadPath, { recursive: true });
+    console.log('Start');
+    await deepM3u8Conversion(url, path.join(downloadPath, name + '.mp4'));
+    console.log('Finished');
 }
 
 async function startDownloading(obj, m3u8URL) {
