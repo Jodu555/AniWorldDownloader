@@ -16,9 +16,9 @@ const puppeteer = require('puppeteer-extra')
 const stealth = require("puppeteer-extra-plugin-stealth")();
 puppeteer.use(stealth);
 
-const seasons = 2, episodes = [26, 13];
-const title = 'The Irregular at Magic High School';
-const start = 'https://aniworld.to/anime/stream/the-irregular-at-magic-high-school/';
+const seasons = 2, episodes = [12, 12];
+const title = 'The Asterisk War';
+const start = 'https://aniworld.to/anime/stream/the-asterisk-war/';
 
 const urls = [];
 
@@ -46,7 +46,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         }
     }
 
-    roboterControl(urls[0]);
+    robotControl(urls[0]);
 
     return;
 
@@ -65,24 +65,39 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 })();
 
-async function roboterControl(obj) {
+async function robotControl(obj) {
 
     console.log(obj);
 
 
     robot.startJar();
 
-
-
-    await robot
+    robot
         .mouseMove(-617, 45)
-        .mousePress(1)
-        .mouseRelease(1)
-        .go();
+    click(robot, 1)
+
     robotTypeAdvanced(robot, obj.url);
     robot.press('ENTER').release('ENTER');
+
     await robot.go();
+
+    await wait(5000);
+
+    robot
+        .mouseMove(-2555, 222)
+    click(robot, 1)
+    robot.sleep(500)
+        .mouseMove(-1954, 251)
+    click(robot, 1)
+
+    await robot.go();
+
     robot.stopJar();
+}
+
+function click(robot, btn) {
+    robot.mousePress(btn)
+        .mouseRelease(btn)
 }
 
 function robotTypeAdvanced(robot, string) {
