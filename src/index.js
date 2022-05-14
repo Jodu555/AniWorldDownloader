@@ -23,8 +23,6 @@ const start = 'https://aniworld.to/anime/stream/the-asterisk-war/';
 
 const urls = [];
 
-const m3Urls = [
-]
 
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
@@ -53,24 +51,26 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // return;
 
-    const output = [];
+    // const output = [];
 
-    for (const obj of urls) {
-        const url = await getM3u8UrlFromURL(obj.url);
-        console.log('Collected: ' + url);
-        output.push({ ...obj, m3u8: url })
-        fs.writeFileSync('output.json', JSON.stringify(output, null, 3), 'utf-8');
-        await wait(2000);
-    }
+    // for (const obj of urls) {
+    //     const url = await getM3u8UrlFromURL(obj.url);
+    //     console.log('Collected: ' + url);
+    //     output.push({ ...obj, m3u8: url })
+    //     fs.writeFileSync('output.json', JSON.stringify(output, null, 3), 'utf-8');
+    //     await wait(1000);
+    // }
 
-    return;
+    // return;
+
+    const collectedObjects = JSON.parse(fs.readFileSync('output.json', 'utf-8'));
 
 
     let i = 0;
-    for (const m3url of m3Urls) {
-        console.log(`Started the download of ${urls[i].file}`);
-        console.log(`  Download: ${i + 1} / ${m3Urls.length + 1}`);
-        await startDownloading(urls[i], m3url)
+    for (const obj of collectedObjects) {
+        console.log(`Started the download of ${obj.file}`);
+        console.log(`  Download: ${i + 1} / ${collectedObjects.length + 1}`);
+        await startDownloading(obj, obj.m3u8)
         i++;
     }
 
@@ -94,12 +94,12 @@ async function getM3u8UrlFromURL(url) {
     robot
         .mouseMove(-2555, 222)
     click(robot, 1)
-    robot.sleep(500)
+    robot.sleep(100)
         .mouseMove(-1954, 251)
     click(robot, 1)
     click(robot, 3)
     robot.mouseMove(-1943, 264)
-        .sleep(500);
+        .sleep(100);
     click(robot, 3)
     await robot.go();
 
