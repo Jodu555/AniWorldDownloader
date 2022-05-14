@@ -36,35 +36,40 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     // Generating
     //////////////////
     if (fs.existsSync(title + '.json')) {
-        JSON.parse(fs.readFileSync(title + '.json', 'utf-8')).forEach(e => urls.push(e));
+        JSON.parse(fs.readFileSync(title + '.json', 'utf-8')).forEach(e => { urls.push(e) });
     } else {
         generate();
     }
 
 
     //NOTE: here must be the season before to delete the items
-    urls.splice(0, episodes[0] + 8)
+    // urls.splice(0, episodes[0] + 8)
     console.log(urls);
 
     //////////////////
     // Collecting
     //////////////////
 
-    // return;
-
-    const output = [];
+    return;
 
     let prevm3url = '';
 
     for (const obj of urls) {
+        if (obj.m3u8 !== '') return;
+
         const url = await getM3u8UrlFromURL(obj.url);
+
         console.log('Collected: ' + url);
-        if (!url.includes('https://') || url == prevm3url)
+        if (!url.includes('https://') || url == prevm3url) {
+            console.log('Got suspicious program behaviour: Stopped!', !url.includes('https://'), url == prevm3url);
             process.exit(1);
+        }
+
         prevm3url = url;
 
-        output.push({ ...obj, m3u8: url })
-        fs.writeFileSync('output.json', JSON.stringify(output, null, 3), 'utf-8');
+        obj.m3u8 = url;
+
+        fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
         await wait(1000);
     }
 
