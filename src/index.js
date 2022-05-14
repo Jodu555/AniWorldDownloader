@@ -13,7 +13,8 @@ const path = require('path');
 
 const robot = require("kbm-robot");
 
-const puppeteer = require('puppeteer-extra')
+const puppeteer = require('puppeteer-extra');
+const { exit } = require('process');
 const stealth = require("puppeteer-extra-plugin-stealth")();
 puppeteer.use(stealth);
 
@@ -59,6 +60,8 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     for (const obj of urls) {
         const url = await getM3u8UrlFromURL(obj.url);
+        if (!url.includes('https://'))
+            exit();
         console.log('Collected: ' + url);
         output.push({ ...obj, m3u8: url })
         fs.writeFileSync('output.json', JSON.stringify(output, null, 3), 'utf-8');
