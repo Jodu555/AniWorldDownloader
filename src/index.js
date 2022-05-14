@@ -69,21 +69,34 @@ async function roboterControl(obj) {
 
     console.log(obj);
 
-    serialize(null, obj.url)
 
-    // robot.startJar();
+    robot.startJar();
 
-    // robot
-    //     .mouseMove(-617, 45)
-    //     .mousePress(1)
-    //     .mouseRelease(1)
-    //     .typeString(obj.url)
-    //     .press("SHIFT")
-    //     .type('.')
-    //     .sleep(50)
-    //     .release("SHIFT")
-    //     .go()
-    //     .then(robot.stopJar);
+
+
+    await robot
+        .mouseMove(-617, 45)
+        .mousePress(1)
+        .mouseRelease(1)
+        .go();
+    robotTypeAdvanced(robot, obj.url);
+    robot.press('ENTER').release('ENTER');
+    await robot.go();
+    robot.stopJar();
+}
+
+function robotTypeAdvanced(robot, string) {
+    const typer = serializeForRobot(string);
+    typer.forEach(data => {
+        if (data.advanced == true) {
+            robot.press('SHIFT')
+                .type(data.key)
+                .sleep(50)
+                .release('SHIFT')
+        } else {
+            robot.typeString(data)
+        }
+    })
 }
 
 function serializeForRobot(string) {
@@ -99,9 +112,7 @@ function serializeForRobot(string) {
     for (const c of string) {
         if (mapper[c] != null) {
             typer.push({ advanced: true, key: mapper[c] })
-            typeIdx++;
-            typeIdx++;
-            console.log(c);
+            typeIdx += 2;
         } else {
             if (typer[typeIdx] == undefined)
                 typer[typeIdx] = ''
