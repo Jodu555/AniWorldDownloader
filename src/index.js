@@ -10,6 +10,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const robot = require("kbm-robot");
 
 const puppeteer = require('puppeteer-extra')
 const stealth = require("puppeteer-extra-plugin-stealth")();
@@ -45,7 +46,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         }
     }
 
-    startBrowser(urls[0]);
+    roboterControl(urls[0]);
 
     return;
 
@@ -66,6 +67,48 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 async function roboterControl(obj) {
 
+    console.log(obj);
+
+    serialize(null, obj.url)
+
+    // robot.startJar();
+
+    // robot
+    //     .mouseMove(-617, 45)
+    //     .mousePress(1)
+    //     .mouseRelease(1)
+    //     .typeString(obj.url)
+    //     .press("SHIFT")
+    //     .type('.')
+    //     .sleep(50)
+    //     .release("SHIFT")
+    //     .go()
+    //     .then(robot.stopJar);
+}
+
+function serializeForRobot(string) {
+    const mapper = {
+        ':': '.',
+        '/': '7',
+    }
+
+    let typer = [];
+
+    let typeIdx = 0;
+
+    for (const c of string) {
+        if (mapper[c] != null) {
+            typer.push({ advanced: true, key: mapper[c] })
+            typeIdx++;
+            typeIdx++;
+            console.log(c);
+        } else {
+            if (typer[typeIdx] == undefined)
+                typer[typeIdx] = ''
+            typer[typeIdx] += c;
+        }
+    }
+    return typer;
 }
 
 
