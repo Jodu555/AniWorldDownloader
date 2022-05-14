@@ -64,6 +64,9 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 })();
 
+async function roboterControl(obj) {
+
+}
 
 
 async function startBrowser(obj) {
@@ -74,19 +77,20 @@ async function startBrowser(obj) {
         defaultViewport: null,
         headless: false,
         devtools: true,
-        executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe', // Windows
-        args: [
-            `--disable-extensions-except=${pathToExtension}`,
-            `--load-extension=${pathToExtension}`,
-        ],
+        executablePath: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
+        // executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe', // Windows
+        // args: [
+        //     `--disable-extensions-except=${pathToExtension}`,
+        //     `--load-extension=${pathToExtension}`,
+        // ],
     });
-    await wait(2000);
-    //To Close the initial adblock opener website
-    (await browser.pages()).forEach(p => {
-        if (p.url().includes('chrome-extension'))
-            p.close();
-    });
-    await wait(1000);
+    // await wait(2000);
+    // //To Close the initial adblock opener website
+    // (await browser.pages()).forEach(p => {
+    //     if (p.url().includes('chrome-extension'))
+    //         p.close();
+    // });
+    // await wait(1000);
     const page = await browser.newPage();
     const client = await page.target().createCDPSession();
 
@@ -104,6 +108,8 @@ async function startBrowser(obj) {
 
     // });
 
+    // To disable breakpoints use ctrl + f8 then f8 to skip ones
+
 
     await client.send('Network.enable');
     await client.send('Network.setRequestInterception', {
@@ -119,6 +125,8 @@ async function startBrowser(obj) {
         resourceType
     }) => {
         console.log(request.url);
+        if (request.url.includes('https://delivery-node-handal'))
+            console.log('AIAIAIAIAAIAIAI');
         if (request.url.includes('m3u8')) {
             console.log(request.url);
         }
