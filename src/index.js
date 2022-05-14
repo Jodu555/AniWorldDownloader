@@ -49,11 +49,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     urls.splice(0, episodes[0])
     // console.log(urls);
 
-    const downloadPath = path.join(process.cwd(), 'Downloads', title, 'Movies');
-    fs.mkdirSync(downloadPath, { recursive: true });
-    console.log('Start');
-    await deepM3u8Conversion('https://delivery-node-qubilah.voe-network.net/hls/,6oarmi6cmu3lcszcry44v3z4wzfsfrtwlkclqjhhjfc4sg5oqdt3lskqbfpa,.urlset/master.m3u8', path.join(downloadPath, 'The Irregular at Magic High School - Reminiscence Arc.mp4'))
-    console.log('Finished');
+
 
     return;
 
@@ -66,6 +62,14 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     }
 
 })();
+
+function downloadMovie(url, name) {
+    const downloadPath = path.join(process.cwd(), 'Downloads', title, 'Movies');
+    fs.mkdirSync(downloadPath, { recursive: true });
+    console.log('Start');
+    await deepM3u8Conversion(url, path.join(downloadPath, name + '.mp4'));
+    console.log('Finished');
+}
 
 async function startBrowser(obj) {
     // const pathToExtension = 'C:\Users\Jodu555\AppData\Local\Google\Chrome\User Data\Default\Extensions\cfhdojbkjhnklbpkdaibdccddilifddb\3.12_0';
