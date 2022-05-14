@@ -7,6 +7,7 @@
 // const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 // puppeteer.use(AdblockerPlugin())
 
+
 const fs = require('fs');
 const path = require('path');
 
@@ -46,7 +47,8 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         }
     }
 
-    robotControl(urls[0]);
+    // robotControl(urls[0]);
+    console.log(await readFromClipboard());
 
     return;
 
@@ -89,8 +91,13 @@ async function robotControl(obj) {
     robot.sleep(500)
         .mouseMove(-1954, 251)
     click(robot, 1)
-
+    click(robot, 3)
+    robot.mouseMove(-1943, 264)
+        .sleep(500);
+    click(robot, 3)
     await robot.go();
+
+    // console.log(clipboardy.readSync());
 
     robot.stopJar();
 }
@@ -232,4 +239,12 @@ async function deepM3u8Conversion(url, output) {
         .setInputFile(url)
         .setOutputFile(output)
         .start();
+}
+
+async function readFromClipboard() {
+    return new Promise((resolve, _) => {
+        import('clipboardy').then(clipboard => {
+            resolve(clipboard.default.readSync());
+        });
+    })
 }
