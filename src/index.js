@@ -17,9 +17,9 @@ const puppeteer = require('puppeteer-extra');
 const stealth = require("puppeteer-extra-plugin-stealth")();
 puppeteer.use(stealth);
 
-const seasons = 2, episodes = [12, 12];
-const title = 'The Asterisk War';
-const start = 'https://aniworld.to/anime/stream/the-asterisk-war/';
+const episodes = [12];
+const title = 'A Chivalry of a Failed Knight';
+const start = 'https://aniworld.to/anime/stream/a-chivalry-of-a-failed-knight/';
 
 const urls = [];
 
@@ -32,21 +32,18 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // return;
 
-    for (let i = 0; i < seasons; i++) {
-        const season = i + 1;
-        const episode = episodes[i];
-        for (let j = 1; j < episode + 1; j++) {
-            const obj = {
-                folder: `Season ${season}`,
-                file: `${title} St.${season} Flg.${j}`,
-                url: start + `staffel-${season}/episode-${j}`
-            };
-            urls.push(obj);
-        }
+    //////////////////
+    // Generating
+    //////////////////
+    if (fs.existsSync(title + '.json')) {
+        JSON.parse(fs.readFileSync(title + '.json', 'utf-8')).forEach(e => urls.push(e));
+    } else {
+        generate();
     }
 
+
     //NOTE: here must be the season before to delete the items
-    urls.splice(0, episodes[0])
+    urls.splice(0, episodes[0] + 8)
     console.log(urls);
 
     //////////////////
@@ -71,24 +68,42 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         await wait(1000);
     }
 
-    return;
+    // return;
 
     //////////////////
     // Downloading
     //////////////////
 
-    const collectedObjects = JSON.parse(fs.readFileSync('output.json', 'utf-8'));
+    // const collectedObjects = JSON.parse(fs.readFileSync('output.json', 'utf-8'));
 
 
-    let i = 0;
-    for (const obj of collectedObjects) {
-        console.log(`Started the download of ${obj.file}`);
-        console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
-        await startDownloading(obj, obj.m3u8)
-        i++;
-    }
+    // let i = 0;
+    // for (const obj of collectedObjects) {
+    //     console.log(`Started the download of ${obj.file}`);
+    //     console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
+    //     await startDownloading(obj, obj.m3u8)
+    //     i++;
+    // }
 
 })();
+
+function generate() {
+    for (let i = 0; i < episodes.length; i++) {
+        const season = i + 1;
+        const episode = episodes[i];
+        for (let j = 1; j < episode + 1; j++) {
+            const obj = {
+                folder: `Season ${season}`,
+                file: `${title} St.${season} Flg.${j}`,
+                url: start + `staffel-${season}/episode-${j}`,
+                m3u8: ''
+            };
+            urls.push(obj);
+        }
+    }
+
+    fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8')
+}
 
 async function getM3u8UrlFromURL(url) {
 
@@ -103,7 +118,7 @@ async function getM3u8UrlFromURL(url) {
 
     await robot.go();
 
-    await wait(5000);
+    await wait(5800);
 
     robot
         .mouseMove(-2555, 222)
