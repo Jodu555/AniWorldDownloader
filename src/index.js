@@ -50,28 +50,28 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     // Collecting
     //////////////////
 
-    return;
+    // return;
 
-    let prevm3url = '';
+    // let prevm3url = '';
 
-    for (const obj of urls) {
-        if (obj.m3u8 !== '') return;
+    // for (const obj of urls) {
+    //     if (obj.m3u8 !== '') continue;
 
-        const url = await getM3u8UrlFromURL(obj.url);
+    //     const url = await getM3u8UrlFromURL(obj.url);
 
-        console.log('Collected: ' + url);
-        if (!url.includes('https://') || url == prevm3url) {
-            console.log('Got suspicious program behaviour: Stopped!', !url.includes('https://'), url == prevm3url);
-            process.exit(1);
-        }
+    //     console.log('Collected: ' + url);
+    //     if (!url.includes('https://') || url == prevm3url) {
+    //         console.log('Got suspicious program behaviour: Stopped!', !url.includes('https://'), url == prevm3url);
+    //         process.exit(1);
+    //     }
 
-        prevm3url = url;
+    //     prevm3url = url;
 
-        obj.m3u8 = url;
+    //     obj.m3u8 = url;
 
-        fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
-        await wait(1000);
-    }
+    //     fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
+    //     await wait(1000);
+    // }
 
     // return;
 
@@ -79,16 +79,15 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     // Downloading
     //////////////////
 
-    // const collectedObjects = JSON.parse(fs.readFileSync('output.json', 'utf-8'));
+    const collectedObjects = JSON.parse(fs.readFileSync(title + '.json', 'utf-8'));
 
-
-    // let i = 0;
-    // for (const obj of collectedObjects) {
-    //     console.log(`Started the download of ${obj.file}`);
-    //     console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
-    //     await startDownloading(obj, obj.m3u8)
-    //     i++;
-    // }
+    let i = 0;
+    for (const obj of collectedObjects) {
+        console.log(`Started the download of ${obj.file}`);
+        console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
+        await startDownloading(obj, obj.m3u8)
+        i++;
+    }
 
 })();
 
