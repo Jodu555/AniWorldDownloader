@@ -47,14 +47,23 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         }
     }
 
-    // robotControl(urls[0]);
-    console.log(await readFromClipboard());
+    //NOTE: here must be the season before to delete the items
+    urls.splice(episodes[0], urls.length)
+    console.log(urls);
+
+    // return;
+
+    const output = [];
+
+    for (const obj of urls) {
+        const url = await getM3u8UrlFromURL(obj.url);
+        console.log('Collected: ' + url);
+        output.push({ ...obj, m3u8: url })
+        fs.writeFileSync('output.json', JSON.stringify(output, null, 3), 'utf-8');
+        await wait(2000);
+    }
 
     return;
-
-    //NOTE: here must be the season before to delete the items
-    urls.splice(0, episodes[0])
-    // console.log(urls);
 
 
     let i = 0;
@@ -67,10 +76,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 })();
 
-async function robotControl(obj) {
-
-    console.log(obj);
-
+async function getM3u8UrlFromURL(url) {
 
     robot.startJar();
 
@@ -78,7 +84,7 @@ async function robotControl(obj) {
         .mouseMove(-617, 45)
     click(robot, 1)
 
-    robotTypeAdvanced(robot, obj.url);
+    robotTypeAdvanced(robot, url);
     robot.press('ENTER').release('ENTER');
 
     await robot.go();
@@ -97,9 +103,11 @@ async function robotControl(obj) {
     click(robot, 3)
     await robot.go();
 
-    // console.log(clipboardy.readSync());
+    const m3u8URL = await readFromClipboard();
 
     robot.stopJar();
+
+    return m3u8URL;
 }
 
 function click(robot, btn) {
