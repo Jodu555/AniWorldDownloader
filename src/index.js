@@ -46,22 +46,30 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     }
 
     //NOTE: here must be the season before to delete the items
-    urls.splice(episodes[0], urls.length)
+    urls.splice(0, episodes[0])
     console.log(urls);
 
-    // return;
-
-    // const output = [];
-
-    // for (const obj of urls) {
-    //     const url = await getM3u8UrlFromURL(obj.url);
-    //     console.log('Collected: ' + url);
-    //     output.push({ ...obj, m3u8: url })
-    //     fs.writeFileSync('output.json', JSON.stringify(output, null, 3), 'utf-8');
-    //     await wait(1000);
-    // }
+    //////////////////
+    // Collecting
+    //////////////////
 
     // return;
+
+    const output = [];
+
+    for (const obj of urls) {
+        const url = await getM3u8UrlFromURL(obj.url);
+        console.log('Collected: ' + url);
+        output.push({ ...obj, m3u8: url })
+        fs.writeFileSync('output.json', JSON.stringify(output, null, 3), 'utf-8');
+        await wait(1000);
+    }
+
+    return;
+
+    //////////////////
+    // Downloading
+    //////////////////
 
     const collectedObjects = JSON.parse(fs.readFileSync('output.json', 'utf-8'));
 
@@ -69,7 +77,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     let i = 0;
     for (const obj of collectedObjects) {
         console.log(`Started the download of ${obj.file}`);
-        console.log(`  Download: ${i + 1} / ${collectedObjects.length + 1}`);
+        console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
         await startDownloading(obj, obj.m3u8)
         i++;
     }
