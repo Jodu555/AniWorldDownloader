@@ -22,32 +22,19 @@ const start = 'https://aniworld.to/anime/stream/the-irregular-at-magic-high-scho
 const urls = [];
 
 const m3Urls = [
-    'https://delivery-node-kassab.voe-network.net/hls/,6oarmxfuum33cszcr365fkr7wyxqk4lwisu3jl7tny7ucyk2wq5vqszqvvxa,.urlset/master.m3u8',
-    'https://delivery-node-handal.voe-network.net/hls/,6oarnztao43lcszcrycmlpbaw3anaic6f7663enx52wugtt7sumwrelbyfcq,.urlset/master.m3u8',
-    'https://delivery-node-rayyaa.voe-network.net/hls/,6oarmx5uum33cszcr365fmrlxj3xmgjluzxmzohdr6jyrsrna76ypmtmumwq,.urlset/master.m3u8',
-    'https://delivery-node-ishaq.voe-network.net/hls/,6oarmwnuum33cszcr365fl3sxx3bicgcab2wh6p5wozja5iuofn5tnlqi6na,.urlset/master.m3u8',
-    'https://delivery-node-shamoon.voe-network.net/hls/,6oarmxvuum33cszcr365fmtt5o6r6eg2dprvfxu7u6nqvcymfvsjedvkcsda,.urlset/master.m3u8',
-    'https://delivery-node-malak.voe-network.net/hls/,6oarmu5uum33cszcr365fm3twsjwlw525y5foqgrugn34lvzbqg6apkmaxaq,.urlset/master.m3u8',
-    'https://delivery-node-aladdin.voe-network.net/hls/,6oarmw5uum33cszcr365f3txv22ek5dwehwjrexxde5wfbjorvjmpg6aksza,.urlset/master.m3u8',
-    'https://delivery-node-jabalah.voe-network.net/hls/,6oarmvfuum33cszcr365f3z6xkm53w7l6wwruit2pmsxukc62che4e7z5ova,.urlset/master.m3u8',
-    'https://delivery-node-safar.voe-network.net/hls/,6oarmsfuum33cszcr365fljrxnni3ux6sh52lftt2n4to5o5lvgjgvnmj2mq,.urlset/master.m3u8',
-    'https://delivery-node-fawziyyah.voe-network.net/hls/,6oarn3cioy3lcszcr365fnjbwsh2liabwltdpmzbipzb7brwhc42mey5gkjq,.urlset/master.m3u8',
-    'https://delivery-node-layth.voe-network.net/hls/,6oarmufuum33cszcr365f2bm5exhmjkc3xqpozz2yfzsc7gl4ebljq5av3bq,.urlset/master.m3u8',
-    'https://delivery-node-dhakwan.voe-network.net/hls/,6oarmmfuum33cszcr365fnrf5vtxb4q4vfs67y5wajnvgfe2n3yisbpdvqsa,.urlset/master.m3u8',
-    'https://delivery-node-fiqar.voe-network.net/hls/,6oarmsnuum33cszcr365fpjv5l4wczsj267x6fqq6nxhuuh6dzq7ghd2alrq,.urlset/master.m3u8',
-    'https://delivery-node-thanaa.voe-network.net/hls/,6oarmlvuum33cszcr365fkjwvbfi7bo6j67yusu2atgfjr2w3n2p3n42u6sa,.urlset/master.m3u8',
-    'https://delivery-node-waqqas.voe-network.net/hls/,6oarmrfuum33cszcr365f3zxwroerbdqfwd2xwujglcwwt42uzrtaqpuwf5q,.urlset/master.m3u8',
-    'https://delivery-node-aram.voe-network.net/hls/,6oarmrnuum33cszcr365f23rx36pi4desf7dc74tvpsifzqrfo6my2l53xga,.urlset/master.m3u8',
-    'https://delivery-node-tawfiq.voe-network.net/hls/,6oarmmnuum33cszcr365fy3qvw676rcbyubwpet6hrcgtcfszsvq5lgemama,.urlset/master.m3u8',
-    'https://delivery-node-ruwayd.voe-network.net/hls/,6oarnpkioy3lcszcr365f3jnwc6iwlwb2jdrfnjvxsrqvy6egky6ybv6yqgq,.urlset/master.m3u8',
-    'https://delivery-node-sahlah.voe-network.net/hls/,6oarminuum33cszcr365fizpui2rzic7xcdmzysrhh256v7d4peemkabra6q,.urlset/master.m3u8',
-    'https://delivery-node-najjar.voe-network.net/hls/,6oarmnvuum33cszcr365fkbrvfd5ttsdy3rliemnjoaww7dopjl6ricx2aoq,.urlset/master.m3u8',
-    'https://delivery-node-hawra.voe-network.net/hls/,6oarn2cioy3lcszcr365flluvp4khdni5l3sflh6lpjmt47krrm3jshogs4q,.urlset/master.m3u8',
-    'https://delivery-node-sayegh.voe-network.net/hls/,6oarmonuum33cszcr365f2be4hpahwda5oakq7t7x6cfpygcngwbkfy5xcgq,.urlset/master.m3u8',
-    'https://delivery-node-harb.voe-network.net/hls/,6oarmlfuum33cszcr365f2drxz7y7mlj76stqztvdjgqek6j3k3y4gkswdla,.urlset/master.m3u8',
-    'https://delivery-node-essa.voe-network.net/hls/,6oarmkfuum33cszcr365fkrqwgysjxrv6o4qr252fdhiufkxta6h4ntcmcma,.urlset/master.m3u8',
-    'https://delivery-node-ubadah.voe-network.net/hls/,6oarmkvuum33cszcr365fmbxv3rdec7idtzqj2rvqgozpdkucyuoqgilqmfq,.urlset/master.m3u8',
-    'https://delivery-node-umniyah.voe-network.net/hls/,6oarmknuum33cszcr365f3jo5ieejmc7vlyqjj4yof2letuxuaqt6az3y64q,.urlset/master.m3u8',
+    'https://delivery-node-najjar.voe-network.net/hls/,6oarnceute33cszcryj5bnjo5krlipygltafkpryvlwgqhivybxyaiitmtna,.urlset/master.m3u8',
+    'https://delivery-node-wardah.voe-network.net/hls/,6oarnbeute33cszcryj5bnb6wolcebdkyyjcpe3kkcidijgyxr2ixtby7ykq,.urlset/master.m3u8',
+    'https://delivery-node-fatima.voe-network.net/hls/,6oarm7mvte33cszcryj5bidw5acpgzgl5kdpdadm6uexbvt7gmp2okaw7t6a,.urlset/master.m3u8',
+    'https://delivery-node-walliyullah.voe-network.net/hls/,6oarno2ioy3lcszcryj5bolsxmhe7omqbdsoijylu6mooj2et2zha2jrtqua,.urlset/master.m3u8',
+    'https://delivery-node-imad.voe-network.net/hls/,6oarman3xu3lcszcr3657yzmv4pgehujgr2zsnbefuxnnn23tvt2wat372eq,.urlset/master.m3u8',
+    'https://delivery-node-waddah.voe-network.net/hls/,6oarmfv3xu3lcszcr3657oza5kbvqdzdoqaxnxx2wwissmiwgt2h6wlv2tpa,.urlset/master.m3u8',
+    'https://delivery-node-nida.voe-network.net/hls/,6oarmf53xu3lcszcr3657mrpxtxug7osubkulac5ycajxqhkuyxwksuvvz6q,.urlset/master.m3u8',
+    'https://delivery-node-maloof.voe-network.net/hls/,6oarmcf3xu3lcszcr3657pj6vam5pof4pxvprbhrs4ss7xb4xu4t7xqulc5a,.urlset/master.m3u8',
+    'https://delivery-node-shifa.voe-network.net/hls/,6oarn4sioy3lcszcr3zn7nrmwtr42giecgvpcna2ecbmratobc6ahplyqw7q,.urlset/master.m3u8',
+    'https://delivery-node-tharaa.voe-network.net/hls/,6oarneu7xy3lcszcr3zn723t5n6s5wespvvuym6pgzjx2iyczips3y4vb2qq,.urlset/master.m3u8',
+    'https://delivery-node-fatima.voe-network.net/hls/,6oarndu7xy3lcszcr3zn7pro4cr4omyu6zewbi6sft3rgouejxqogof7okxa,.urlset/master.m3u8',
+    'https://delivery-node-saleem.voe-network.net/hls/,6oarnbe7xy3lcszcr3zn73zj5lasos6xds44yrpbrssydxp3mrsb3fdhjdqa,.urlset/master.m3u8',
+    'https://delivery-node-jarir.voe-network.net/hls/,6oarm4e4xy3lcszcr3zn7lrmvyznh67sqtbu6jv4ufgk7ebkeot5y4ieet3q,.urlset/master.m3u8',
 ]
 
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
@@ -73,9 +60,9 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     //NOTE: here must be the season before to delete the items
     urls.splice(0, episodes[0])
-    console.log(urls);
+    // console.log(urls);
 
-    return;
+    // return;
 
     let i = 0;
     for (const m3url of m3Urls) {
@@ -158,10 +145,14 @@ async function startBrowser(obj) {
 async function startDownloading(obj, m3u8URL) {
     const downloadPath = path.join(process.cwd(), 'Downloads', title, obj.folder.replace(' ', '-'));
     fs.mkdirSync(downloadPath, { recursive: true });
+    deepM3u8Conversion(m3u8URL, path.join(downloadPath, obj.file.replaceAll('.', '#') + '.mp4'))
+}
+
+async function deepM3u8Conversion(url, output) {
     const m3u8ToMp4 = require("m3u8-to-mp4");
     const converter = new m3u8ToMp4();
     await converter
-        .setInputFile(m3u8URL)
-        .setOutputFile(path.join(downloadPath, obj.file.replaceAll('.', '#') + '.mp4'))
+        .setInputFile(url)
+        .setOutputFile(output)
         .start();
 }
