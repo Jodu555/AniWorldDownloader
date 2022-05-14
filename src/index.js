@@ -22,19 +22,6 @@ const start = 'https://aniworld.to/anime/stream/the-irregular-at-magic-high-scho
 const urls = [];
 
 const m3Urls = [
-    'https://delivery-node-najjar.voe-network.net/hls/,6oarnceute33cszcryj5bnjo5krlipygltafkpryvlwgqhivybxyaiitmtna,.urlset/master.m3u8',
-    'https://delivery-node-wardah.voe-network.net/hls/,6oarnbeute33cszcryj5bnb6wolcebdkyyjcpe3kkcidijgyxr2ixtby7ykq,.urlset/master.m3u8',
-    'https://delivery-node-fatima.voe-network.net/hls/,6oarm7mvte33cszcryj5bidw5acpgzgl5kdpdadm6uexbvt7gmp2okaw7t6a,.urlset/master.m3u8',
-    'https://delivery-node-walliyullah.voe-network.net/hls/,6oarno2ioy3lcszcryj5bolsxmhe7omqbdsoijylu6mooj2et2zha2jrtqua,.urlset/master.m3u8',
-    'https://delivery-node-imad.voe-network.net/hls/,6oarman3xu3lcszcr3657yzmv4pgehujgr2zsnbefuxnnn23tvt2wat372eq,.urlset/master.m3u8',
-    'https://delivery-node-waddah.voe-network.net/hls/,6oarmfv3xu3lcszcr3657oza5kbvqdzdoqaxnxx2wwissmiwgt2h6wlv2tpa,.urlset/master.m3u8',
-    'https://delivery-node-nida.voe-network.net/hls/,6oarmf53xu3lcszcr3657mrpxtxug7osubkulac5ycajxqhkuyxwksuvvz6q,.urlset/master.m3u8',
-    'https://delivery-node-maloof.voe-network.net/hls/,6oarmcf3xu3lcszcr3657pj6vam5pof4pxvprbhrs4ss7xb4xu4t7xqulc5a,.urlset/master.m3u8',
-    'https://delivery-node-shifa.voe-network.net/hls/,6oarn4sioy3lcszcr3zn7nrmwtr42giecgvpcna2ecbmratobc6ahplyqw7q,.urlset/master.m3u8',
-    'https://delivery-node-tharaa.voe-network.net/hls/,6oarneu7xy3lcszcr3zn723t5n6s5wespvvuym6pgzjx2iyczips3y4vb2qq,.urlset/master.m3u8',
-    'https://delivery-node-fatima.voe-network.net/hls/,6oarndu7xy3lcszcr3zn7pro4cr4omyu6zewbi6sft3rgouejxqogof7okxa,.urlset/master.m3u8',
-    'https://delivery-node-saleem.voe-network.net/hls/,6oarnbe7xy3lcszcr3zn73zj5lasos6xds44yrpbrssydxp3mrsb3fdhjdqa,.urlset/master.m3u8',
-    'https://delivery-node-jarir.voe-network.net/hls/,6oarm4e4xy3lcszcr3zn7lrmvyznh67sqtbu6jv4ufgk7ebkeot5y4ieet3q,.urlset/master.m3u8',
 ]
 
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
@@ -62,7 +49,13 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     urls.splice(0, episodes[0])
     // console.log(urls);
 
-    // return;
+    const downloadPath = path.join(process.cwd(), 'Downloads', title, 'Movies');
+    fs.mkdirSync(downloadPath, { recursive: true });
+    console.log('Start');
+    await deepM3u8Conversion('https://delivery-node-qubilah.voe-network.net/hls/,6oarmi6cmu3lcszcry44v3z4wzfsfrtwlkclqjhhjfc4sg5oqdt3lskqbfpa,.urlset/master.m3u8', path.join(downloadPath, 'The Irregular at Magic High School - Reminiscence Arc.mp4'))
+    console.log('Finished');
+
+    return;
 
     let i = 0;
     for (const m3url of m3Urls) {
@@ -145,7 +138,7 @@ async function startBrowser(obj) {
 async function startDownloading(obj, m3u8URL) {
     const downloadPath = path.join(process.cwd(), 'Downloads', title, obj.folder.replace(' ', '-'));
     fs.mkdirSync(downloadPath, { recursive: true });
-    deepM3u8Conversion(m3u8URL, path.join(downloadPath, obj.file.replaceAll('.', '#') + '.mp4'))
+    await deepM3u8Conversion(m3u8URL, path.join(downloadPath, obj.file.replaceAll('.', '#') + '.mp4'))
 }
 
 async function deepM3u8Conversion(url, output) {
