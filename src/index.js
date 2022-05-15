@@ -18,8 +18,8 @@ const stealth = require("puppeteer-extra-plugin-stealth")();
 puppeteer.use(stealth);
 
 const episodes = [12];
-const title = 'A Chivalry of a Failed Knight';
-const start = 'https://aniworld.to/anime/stream/a-chivalry-of-a-failed-knight/';
+const title = 'The Testament of Sister New Devil';
+const start = 'https://aniworld.to/anime/stream/the-testament-of-sister-new-devil/';
 
 const urls = [];
 
@@ -27,10 +27,6 @@ const urls = [];
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 (async () => {
-    // const pathToExtension = `C:/Users/Jodu555/AppData/Local/Google/Chrome/User Data/Default/Extensions/cfhdojbkjhnklbpkdaibdccddilifddb/3.12_0`;
-    // console.log(a.readdirSync(pathToExtension));
-
-    // return;
 
     //////////////////
     // Generating
@@ -48,9 +44,28 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // await collect();
 
-    // await download();
+    await download();
 
 })();
+
+function generate() {
+    for (let i = 0; i < episodes.length; i++) {
+        const season = i + 1;
+        const episode = episodes[i];
+        for (let j = 1; j < episode + 1; j++) {
+            const obj = {
+                finished: false,
+                folder: `Season ${season}`,
+                file: `${title} St.${season} Flg.${j}`,
+                url: start + `staffel-${season}/episode-${j}`,
+                m3u8: '',
+            };
+            urls.push(obj);
+        }
+    }
+
+    fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8')
+}
 
 async function collect() {
     let prevm3url = '';
@@ -75,32 +90,17 @@ async function collect() {
     }
 }
 
-function generate() {
-    for (let i = 0; i < episodes.length; i++) {
-        const season = i + 1;
-        const episode = episodes[i];
-        for (let j = 1; j < episode + 1; j++) {
-            const obj = {
-                folder: `Season ${season}`,
-                file: `${title} St.${season} Flg.${j}`,
-                url: start + `staffel-${season}/episode-${j}`,
-                m3u8: ''
-            };
-            urls.push(obj);
-        }
-    }
-
-    fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8')
-}
-
 async function download() {
     const collectedObjects = JSON.parse(fs.readFileSync(title + '.json', 'utf-8'));
 
     let i = 0;
     for (const obj of collectedObjects) {
+        if (obj.finished == true) continue;
         console.log(`Started the download of ${obj.file}`);
         console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
         await startDownloading(obj, obj.m3u8)
+        obj.finished = true;
+        fs.writeFileSync(title + '.json', JSON.stringify(collectedObjects, null, 3), 'utf-8');
         i++;
     }
 }
