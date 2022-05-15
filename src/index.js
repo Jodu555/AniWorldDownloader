@@ -59,8 +59,8 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
                 }
             });
             output.forEach(e => { urls.push(e); });
+            fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
         }
-
     } else {
         generate().forEach(e => { urls.push(e); });
         fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
