@@ -17,16 +17,11 @@ const puppeteer = require('puppeteer-extra');
 const stealth = require("puppeteer-extra-plugin-stealth")();
 puppeteer.use(stealth);
 
-// Aesthetica of a Rogue Hero
-// const episodes = [12];
-// const title = 'Aesthetica of a Rogue Hero';
-// const start = 'https://aniworld.to/anime/stream/aesthetica-of-a-rogue-hero/';
 
-
-// The Testament of Sister New Devil
-const episodes = [12, 10];
-const title = 'The Testament of Sister New Devil';
-const start = 'https://aniworld.to/anime/stream/the-testament-of-sister-new-devil/';
+// Elfen Lied
+const episodes = [13];
+const title = 'Elfen Lied';
+const start = 'https://aniworld.to/anime/stream/elfen-lied/';
 
 const urls = [];
 
@@ -69,7 +64,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     //NOTE: here must be the season before to delete the items
     // urls.splice(0, episodes[0] + 8)
-    // console.log(urls);
+    console.log(urls);
 
     // await collect();
 
