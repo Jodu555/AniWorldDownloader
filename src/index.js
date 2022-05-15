@@ -46,42 +46,34 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     // urls.splice(0, episodes[0] + 8)
     console.log(urls);
 
-    //////////////////
-    // Collecting
-    //////////////////
+    // await collect();
 
-    // return;
-
-    // let prevm3url = '';
-
-    // for (const obj of urls) {
-    //     if (obj.m3u8 !== '') continue;
-
-    //     const url = await getM3u8UrlFromURL(obj.url);
-
-    //     console.log('Collected: ' + url);
-    //     if (!url.includes('https://') || url == prevm3url) {
-    //         console.log('Got suspicious program behaviour: Stopped!', !url.includes('https://'), url == prevm3url);
-    //         process.exit(1);
-    //     }
-
-    //     prevm3url = url;
-
-    //     obj.m3u8 = url;
-
-    //     fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
-    //     await wait(1000);
-    // }
-
-    // return;
-
-    //////////////////
-    // Downloading
-    //////////////////
-
-    download();
+    // await download();
 
 })();
+
+async function collect() {
+    let prevm3url = '';
+
+    for (const obj of urls) {
+        if (obj.m3u8 !== '') continue;
+
+        const url = await getM3u8UrlFromURL(obj.url);
+
+        console.log('Collected: ' + url);
+        if (!url.includes('https://') || url == prevm3url) {
+            console.log('Got suspicious program behaviour: Stopped!', !url.includes('https://'), url == prevm3url);
+            process.exit(1);
+        }
+
+        prevm3url = url;
+
+        obj.m3u8 = url;
+
+        fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
+        await wait(1000);
+    }
+}
 
 function generate() {
     for (let i = 0; i < episodes.length; i++) {
