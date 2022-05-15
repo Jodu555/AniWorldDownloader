@@ -79,15 +79,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     // Downloading
     //////////////////
 
-    const collectedObjects = JSON.parse(fs.readFileSync(title + '.json', 'utf-8'));
-
-    let i = 0;
-    for (const obj of collectedObjects) {
-        console.log(`Started the download of ${obj.file}`);
-        console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
-        await startDownloading(obj, obj.m3u8)
-        i++;
-    }
+    download();
 
 })();
 
@@ -107,6 +99,18 @@ function generate() {
     }
 
     fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8')
+}
+
+async function download() {
+    const collectedObjects = JSON.parse(fs.readFileSync(title + '.json', 'utf-8'));
+
+    let i = 0;
+    for (const obj of collectedObjects) {
+        console.log(`Started the download of ${obj.file}`);
+        console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
+        await startDownloading(obj, obj.m3u8)
+        i++;
+    }
 }
 
 async function getM3u8UrlFromURL(url) {
