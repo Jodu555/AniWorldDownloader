@@ -19,9 +19,9 @@ puppeteer.use(stealth);
 
 
 // Elfen Lied
-const episodes = [26];
-const title = 'Demon Slayer';
-const start = 'https://aniworld.to/anime/stream/demon-slayer-kimetsu-no-yaiba/';
+const episodes = [5];
+const title = 'TestLOLOLO';
+const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 const urls = [];
 
@@ -66,9 +66,13 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     // urls.splice(0, episodes[0] + 8)
     console.log(urls);
 
+    const obj = urls.find(v => v.m3u8 == 'TESTHALLO');
+    // urls.find(v => v.m3u8 == url) == undefined => Not in the list
+    console.log(obj);
+
     // await collect();
 
-    await download();
+    // await download();
 
 })();
 
