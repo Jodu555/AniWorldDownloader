@@ -96,7 +96,6 @@ function generate() {
 }
 
 async function collect() {
-    let prevm3url = '';
 
     for (const obj of urls) {
         if (obj.m3u8 !== '') continue;
@@ -104,12 +103,10 @@ async function collect() {
         const url = await getM3u8UrlFromURL(obj.url);
 
         console.log('Collected: ' + url);
-        if (!url.includes('https://') || url == prevm3url) {
-            console.log('Got suspicious program behaviour: Stopped!', !url.includes('https://'), url == prevm3url);
+        if (!url.includes('https://') || urls.find(v => v.m3u8 == url) !== undefined) {
+            console.log('Got suspicious program behaviour: Stopped!', !url.includes('https://'), urls.find(v => v.m3u8 == url) !== undefined);
             process.exit(1);
         }
-
-        prevm3url = url;
 
         obj.m3u8 = url;
 
