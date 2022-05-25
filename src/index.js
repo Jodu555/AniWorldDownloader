@@ -24,9 +24,13 @@ puppeteer.use(stealth);
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Anime
-const episodes = [24, 13];
-const title = 'Food Wars! Shokugeki no Sōma';
-const start = 'https://aniworld.to/anime/stream/food-wars-shokugeki-no-sma/';
+const episodes = [12];
+const title = 'Kaguya-sama! Love is War';
+const start = 'https://aniworld.to/anime/stream/kaguya-sama-love-is-war/';
+
+// For later usage
+// const title = 'The Misfit of Demon King Academy';
+// const episodes = [13];
 
 const urls = [];
 
