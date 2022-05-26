@@ -8,6 +8,8 @@
 // puppeteer.use(AdblockerPlugin())
 
 
+//TODO: Think about move all the anime info stuff to an external file where at the top this metadata gets added
+
 const fs = require('fs');
 const path = require('path');
 
@@ -27,6 +29,11 @@ puppeteer.use(stealth);
 const episodes = [12, 12, 7];
 const title = 'Kaguya-sama! Love is War';
 const start = 'https://aniworld.to/anime/stream/kaguya-sama-love-is-war/';
+
+// Kaguya-sama! Love is War
+// const episodes = [12, 12, 7];
+// const title = 'Kaguya-sama! Love is War';
+// const start = 'https://aniworld.to/anime/stream/kaguya-sama-love-is-war/';
 
 // For later usage
 // const title = 'The Misfit of Demon King Academy';
@@ -78,7 +85,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // await collect();
 
-    await download();
+    // await download();
 
 })();
 
