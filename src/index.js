@@ -24,7 +24,7 @@ puppeteer.use(stealth);
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Anime
-const episodes = [12];
+const episodes = [12, 12, 7];
 const title = 'Kaguya-sama! Love is War';
 const start = 'https://aniworld.to/anime/stream/kaguya-sama-love-is-war/';
 
@@ -78,7 +78,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // await collect();
 
-    // await download();
+    await download();
 
 })();
 
