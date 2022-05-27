@@ -118,6 +118,7 @@ async function collect() {
 
     for (const obj of urls) {
         if (obj.m3u8 !== '') continue;
+        if (obj.finished == true) continue;
 
         const url = await getM3u8UrlFromURL(obj.url);
 
