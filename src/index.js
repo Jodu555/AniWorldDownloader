@@ -20,12 +20,14 @@ const stealth = require("puppeteer-extra-plugin-stealth")();
 puppeteer.use(stealth);
 
 
+const anime = false;
+
 // For Testing
 // const episodes = [5];
 // const title = 'TestLOLOLO';
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
-// Actual Anime
+// Actual Series
 const episodes = [12, 12, 7];
 const title = 'Kaguya-sama! Love is War';
 const start = 'https://aniworld.to/anime/stream/kaguya-sama-love-is-war/';
@@ -303,7 +305,11 @@ async function downloadMovie(name, url) {
 }
 
 async function startDownloading(obj, m3u8URL) {
-    const downloadPath = path.join(process.cwd(), 'Downloads', title, obj.folder.replace(' ', '-'));
+    let downloadPath = path.join(process.cwd(), 'Downloads');
+
+    anime ? (downloadPath = path.join(downloadPath, 'Anime')) : (downloadPath = path.join(downloadPath, 'STO'));
+
+    downloadPath = path.join(downloadPath, title, obj.folder.replace(' ', '-'))
     fs.mkdirSync(downloadPath, { recursive: true });
     await deepM3u8Conversion(m3u8URL, path.join(downloadPath, obj.file.replaceAll('.', '#') + '.mp4'))
 }
