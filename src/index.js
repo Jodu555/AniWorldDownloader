@@ -87,7 +87,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // await collect();
 
-    // await download();
+    await download();
 
 })();
 
@@ -135,17 +135,19 @@ async function collect() {
 }
 
 async function download() {
-    const collectedObjects = JSON.parse(fs.readFileSync(title + '.json', 'utf-8'));
+    const possibleObjects = JSON.parse(fs.readFileSync(title + '.json', 'utf-8'));
+    const collectedObjects = possibleObjects.filter(o => o.m3u8 !== '' && o.finished !== true);
+    console.log(`Stripped the whole ${possibleObjects.length} possible Videos down to the ${collectedObjects.length} downloadable Objects`);
 
     let i = 0;
-    for (const obj of collectedObjects) {
+    for (const obj of possibleObjects) {
         if (obj.m3u8 == '') continue;
         if (obj.finished == true) continue;
         console.log(`Started the download of ${obj.file}`);
         console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
         await startDownloading(obj, obj.m3u8)
         obj.finished = true;
-        fs.writeFileSync(title + '.json', JSON.stringify(collectedObjects, null, 3), 'utf-8');
+        fs.writeFileSync(title + '.json', JSON.stringify(possibleObjects, null, 3), 'utf-8');
         i++;
     }
 }
@@ -311,7 +313,7 @@ async function downloadMovie(name, url) {
 async function startDownloading(obj, m3u8URL) {
     let downloadPath = path.join(process.cwd(), 'Downloads');
 
-    anime ? (downloadPath = path.join(downloadPath, 'Anime')) : (downloadPath = path.join(downloadPath, 'STO'));
+    anime ? (downloadPath = path.join(downloadPath, 'Aniworld')) : (downloadPath = path.join(downloadPath, 'STO'));
 
     downloadPath = path.join(downloadPath, title, obj.folder.replace(' ', '-'))
     fs.mkdirSync(downloadPath, { recursive: true });
