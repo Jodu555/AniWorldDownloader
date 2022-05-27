@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [26];
-const title = 'Emmas Chatroom';
-const start = 'http://190.115.18.20/serie/stream/emmas-chatroom/';
+const episodes = [26, 26, 26];
+const title = 'H2O - Plötzlich Meerjungfrau';
+const start = 'http://190.115.18.20/serie/stream/h2o-ploetzlich-meerjungfrau/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
@@ -87,7 +87,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // await collect();
 
-    await download();
+    // await download();
 
 })();
 
