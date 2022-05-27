@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [12, 12, 7];
-const title = 'Kaguya-sama! Love is War';
-const start = 'https://aniworld.to/anime/stream/kaguya-sama-love-is-war/';
+const episodes = [26, 26, 26];
+const title = 'Mia and Me – Abenteuer in Centopia';
+const start = 'http://190.115.18.20/serie/stream/mia-and-me-abenteuer-in-centopia/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
@@ -72,11 +72,11 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
                 }
             });
             output.forEach(e => { urls.push(e); });
-            fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
+            write();
         }
     } else {
         generate().forEach(e => { urls.push(e); });
-        fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
+        write();
     }
 
 
@@ -110,6 +110,10 @@ function generate() {
     return items;
 }
 
+function write() {
+    fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
+}
+
 async function collect() {
 
     for (const obj of urls) {
@@ -125,7 +129,7 @@ async function collect() {
 
         obj.m3u8 = url;
 
-        fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
+        write();
         await wait(1000);
     }
 }
