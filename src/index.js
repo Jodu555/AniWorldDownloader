@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [8];
-const title = 'Shadow and Bone';
-const start = 'http://190.115.18.20/serie/stream/shadow-and-bone/';
+const episodes = [22, 20, 24, 22, 22];
+const title = 'Hart aber herzlich';
+const start = 'http://190.115.18.20/serie/stream/hart-aber-herzlich/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
@@ -85,9 +85,9 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     console.log(urls);
 
 
-    // await collect();
+    await collect();
 
-    await download();
+    // await download();
 
 })();
 
