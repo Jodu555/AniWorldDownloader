@@ -82,12 +82,12 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     //NOTE: here must be the season before to delete the items
     // urls.splice(0, episodes[0] + 8)
-    console.log(urls);
+    console.log(`Loaded ${urls.length} Urls!`);
 
 
-    await collect();
+    // await collect();
 
-    // await download();
+    await download();
 
 })();
 
