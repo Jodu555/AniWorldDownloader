@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [10, 10, 11, 3, 8, 4, 2, 2, 4, 4, 4, 4, 5];
-const title = 'Agatha Christies Poirot';
-const start = 'http://190.115.18.20/serie/stream/agatha-christies-poirot/';
+const episodes = [3, 24, 25, 26, 27, 25, 23, 25, 24];
+const title = 'Walker, Texas Ranger';
+const start = 'http://190.115.18.20/serie/stream/walker-texas-ranger/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
@@ -85,9 +85,9 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     console.log(`Loaded ${urls.length} Urls!`);
 
 
-    await collect();
+    // await collect();
 
-    // await download();
+    await download();
 
 })();
 
