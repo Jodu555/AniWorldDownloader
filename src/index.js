@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [3, 24, 25, 26, 27, 25, 23, 25, 24];
-const title = 'Walker, Texas Ranger';
-const start = 'http://190.115.18.20/serie/stream/walker-texas-ranger/';
+const episodes = [23, 24, 24, 24, 24, 20, 16];
+const title = 'NCIS - New Orleans';
+const start = 'http://190.115.18.20/serie/stream/ncis-new-orleans/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
