@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [22, 22, 22, 22, 6];
-const title = 'Remington Steele';
-const start = 'http://190.115.18.20/serie/stream/remington-steele/';
+const episodes = [23, 26, 24, 26, 15];
+const title = 'Drei Engel für Charlie';
+const start = 'http://190.115.18.20/serie/stream/drei-engel-fuer-charlie/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
