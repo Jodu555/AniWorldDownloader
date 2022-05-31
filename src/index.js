@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [23, 24, 24, 24, 24, 20, 16];
-const title = 'NCIS - New Orleans';
-const start = 'http://190.115.18.20/serie/stream/ncis-new-orleans/';
+const episodes = [22, 22, 22, 22, 6];
+const title = 'Remington Steele';
+const start = 'http://190.115.18.20/serie/stream/remington-steele/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
