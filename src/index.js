@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [25, 25, 25, 25, 25, 26, 24, 24, 22];
-const title = 'Die Waltons';
-const start = 'http://190.115.18.20/serie/stream/die-waltons/';
+const episodes = [24, 22, 22, 22, 24, 24, 22, 22, 22, 6];
+const title = 'Unsere kleine Farm';
+const start = 'http://190.115.18.20/serie/stream/unsere-kleine-farm/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
@@ -85,9 +85,9 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     console.log(`Loaded ${urls.length} Urls!`);
 
 
-    await collect();
+    // await collect();
 
-    // await download();
+    await download();
 
 })();
 
