@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [23, 26, 24, 26, 15];
-const title = 'Drei Engel für Charlie';
-const start = 'http://190.115.18.20/serie/stream/drei-engel-fuer-charlie/';
+const episodes = [25, 25, 25, 25, 25, 26, 24, 24, 22];
+const title = 'Die Waltons';
+const start = 'http://190.115.18.20/serie/stream/die-waltons/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
