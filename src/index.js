@@ -85,9 +85,9 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     console.log(`Loaded ${urls.length} Urls!`);
 
 
-    // await collect();
+    await collect();
 
-    await download();
+    // await download();
 
 })();
 
