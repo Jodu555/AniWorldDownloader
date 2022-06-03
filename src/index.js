@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [21, 23, 22, 22];
-const title = 'Agentin mit Herz';
-const start = 'http://190.115.18.20/serie/stream/agentin-mit-herz/';
+const episodes = [19, 22, 18, 26, 25, 22, 24, 22];
+const title = 'Diagnose: Mord';
+const start = 'http://190.115.18.20/serie/stream/diagnose-mord/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
