@@ -20,7 +20,7 @@ const stealth = require("puppeteer-extra-plugin-stealth")();
 puppeteer.use(stealth);
 
 
-const anime = true;
+const anime = false;
 
 // For Testing
 // const episodes = [5];
@@ -28,18 +28,14 @@ const anime = true;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-// const episodes = [24, 22, 22, 22, 24, 24, 22, 22, 22, 6];
-// const title = 'Unsere kleine Farm';
-// const start = 'http://190.115.18.20/serie/stream/unsere-kleine-farm/';
+const episodes = [21, 23, 22, 22];
+const title = 'Agentin mit Herz';
+const start = 'http://190.115.18.20/serie/stream/agentin-mit-herz/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
 // const title = 'Kaguya-sama! Love is War';
 // const start = 'https://aniworld.to/anime/stream/kaguya-sama-love-is-war/';
-
-const episodes = [12];
-const title = 'Akashic Records of Bastard Magical Instructor';
-const start = 'https://aniworld.to/anime/stream/akashic-records-of-bastard-magical-instructor/';
 
 // For later usage
 // const title = 'The Misfit of Demon King Academy';
@@ -91,7 +87,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // await collect();
 
-    // await download();
+    await download();
 
 })();
 
