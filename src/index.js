@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [19, 22, 18, 26, 25, 22, 24, 22];
-const title = 'Diagnose: Mord';
-const start = 'http://190.115.18.20/serie/stream/diagnose-mord/';
+const episodes = [26];
+const title = 'Weihnachtsmann & Co. KG';
+const start = 'http://190.115.18.20/serie/stream/weihnachtsmann-co-kg/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
@@ -87,7 +87,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // await collect();
 
-    await download();
+    // await download();
 
 })();
 
@@ -166,17 +166,17 @@ async function getM3u8UrlFromURL(url) {
 
     await robot.go();
 
-    await wait(5800);
+    await wait(5900);
 
     robot
         .mouseMove(-2555, 222)
     click(robot, 1)
-    robot.sleep(100)
+    robot.sleep(400)
         .mouseMove(-1954, 251)
     click(robot, 1)
     click(robot, 3)
     robot.mouseMove(-1943, 264)
-        .sleep(100);
+        .sleep(400);
     click(robot, 3)
     await robot.go();
 
