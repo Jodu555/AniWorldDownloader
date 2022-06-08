@@ -29,8 +29,8 @@ const anime = false;
 
 // Actual Series
 const episodes = [26];
-const title = 'Weihnachtsmann & Co. KG';
-const start = 'http://190.115.18.20/serie/stream/weihnachtsmann-co-kg/';
+const title = 'Disney\'s Fillmore';
+const start = 'http://190.115.18.20/serie/stream/disney-s-fillmore/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
