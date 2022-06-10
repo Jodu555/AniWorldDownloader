@@ -28,9 +28,12 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [26, 26, 26];
-const title = 'Wickie und die starken Männer';
-const start = 'http://190.115.18.20/serie/stream/wickie-und-die-starken-maenner/';
+// const episodes = [26, 16];
+// const title = 'Sally Bollywood';
+// const start = 'http://190.115.18.20/serie/stream/sally-bollywood/';
+const episodes = [13, 13, 26];
+const title = 'SimsalaGrimm';
+const start = 'http://190.115.18.20/serie/stream/simsalagrimm/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
