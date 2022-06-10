@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [26];
-const title = 'Disney\'s Fillmore';
-const start = 'http://190.115.18.20/serie/stream/disney-s-fillmore/';
+const episodes = [26, 26, 26];
+const title = 'Wickie und die starken Männer';
+const start = 'http://190.115.18.20/serie/stream/wickie-und-die-starken-maenner/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
@@ -87,7 +87,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // await collect();
 
-    // await download();
+    await download();
 
 })();
 
