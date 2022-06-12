@@ -31,9 +31,9 @@ const anime = false;
 // const episodes = [26, 16];
 // const title = 'Sally Bollywood';
 // const start = 'http://190.115.18.20/serie/stream/sally-bollywood/';
-const episodes = [13, 13, 26];
-const title = 'SimsalaGrimm';
-const start = 'http://190.115.18.20/serie/stream/simsalagrimm/';
+const episodes = [21, 30, 14, 23];
+const title = 'Kim Possible';
+const start = 'http://190.115.18.20/serie/stream/kim-possible/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
