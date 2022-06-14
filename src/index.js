@@ -31,9 +31,12 @@ const anime = false;
 // const episodes = [26, 16];
 // const title = 'Sally Bollywood';
 // const start = 'http://190.115.18.20/serie/stream/sally-bollywood/';
-const episodes = [13, 7, 6, 13, 13];
-const title = 'She-Ra und die Rebellen-Prinzessinnen';
-const start = 'http://190.115.18.20/serie/stream/she-ra-und-die-rebellen-prinzessinnen/';
+// const episodes = [13, 7, 6, 13, 13];
+// const title = 'She-Ra und die Rebellen-Prinzessinnen';
+// const start = 'http://190.115.18.20/serie/stream/she-ra-und-die-rebellen-prinzessinnen/';
+const episodes = [6];
+const title = 'Rin - Daughters of Mnemosyne';
+const start = 'http://190.115.18.20/serie/stream/rin-daughters-of-mnemosyne/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
