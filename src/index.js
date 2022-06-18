@@ -28,15 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-// const episodes = [26, 16];
-// const title = 'Sally Bollywood';
-// const start = 'http://190.115.18.20/serie/stream/sally-bollywood/';
-// const episodes = [13, 7, 6, 13, 13];
-// const title = 'She-Ra und die Rebellen-Prinzessinnen';
-// const start = 'http://190.115.18.20/serie/stream/she-ra-und-die-rebellen-prinzessinnen/';
-const episodes = [6];
-const title = 'Rin - Daughters of Mnemosyne';
-const start = 'http://190.115.18.20/serie/stream/rin-daughters-of-mnemosyne/';
+const episodes = [22, 22, 22, 22, 20, 13, 12];
+const title = 'Star Wars! The Clone Wars';
+const start = 'http://190.115.18.20/serie/stream/star-wars-the-clone-wars/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
