@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [20, 22, 23, 22, 19, 20];
-const title = 'Supergirl';
-const start = 'http://190.115.18.20/serie/stream/supergirl/';
+const episodes = [15, 22, 22, 15];
+const title = 'Star Wars Rebels';
+const start = 'http://190.115.18.20/serie/stream/star-wars-rebels/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
@@ -85,9 +85,9 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     console.log(`Loaded ${urls.length} Urls!`);
 
 
-    await collect();
+    // await collect();
 
-    // await download();
+    await download();
 
 })();
 
