@@ -20,7 +20,7 @@ const stealth = require("puppeteer-extra-plugin-stealth")();
 puppeteer.use(stealth);
 
 
-const anime = false;
+const anime = true;
 
 // For Testing
 // const episodes = [5];
@@ -28,9 +28,9 @@ const anime = false;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [15, 22, 22, 15];
-const title = 'Star Wars Rebels';
-const start = 'http://190.115.18.20/serie/stream/star-wars-rebels/';
+const episodes = [12];
+const title = 'Our Last Crusade or the Rise of a New World';
+const start = 'https://aniworld.to/anime/stream/our-last-crusade-or-the-rise-of-a-new-world/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
@@ -87,7 +87,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // await collect();
 
-    await download();
+    // await download();
 
 })();
 
