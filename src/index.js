@@ -13,6 +13,9 @@
 const fs = require('fs');
 const path = require('path');
 
+require('dotenv').config();
+
+
 const robot = require("kbm-robot");
 
 const puppeteer = require('puppeteer-extra');
@@ -47,6 +50,10 @@ const urls = [];
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 (async () => {
+
+    console.log(fmt(process.env.URL_POS));
+
+    return;
 
     //////////////////
     // Generating
@@ -153,12 +160,21 @@ async function download() {
     }
 }
 
+function fmt(env_VAR) {
+    return env_VAR.split(' ').map(n => Number(n));
+}
+
 async function getM3u8UrlFromURL(url) {
+    const URL_POS = fmt(process.env.URL_POS);
+    const FIRST_NETWORK_REQUEST_POS = fmt(process.env.FIRST_NETWORK_REQUEST_POS);
+    const URL_NETWORK_REQUEST_POS = fmt(process.env.URL_NETWORK_REQUEST_POS);
+    const URL_COPY_BuTTON = fmt(process.env.URL_COPY_BuTTON);
+
 
     robot.startJar();
 
     robot
-        .mouseMove(-617, 45)
+        .mouseMove(URL_POS[0], URL_POS[1])
     click(robot, 1)
 
     robotTypeAdvanced(robot, url);
@@ -169,13 +185,13 @@ async function getM3u8UrlFromURL(url) {
     await wait(5900);
 
     robot
-        .mouseMove(-2555, 222)
+        .mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1])
     click(robot, 1)
     robot.sleep(400)
-        .mouseMove(-1954, 251)
+        .mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1])
     click(robot, 1)
     click(robot, 3)
-    robot.mouseMove(-1943, 264)
+    robot.mouseMove(URL_COPY_BuTTON[0], URL_COPY_BuTTON[1])
         .sleep(400);
     click(robot, 3)
     await robot.go();
