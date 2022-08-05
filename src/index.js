@@ -31,9 +31,9 @@ const anime = true;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = [12];
-const title = 'Our Last Crusade or the Rise of a New World';
-const start = 'https://aniworld.to/anime/stream/our-last-crusade-or-the-rise-of-a-new-world/';
+const episodes = process.env.EPISODES || [12];
+const title = process.env.TITLE || 'Our Last Crusade or the Rise of a New World';
+const start = process.env.URL_START || 'https://aniworld.to/anime/stream/our-last-crusade-or-the-rise-of-a-new-world/';
 
 // Kaguya-sama! Love is War
 // const episodes = [12, 12, 7];
@@ -51,6 +51,11 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 (async () => {
 
+    console.log(episodes);
+    console.log(title);
+    console.log(start);
+
+    return;
     //////////////////
     // Generating
     //////////////////
