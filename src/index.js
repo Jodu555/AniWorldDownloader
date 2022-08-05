@@ -51,10 +51,6 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 (async () => {
 
-    console.log(fmt(process.env.URL_POS));
-
-    return;
-
     //////////////////
     // Generating
     //////////////////
