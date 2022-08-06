@@ -1,13 +1,3 @@
-// // puppeteer-extra is a drop-in replacement for puppeteer,
-// // it augments the installed puppeteer with plugin functionality
-// const puppeteer = require('puppeteer-extra')
-
-// // Add adblocker plugin, which will transparently block ads in all pages you
-// // create using puppeteer.
-// const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
-// puppeteer.use(AdblockerPlugin())
-
-
 //TODO: Think about move all the anime info stuff to an external file where at the top this metadata gets added
 
 const fs = require('fs');
@@ -18,10 +8,6 @@ require('dotenv').config();
 
 const robot = require("kbm-robot");
 
-const puppeteer = require('puppeteer-extra');
-const stealth = require("puppeteer-extra-plugin-stealth")();
-puppeteer.use(stealth);
-
 
 const anime = true;
 
@@ -31,7 +17,7 @@ const anime = true;
 // const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
 
 // Actual Series
-const episodes = process.env.EPISODES || [12];
+const episodes = fmt(process.env.EPISODES) || [12];
 const title = process.env.TITLE || 'Our Last Crusade or the Rise of a New World';
 const start = process.env.URL_START || 'https://aniworld.to/anime/stream/our-last-crusade-or-the-rise-of-a-new-world/';
 
@@ -51,11 +37,6 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 (async () => {
 
-    console.log(episodes);
-    console.log(title);
-    console.log(start);
-
-    return;
     //////////////////
     // Generating
     //////////////////
@@ -92,6 +73,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     // urls.splice(0, episodes[0] + 8)
     console.log(`Loaded ${urls.length} Urls!`);
 
+    // downloadMovie('name', 'url')
 
     // await collect();
 
@@ -244,80 +226,6 @@ function serializeForRobot(string) {
         }
     }
     return typer;
-}
-
-
-async function startBrowser(obj) {
-    // const pathToExtension = 'C:\Users\Jodu555\AppData\Local\Google\Chrome\User Data\Default\Extensions\cfhdojbkjhnklbpkdaibdccddilifddb\3.12_0';
-    const pathToExtension = `C:\\Users\\Jodu555\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\cfhdojbkjhnklbpkdaibdccddilifddb\\3.12_0`;
-    // const pathToExtension = `C:/Users/Jodu555/AppData/Local/Google/Chrome/User Data/Default/Extensions/cfhdojbkjhnklbpkdaibdccddilifddb/3.12_0`;
-    const browser = await puppeteer.launch({
-        defaultViewport: null,
-        headless: false,
-        devtools: true,
-        executablePath: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
-        // executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe', // Windows
-        // args: [
-        //     `--disable-extensions-except=${pathToExtension}`,
-        //     `--load-extension=${pathToExtension}`,
-        // ],
-    });
-    // await wait(2000);
-    // //To Close the initial adblock opener website
-    // (await browser.pages()).forEach(p => {
-    //     if (p.url().includes('chrome-extension'))
-    //         p.close();
-    // });
-    // await wait(1000);
-    const page = await browser.newPage();
-    const client = await page.target().createCDPSession();
-
-    // await page.setRequestInterception(true);
-    // page.on('request', request => {
-    //     if (request.resourceType() == 'image' || request.resourceType() == 'stylesheet' || request.resourceType() == 'font')
-    //         return request.continue();
-
-    //     if (request.url().includes('m3u8') || request.url().includes('delivery')) {
-    //         console.log(request.resourceType(), request.url());
-    //         request.continue()
-    //     }
-
-    //     request.continue()
-
-    // });
-
-    // To disable breakpoints use ctrl + f8 then f8 to skip ones
-
-
-    await client.send('Network.enable');
-    await client.send('Network.setRequestInterception', {
-        patterns: [{
-            urlPattern: '*'
-        }]
-    });
-
-    await client.on('Network.requestIntercepted', async ({
-        interceptionId,
-        request,
-        responseHeaders,
-        resourceType
-    }) => {
-        console.log(request.url);
-        if (request.url.includes('https://delivery-node-handal'))
-            console.log('AIAIAIAIAAIAIAI');
-        if (request.url.includes('m3u8')) {
-            console.log(request.url);
-        }
-
-        client.send('Network.continueInterceptedRequest', {
-            interceptionId
-        });
-    });
-    await page.goto(obj.url);
-
-    // await wait(15000);
-
-    // console.log('Finished');
 }
 
 async function downloadMovie(name, url) {
