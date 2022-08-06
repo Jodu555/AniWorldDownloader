@@ -75,9 +75,9 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
     // downloadMovie('name', 'url')
 
-    // await collect();
+    process.argv.find(v => v.includes('collect')) && await collect();
 
-    // await download();
+    process.argv.find(v => v.includes('download')) && await download();
 
 })();
 
