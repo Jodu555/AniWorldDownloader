@@ -53,7 +53,20 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     // urls.splice(0, episodes[0] + 8)
     console.log(`Loaded ${urls.length} Urls!`);
 
+
+    //TODO: Add an argument to download Movies
     // downloadMovie('name', 'url')
+
+    if (process.argv.find(v => v.includes('help'))) {
+        console.log(`| ------------- AniWorldDownloader - Help -------------`);
+        console.log(`|`);
+        console.log(`|  => collect : Collects the .m3u8 Urls for the given .env input`);
+        console.log(`|  => download [n] : Downloads the before collected .m3u8 files based on the .env inpuit`);
+        console.log(`|  => skip [n] : Skips n amount of entries Used for example to skip a season if its already downloaded`);
+        console.log(`|`);
+        console.log(`| ------------- AniWorldDownloader - Help -------------`);
+        return;
+    }
 
     if (process.argv.find(v => v.includes('skip'))) {
         const idx = process.argv.findIndex(v => v.includes('skip'))
