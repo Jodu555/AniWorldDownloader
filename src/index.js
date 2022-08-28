@@ -1,34 +1,14 @@
-//TODO: Think about move all the anime info stuff to an external file where at the top this metadata gets added
-
 const fs = require('fs');
 const path = require('path');
-
 require('dotenv').config();
-
-
 const robot = require("kbm-robot");
 
 
-const anime = true;
-
-// For Testing
-// const episodes = [5];
-// const title = 'TestLOLOLO';
-// const start = 'https://aniworld.to/anime/stream/jodus-special-test-ANIME/';
-
-// Actual Series
-const episodes = fmt(process.env.EPISODES) || [12];
-const title = process.env.TITLE || 'Our Last Crusade or the Rise of a New World';
-const start = process.env.URL_START || 'https://aniworld.to/anime/stream/our-last-crusade-or-the-rise-of-a-new-world/';
-
-// Kaguya-sama! Love is War
-// const episodes = [12, 12, 7];
-// const title = 'Kaguya-sama! Love is War';
-// const start = 'https://aniworld.to/anime/stream/kaguya-sama-love-is-war/';
-
-// For later usage
-// const title = 'The Misfit of Demon King Academy';
-// const episodes = [13];
+// Series Info Loading
+const anime = process.env.ANIME;
+const episodes = fmt(process.env.EPISODES);
+const title = process.env.TITLE;
+const start = process.env.URL_START;
 
 const urls = [];
 
@@ -74,6 +54,28 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     console.log(`Loaded ${urls.length} Urls!`);
 
     // downloadMovie('name', 'url')
+
+    if (process.argv.find(v => v.includes('skip'))) {
+        const idx = process.argv.findIndex(v => v.includes('skip'))
+
+        const skipAmt = Number(process.argv[idx + 1]);
+        if (skipAmt == undefined || isNaN(skipAmt)) {
+            console.log('You need to specify a Number how many entries you want to skip')
+            return;
+        }
+
+        let skipptr = skipAmt;
+        for (let i = 0; i < urls.length; i++) {
+            const element = urls[i];
+            if (element.finished == false && skipptr > 0) {
+                element.finished = true;
+                skipptr--;
+            }
+        }
+        console.log(`Skipped ${skipAmt} entries!`);
+        write();
+    }
+
 
     process.argv.find(v => v.includes('collect')) && await collect();
 
