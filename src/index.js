@@ -185,12 +185,12 @@ async function getM3u8UrlFromURL(url) {
     robot
         .mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1])
     click(robot, 1)
-    robot.sleep(400)
+    robot.sleep(200)
         .mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1])
     click(robot, 1)
     click(robot, 3)
     robot.mouseMove(URL_COPY_BuTTON[0], URL_COPY_BuTTON[1])
-        .sleep(400);
+        .sleep(200);
     click(robot, 3)
     await robot.go();
 
