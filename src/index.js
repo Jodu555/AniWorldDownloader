@@ -252,7 +252,7 @@ async function downloadMovie(name, url) {
 }
 
 async function startDownloading(obj, m3u8URL) {
-    let downloadPath = path.join(process.cwd(), 'Downloads');
+    let downloadPath = process.env.DOWNLOAD_PATH ? process.env.DOWNLOAD_PATH : path.join(process.cwd(), 'Downloads');
 
     anime ? (downloadPath = path.join(downloadPath, 'Aniworld')) : (downloadPath = path.join(downloadPath, 'STO'));
 
