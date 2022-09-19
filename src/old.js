@@ -10,16 +10,16 @@
 const puppeteer = require('puppeteer-extra');
 const stealth = require("puppeteer-extra-plugin-stealth")();
 puppeteer.use(stealth);
-
+const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 async function startBrowser(obj) {
     // const pathToExtension = 'C:\Users\Jodu555\AppData\Local\Google\Chrome\User Data\Default\Extensions\cfhdojbkjhnklbpkdaibdccddilifddb\3.12_0';
-    const pathToExtension = `C:\\Users\\Jodu555\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\cfhdojbkjhnklbpkdaibdccddilifddb\\3.12_0`;
+    // const pathToExtension = `C:\\Users\\Jodu555\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\cfhdojbkjhnklbpkdaibdccddilifddb\\3.12_0`;
     // const pathToExtension = `C:/Users/Jodu555/AppData/Local/Google/Chrome/User Data/Default/Extensions/cfhdojbkjhnklbpkdaibdccddilifddb/3.12_0`;
     const browser = await puppeteer.launch({
         defaultViewport: null,
         headless: false,
-        devtools: true,
+        // devtools: true,
         executablePath: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
         // executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe', // Windows
         // args: [
@@ -68,11 +68,11 @@ async function startBrowser(obj) {
         resourceType
     }) => {
         console.log(request.url);
-        if (request.url.includes('https://delivery-node-handal'))
-            console.log('AIAIAIAIAAIAIAI');
-        if (request.url.includes('m3u8')) {
-            console.log(request.url);
-        }
+        // if (request.url.includes('https://delivery-node-handal'))
+        //     console.log('AIAIAIAIAAIAIAI');
+        // if (request.url.includes('m3u8')) {
+        //     console.log(request.url);
+        // }
 
         client.send('Network.continueInterceptedRequest', {
             interceptionId
@@ -80,7 +80,21 @@ async function startBrowser(obj) {
     });
     await page.goto(obj.url);
 
-    // await wait(15000);
+    await wait(6000);
+    console.log('Start Running!!!');
+    console.log('Start Running!!!');
+    console.log('Start Running!!!');
+    console.log('Start Running!!!');
+    console.log('Start Running!!!');
+    const out = await page.evaluate(_ => {
+        const vidozaParent = [...document.getElementsByClassName('icon Vidoza')][0].parentElement;
+        [...vidozaParent.getElementsByClassName('hosterSiteVideoButton')][0].click();
+        return vidozaParent;
+    });
+
+    console.log('out', out);
 
     // console.log('Finished');
 }
+
+startBrowser({ url: 'https://aniworld.to/anime/stream/rent-a-girlfriend/staffel-2/episode-1' })
