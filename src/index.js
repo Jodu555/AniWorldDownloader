@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
+const jsdom = require("jsdom");
 require('dotenv').config();
 const robot = require("kbm-robot");
 
@@ -16,7 +18,8 @@ const urls = [];
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 (async () => {
-
+    await parseInformationsFromURL();
+    return;
     //////////////////
     // Generating
     //////////////////
@@ -95,6 +98,44 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     process.argv.find(v => v.includes('download')) && await download();
 
 })();
+
+async function parseInformationsFromURL() {
+    const response = await axios.get(start);
+    const { document } = (new jsdom.JSDOM(response.data)).window;
+
+
+    const numberOfSeasons = Number(document.querySelector('meta[itemprop="numberOfSeasons"]').content);
+
+    const output = { url: start, seasons: new Array(numberOfSeasons) };
+    const episodes = [...document.querySelectorAll('tr[itemprop="episode"]')];
+    output.seasons[0] = [];
+    episodes.forEach(ep => {
+        let langs = [];
+        [...ep.querySelectorAll('.editFunctions img')].forEach(lang => {
+            langs.push(lang.src)
+        })
+
+        langs = langs.map(l => {
+            switch (l) {
+                case '/public/img/german.svg':
+                    return 'GerDub';
+                case '/public/img/japanese-german.svg':
+                    return 'GerSub';
+                case '/public/img/japanese-english.svg':
+                    return 'EngSub';
+                default:
+                    break;
+            }
+        })
+
+        const mainName = ep.querySelector('.seasonEpisodeTitle strong').textContent;
+        const secondName = ep.querySelector('.seasonEpisodeTitle span').textContent;
+
+        output.seasons[0].push({ mainName, secondName, langs });
+    });
+
+    console.log(output);
+}
 
 function generate() {
     const items = [];
