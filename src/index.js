@@ -103,12 +103,33 @@ async function parseInformationsFromURL() {
     const response = await axios.get(start);
     const { document } = (new jsdom.JSDOM(response.data)).window;
 
+    const seasonsUl = [...document.querySelectorAll('span')].find(e => e.textContent.includes('Staffeln:')).parentElement.parentElement;
+    const seasonsTab = [...seasonsUl.querySelectorAll('li')].map(e => e.querySelector('a')?.title).filter(e => e != undefined);
 
-    const numberOfSeasons = Number(document.querySelector('meta[itemprop="numberOfSeasons"]').content);
+    const numberOfSeasons = seasonsTab.filter(e => e.includes('Staffel')).length;
+    const hasMovies = seasonsTab.find(e => e.includes('Film')) != null;
 
-    const output = { url: start, seasons: new Array(numberOfSeasons) };
+
+    const output = { url: start, hasMovies, seasons: new Array(numberOfSeasons) };
+
+    if (hasMovies) {
+        const movResponse = await axios.get(`${start}/filme`);
+        output.movies = getListInformations(movResponse.data);
+    }
+
+    output.seasons[0] = getListInformations(response.data)
+    for (let i = 1; i < numberOfSeasons; i++) {
+        const seaResponse = await axios.get(`${start}/staffel-${i + 1}`);
+        output.seasons[1] = getListInformations(seaResponse.data);
+    }
+
+    fs.writeFileSync('test.json', JSON.stringify(output, null, 3), 'utf8')
+}
+
+function getListInformations(data) {
+    const { document } = (new jsdom.JSDOM(data)).window;
     const episodes = [...document.querySelectorAll('tr[itemprop="episode"]')];
-    output.seasons[0] = [];
+    const out = [];
     episodes.forEach(ep => {
         let langs = [];
         [...ep.querySelectorAll('.editFunctions img')].forEach(lang => {
@@ -131,10 +152,9 @@ async function parseInformationsFromURL() {
         const mainName = ep.querySelector('.seasonEpisodeTitle strong').textContent;
         const secondName = ep.querySelector('.seasonEpisodeTitle span').textContent;
 
-        output.seasons[0].push({ mainName, secondName, langs });
+        out.push({ mainName, secondName, langs });
     });
-
-    console.log(output);
+    return out;
 }
 
 function generate() {
