@@ -100,6 +100,26 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 })();
 
 async function parseInformationsFromURL() {
+
+    // const re = /^(.*)St#(\d+) Flg#(\d+).mp4/igm;
+
+    // const str = 'Akame ga Kill! St#1 Flg#8.mp4';
+
+    // const [
+    //     original,
+    //     name,
+    //     season,
+    //     episode,
+    // ] = re.exec(str)
+
+    // console.log({
+    //     original,
+    //     name: name.trim(),
+    //     season,
+    //     episode,
+    // });
+
+    return;
     const response = await axios.get(start);
     const { document } = (new jsdom.JSDOM(response.data)).window;
 
