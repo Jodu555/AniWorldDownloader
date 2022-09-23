@@ -205,7 +205,7 @@ async function download() {
         console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
         await startDownloading(obj, obj.m3u8)
         obj.finished = true;
-        fs.writeFileSync(title + '.json', JSON.stringify(possibleObjects, null, 3), 'utf-8');
+        fs.writeFileSync(title + '_dl.json', JSON.stringify(possibleObjects, null, 3), 'utf-8');
         i++;
     }
 }
