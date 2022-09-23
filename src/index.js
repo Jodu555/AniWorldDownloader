@@ -193,7 +193,7 @@ async function collect() {
 }
 
 async function download() {
-    const possibleObjects = JSON.parse(fs.readFileSync(title + '.json', 'utf-8'));
+    const possibleObjects = JSON.parse(fs.readFileSync(title + '_dl.json', 'utf-8'));
     const collectedObjects = possibleObjects.filter(o => o.m3u8 !== '' && o.finished !== true);
     console.log(`Stripped the whole ${possibleObjects.length} possible Videos down to the ${collectedObjects.length} downloadable Objects`);
 
