@@ -73,7 +73,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     if (!fs.existsSync(title + '_dl.json')) {
         console.log(title, 'Got not parsed yet please choose parse as the first option to use');
     } else {
-        JSON.parse(fs.readFileSync((title + '_dl.json', 'utf8'))).forEach(e => urls.push(e));
+        JSON.parse(fs.readFileSync(title + '_dl.json', 'utf8')).forEach(e => urls.push(e));
     }
 
     if (process.argv.find(v => v.includes('skip'))) {
