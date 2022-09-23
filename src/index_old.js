@@ -19,6 +19,45 @@ const urls = [];
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 (async () => {
+    //////////////////
+    // Generating
+    //////////////////
+    // if (fs.existsSync(title + '.json')) {
+    //     const readUrls = JSON.parse(fs.readFileSync(title + '.json', 'utf-8'));
+
+    //     const entries = episodes.reduce((p, c) => p + c, 0);
+    //     if (entries == readUrls.length) {
+    //         readUrls.forEach(e => { urls.push(e); });
+    //     } else {
+    //         console.log('List isnt fully generated');
+    //         console.log('  Regenerating and comparing list');
+    //         const full = generate();
+    //         const output = [];
+
+    //         full.forEach(e => {
+    //             const item = readUrls.filter(x => e.url == x.url)[0];
+    //             if (item != null) {
+    //                 output.push(item);
+    //             } else {
+    //                 output.push(e);
+    //             }
+    //         });
+    //         output.forEach(e => { urls.push(e); });
+    //         write();
+    //     }
+    // } else {
+    //     generate().forEach(e => { urls.push(e); });
+    //     write();
+    // }
+
+
+    //NOTE: here must be the season before to delete the items
+    // urls.splice(0, episodes[0] + 8)
+    // console.log(`Loaded ${urls.length} Urls!`);
+
+
+    //TODO: Add an argument to download Movies
+    // downloadMovie('name', 'url')
 
     if (process.argv.find(v => v.includes('help'))) {
         console.log(`| ------------- AniWorldDownloader - Help -------------`);
@@ -31,9 +70,38 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         return;
     }
 
+    if (process.argv.find(v => v.includes('skip'))) {
+        const idx = process.argv.findIndex(v => v.includes('skip'))
+
+        const skipAmt = Number(process.argv[idx + 1]);
+        if (skipAmt == undefined || isNaN(skipAmt)) {
+            console.log('You need to specify a Number how many entries you want to skip')
+            return;
+        }
+
+        let skipptr = skipAmt;
+        for (let i = 0; i < urls.length; i++) {
+            const element = urls[i];
+            if (element.finished == false && skipptr > 0) {
+                element.finished = true;
+                skipptr--;
+            }
+        }
+        console.log(`Skipped ${skipAmt} entries!`);
+        write();
+    }
+
+
     if (process.argv.find(v => v.includes('parse'))) {
 
+        // return;
         const output = await parseInformationsFromURL();
+
+        //     "finished": true,
+        //   "folder": "Season 1",
+        //   "file": "Kaguya-sama! Love is War St.1 Flg.12",
+        //   "url": "https://aniworld.to/anime/stream/kaguya-sama-love-is-war/staffel-1/episode-12",
+        //   "m3u8": "https://ftp.voe-network.net/hls/,6oarn3ysqy23cszcr2fnbkbb5h7umqj7csv6myreyyyoz7ndrked5ltmowfa,.urlset/master.m3u8"
 
         const downloadObjects = [];
 
@@ -68,33 +136,6 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
         fs.writeFileSync(title + '.json', JSON.stringify(output, null, 3), 'utf8')
         fs.writeFileSync(title + '_dl.json', JSON.stringify(downloadObjects, null, 3), 'utf8')
 
-    }
-
-    if (!fs.existsSync(title + '_dl.json')) {
-        console.log(title, 'Got not parsed yet please choose parse as the first option to use');
-    } else {
-        JSON.parse(fs.readFileSync((title + '_dl.json', 'utf8'))).forEach(e => urls.push(e));
-    }
-
-    if (process.argv.find(v => v.includes('skip'))) {
-        const idx = process.argv.findIndex(v => v.includes('skip'))
-
-        const skipAmt = Number(process.argv[idx + 1]);
-        if (skipAmt == undefined || isNaN(skipAmt)) {
-            console.log('You need to specify a Number how many entries you want to skip')
-            return;
-        }
-
-        let skipptr = skipAmt;
-        for (let i = 0; i < urls.length; i++) {
-            const element = urls[i];
-            if (element.finished == false && skipptr > 0) {
-                element.finished = true;
-                skipptr--;
-            }
-        }
-        console.log(`Skipped ${skipAmt} entries!`);
-        write();
     }
 
     process.argv.find(v => v.includes('collect')) && await collect();
@@ -167,8 +208,27 @@ function getListInformations(data) {
     return out;
 }
 
+function generate() {
+    const items = [];
+    for (let i = 0; i < episodes.length; i++) {
+        const season = i + 1;
+        const episode = episodes[i];
+        for (let j = 1; j < episode + 1; j++) {
+            const obj = {
+                finished: false,
+                folder: `Season ${season}`,
+                file: `${title} St.${season} Flg.${j}`,
+                url: start + `staffel-${season}/episode-${j}`,
+                m3u8: '',
+            };
+            items.push(obj);
+        }
+    }
+    return items;
+}
+
 function write() {
-    fs.writeFileSync(title + '_dl.json', JSON.stringify(urls, null, 3), 'utf-8');
+    fs.writeFileSync(title + '.json', JSON.stringify(urls, null, 3), 'utf-8');
 }
 
 async function collect() {
