@@ -93,6 +93,8 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     }
 
 
+    process.argv.find(v => v.includes('parse')) && await parseInformationsFromURL();
+
     process.argv.find(v => v.includes('collect')) && await collect();
 
     process.argv.find(v => v.includes('download')) && await download();
@@ -100,26 +102,6 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 })();
 
 async function parseInformationsFromURL() {
-
-    // const re = /^(.*)St#(\d+) Flg#(\d+).mp4/igm;
-
-    // const str = 'Akame ga Kill! St#1 Flg#8.mp4';
-
-    // const [
-    //     original,
-    //     name,
-    //     season,
-    //     episode,
-    // ] = re.exec(str)
-
-    // console.log({
-    //     original,
-    //     name: name.trim(),
-    //     season,
-    //     episode,
-    // });
-
-    return;
     const response = await axios.get(start);
     const { document } = (new jsdom.JSDOM(response.data)).window;
 
@@ -132,15 +114,21 @@ async function parseInformationsFromURL() {
 
     const output = { url: start, hasMovies, seasons: new Array(numberOfSeasons) };
 
+    console.log('Parsed: ');
+    console.log(' ' + start);
+    console.log(`   => Movies: ${hasMovies} - Seasons: ${numberOfSeasons}`);
+
     if (hasMovies) {
         const movResponse = await axios.get(`${start}/filme`);
         output.movies = getListInformations(movResponse.data);
+        console.log(`    => Got ${output.movies.length} Movies`);
     }
 
     output.seasons[0] = getListInformations(response.data)
     for (let i = 1; i < numberOfSeasons; i++) {
         const seaResponse = await axios.get(`${start}/staffel-${i + 1}`);
-        output.seasons[1] = getListInformations(seaResponse.data);
+        output.seasons[i] = getListInformations(seaResponse.data);
+        console.log(`    => Got Season ${i} with ${output.seasons[i].length} Episodes`);
     }
 
     fs.writeFileSync('test.json', JSON.stringify(output, null, 3), 'utf8')
