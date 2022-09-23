@@ -8,7 +8,8 @@ const robot = require("kbm-robot");
 
 // Series Info Loading
 const anime = process.env.ANIME;
-const episodes = fmt(process.env.EPISODES);
+// const episodes = fmt(process.env.EPISODES);
+const preferLangs = fmt(process.env.PREFER_LANGS)
 const title = process.env.TITLE;
 const start = process.env.URL_START;
 
@@ -18,43 +19,41 @@ const urls = [];
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 (async () => {
-    await parseInformationsFromURL();
-    return;
     //////////////////
     // Generating
     //////////////////
-    if (fs.existsSync(title + '.json')) {
-        const readUrls = JSON.parse(fs.readFileSync(title + '.json', 'utf-8'));
+    // if (fs.existsSync(title + '.json')) {
+    //     const readUrls = JSON.parse(fs.readFileSync(title + '.json', 'utf-8'));
 
-        const entries = episodes.reduce((p, c) => p + c, 0);
-        if (entries == readUrls.length) {
-            readUrls.forEach(e => { urls.push(e); });
-        } else {
-            console.log('List isnt fully generated');
-            console.log('  Regenerating and comparing list');
-            const full = generate();
-            const output = [];
+    //     const entries = episodes.reduce((p, c) => p + c, 0);
+    //     if (entries == readUrls.length) {
+    //         readUrls.forEach(e => { urls.push(e); });
+    //     } else {
+    //         console.log('List isnt fully generated');
+    //         console.log('  Regenerating and comparing list');
+    //         const full = generate();
+    //         const output = [];
 
-            full.forEach(e => {
-                const item = readUrls.filter(x => e.url == x.url)[0];
-                if (item != null) {
-                    output.push(item);
-                } else {
-                    output.push(e);
-                }
-            });
-            output.forEach(e => { urls.push(e); });
-            write();
-        }
-    } else {
-        generate().forEach(e => { urls.push(e); });
-        write();
-    }
+    //         full.forEach(e => {
+    //             const item = readUrls.filter(x => e.url == x.url)[0];
+    //             if (item != null) {
+    //                 output.push(item);
+    //             } else {
+    //                 output.push(e);
+    //             }
+    //         });
+    //         output.forEach(e => { urls.push(e); });
+    //         write();
+    //     }
+    // } else {
+    //     generate().forEach(e => { urls.push(e); });
+    //     write();
+    // }
 
 
     //NOTE: here must be the season before to delete the items
     // urls.splice(0, episodes[0] + 8)
-    console.log(`Loaded ${urls.length} Urls!`);
+    // console.log(`Loaded ${urls.length} Urls!`);
 
 
     //TODO: Add an argument to download Movies
@@ -93,7 +92,51 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
     }
 
 
-    process.argv.find(v => v.includes('parse')) && await parseInformationsFromURL();
+    if (process.argv.find(v => v.includes('parse'))) {
+
+        // return;
+        const output = await parseInformationsFromURL();
+
+        //     "finished": true,
+        //   "folder": "Season 1",
+        //   "file": "Kaguya-sama! Love is War St.1 Flg.12",
+        //   "url": "https://aniworld.to/anime/stream/kaguya-sama-love-is-war/staffel-1/episode-12",
+        //   "m3u8": "https://ftp.voe-network.net/hls/,6oarn3ysqy23cszcr2fnbkbb5h7umqj7csv6myreyyyoz7ndrked5ltmowfa,.urlset/master.m3u8"
+
+        const downloadObjects = [];
+
+        output.seasons.forEach((season, se) => {
+            season.forEach((ent, ep) => {
+                const languages = ent.langs.filter(e => preferLangs.find(x => x.includes(e)));
+                languages.forEach(language => {
+                    downloadObjects.push({
+                        finished: false,
+                        folder: `Season ${se + 1}`,
+                        file: `${title} St.${se + 1} Flg.${ep + 1}_${language}`,
+                        url: start + `staffel-${se + 1}/episode-${ep + 1}`,
+                        m3u8: '',
+                    });
+                });
+            });
+        });
+
+        output.movies.forEach((ent, movie) => {
+            const languages = ent.langs.filter(e => preferLangs.find(x => x.includes(e)));
+            languages.forEach(language => {
+                downloadObjects.push({
+                    finished: false,
+                    folder: `Movies`,
+                    file: `${ent.mainName}_${language}`,
+                    url: start + `filme/film-${movie + 1}`,
+                    m3u8: '',
+                });
+            });
+        });
+
+        fs.writeFileSync(title + '.json', JSON.stringify(output, null, 3), 'utf8')
+        fs.writeFileSync(title + '_dl.json', JSON.stringify(downloadObjects, null, 3), 'utf8')
+
+    }
 
     process.argv.find(v => v.includes('collect')) && await collect();
 
@@ -116,7 +159,7 @@ async function parseInformationsFromURL() {
 
     console.log('Parsed: ');
     console.log(' ' + start);
-    console.log(`   => Movies: ${hasMovies} - Seasons: ${numberOfSeasons}`);
+    console.log(`   => Seasons: ${numberOfSeasons} - Movies: ${hasMovies}`);
 
     if (hasMovies) {
         const movResponse = await axios.get(`${start}/filme`);
@@ -125,13 +168,13 @@ async function parseInformationsFromURL() {
     }
 
     output.seasons[0] = getListInformations(response.data)
+    console.log(`    => Got Season ${0} with ${output.seasons[0].length} Episodes`);
     for (let i = 1; i < numberOfSeasons; i++) {
         const seaResponse = await axios.get(`${start}/staffel-${i + 1}`);
         output.seasons[i] = getListInformations(seaResponse.data);
         console.log(`    => Got Season ${i} with ${output.seasons[i].length} Episodes`);
     }
-
-    fs.writeFileSync('test.json', JSON.stringify(output, null, 3), 'utf8')
+    return output;
 }
 
 function getListInformations(data) {
@@ -228,7 +271,7 @@ async function download() {
 }
 
 function fmt(env_VAR) {
-    return env_VAR.split(' ').map(n => Number(n));
+    return env_VAR.split(' ');
 }
 
 async function getM3u8UrlFromURL(url) {
