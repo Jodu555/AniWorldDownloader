@@ -8,7 +8,6 @@ const robot = require("kbm-robot");
 
 // Series Info Loading
 const anime = process.env.ANIME;
-// const episodes = fmt(process.env.EPISODES);
 const preferLangs = fmt(process.env.PREFER_LANGS)
 const title = process.env.TITLE;
 const start = process.env.URL_START;
@@ -218,7 +217,7 @@ async function getM3u8UrlFromURL(url) {
     const URL_POS = fmt(process.env.URL_POS);
     const FIRST_NETWORK_REQUEST_POS = fmt(process.env.FIRST_NETWORK_REQUEST_POS);
     const URL_NETWORK_REQUEST_POS = fmt(process.env.URL_NETWORK_REQUEST_POS);
-    const URL_COPY_BuTTON = fmt(process.env.URL_COPY_BuTTON);
+    const URL_COPY_BUTTON = fmt(process.env.URL_COPY_BuTTON);
 
 
     robot.startJar();
@@ -241,7 +240,7 @@ async function getM3u8UrlFromURL(url) {
         .mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1])
     click(robot, 1)
     click(robot, 3)
-    robot.mouseMove(URL_COPY_BuTTON[0], URL_COPY_BuTTON[1])
+    robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1])
         .sleep(200);
     click(robot, 3)
     await robot.go();
@@ -293,14 +292,6 @@ function serializeForRobot(string) {
         }
     }
     return typer;
-}
-
-async function downloadMovie(name, url) {
-    const downloadPath = path.join(process.cwd(), 'Downloads', title, 'Movies');
-    fs.mkdirSync(downloadPath, { recursive: true });
-    console.log('Start');
-    await deepM3u8Conversion(url, path.join(downloadPath, name + '.mp4'));
-    console.log('Finished');
 }
 
 async function startDownloading(obj, m3u8URL) {
