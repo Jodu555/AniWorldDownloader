@@ -2,6 +2,12 @@
 
 Just a simple little program to download the aniworld videos
 
+## TODO
+
+- [ ] Add some socket integration so the instance can be treated in an stack of unique servers
+- [ ] Add some java stop assurance
+- [ ] Work on some code splitting (all in one file is awful)
+
 ## Weird Copy Error
 
 ```
