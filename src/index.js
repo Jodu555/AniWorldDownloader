@@ -51,18 +51,19 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
             });
         });
 
-        output.movies.forEach((ent, movie) => {
-            const languages = ent.langs.filter(e => preferLangs.find(x => x.includes(e)));
-            languages.forEach(language => {
-                downloadObjects.push({
-                    finished: false,
-                    folder: `Movies`,
-                    file: `${ent.mainName}_${language}`,
-                    url: start + `filme/film-${movie + 1}`,
-                    m3u8: '',
+        if (output.hasMovies)
+            output.movies.forEach((ent, movie) => {
+                const languages = ent.langs.filter(e => preferLangs.find(x => x.includes(e)));
+                languages.forEach(language => {
+                    downloadObjects.push({
+                        finished: false,
+                        folder: `Movies`,
+                        file: `${ent.mainName}_${language}`,
+                        url: start + `filme/film-${movie + 1}`,
+                        m3u8: '',
+                    });
                 });
             });
-        });
 
         fs.writeFileSync(title + '.json', JSON.stringify(output, null, 3), 'utf8')
         fs.writeFileSync(title + '_dl.json', JSON.stringify(downloadObjects, null, 3), 'utf8')
