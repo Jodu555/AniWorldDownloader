@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { exec } = require("child_process");
 const axios = require('axios');
 const jsdom = require("jsdom");
 require('dotenv').config();
@@ -251,6 +252,18 @@ async function getM3u8UrlFromURL(url) {
     robot.stopJar();
 
     return m3u8URL;
+}
+
+function stopJava() {
+    exec('taskkill /f /im java.exe', (error, stdout, stderr) => {
+        console.log(error, stdout, stderr);
+        if (error) {
+            throw err
+        }
+
+        console.log('stdout', stdout)
+        console.log('stderr', stderr)
+    });
 }
 
 function click(robot, btn) {
