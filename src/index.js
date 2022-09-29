@@ -15,6 +15,16 @@ const start = process.env.URL_START;
 
 const urls = [];
 
+process.on('unhandledRejection', error => {
+    console.log('unhandledRejection');
+    throw error;
+})
+
+process.on('uncaughtException', error => {
+    console.log('uncaughtException');
+    throw error;
+});
+
 
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
