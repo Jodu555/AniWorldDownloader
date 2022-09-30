@@ -9,7 +9,8 @@ const robot = require("kbm-robot");
 
 // Series Info Loading
 const anime = process.env.ANIME;
-const preferLangs = fmt(process.env.PREFER_LANGS)
+const preferLangs = fmt(process.env.PREFER_LANGS);
+const fallbackLang = process.env.FALLBACK_LANG;
 const title = process.env.TITLE;
 const start = process.env.URL_START;
 
@@ -49,15 +50,26 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
         output.seasons.forEach((season, se) => {
             season.forEach((ent, ep) => {
-                const languages = ent.langs.filter(e => preferLangs.find(x => x.includes(e)));
-                languages.forEach(language => {
+
+                const add = (lng) => {
                     downloadObjects.push({
                         finished: false,
                         folder: `Season ${se + 1}`,
-                        file: `${title} St.${se + 1} Flg.${ep + 1}_${language}`,
+                        file: `${title} St.${se + 1} Flg.${ep + 1}_${lng}`,
                         url: start + `staffel-${se + 1}/episode-${ep + 1}`,
                         m3u8: '',
                     });
+                }
+
+                const languages = ent.langs.filter(e => preferLangs.find(x => x.includes(e)));
+                if (languages.length == 0) {
+                    // The preferLangs dont match
+                    if (ent.langs.filter(e => e.includes(fallbackLang))) {
+                        add(fallbackLang);
+                    }
+                }
+                languages.forEach(language => {
+                    add(language);
                 });
             });
         });
