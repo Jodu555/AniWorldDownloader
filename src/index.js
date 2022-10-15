@@ -200,7 +200,7 @@ async function collect() {
         if (obj.m3u8 !== '') continue;
         if (obj.finished == true) continue;
 
-        const url = await getM3u8UrlFromURL(obj.url);
+        const url = await getM3u8UrlFromURL(obj);
 
         console.log('Collected: ' + url);
         if (!url.includes('https://') || urls.find(v => v.m3u8 == url) !== undefined) {
@@ -237,11 +237,16 @@ function fmt(env_VAR) {
     return env_VAR.split(' ');
 }
 
-async function getM3u8UrlFromURL(url) {
+async function getM3u8UrlFromURL(obj) {
+    const { url, file } = obj;
+    const language = file.split('_')[1];
     const URL_POS = fmt(process.env.URL_POS);
     const FIRST_NETWORK_REQUEST_POS = fmt(process.env.FIRST_NETWORK_REQUEST_POS);
     const URL_NETWORK_REQUEST_POS = fmt(process.env.URL_NETWORK_REQUEST_POS);
     const URL_COPY_BUTTON = fmt(process.env.URL_COPY_BuTTON);
+    const CONSOLE_FIELD = fmt(process.env.CONSOLE_FIELD);
+
+    console.log(language, language == 'GerDub');
 
 
     robot.startJar();
@@ -254,24 +259,77 @@ async function getM3u8UrlFromURL(url) {
     robot.press('ENTER').release('ENTER');
 
     await robot.go();
+    if (language == 'GerDub') {
+        await wait(5900);
 
-    await wait(5900);
+        robot
+            .mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1])
+        click(robot, 1)
+        robot.sleep(200)
+            .mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1])
+        click(robot, 1)
+        click(robot, 3)
+        robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1])
+            .sleep(200);
+        click(robot, 3)
+        await robot.go();
+    } else {
+        await wait(2000);
 
-    robot
-        .mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1])
-    click(robot, 1)
-    robot.sleep(200)
-        .mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1])
-    click(robot, 1)
-    click(robot, 3)
-    robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1])
-        .sleep(200);
-    click(robot, 3)
-    await robot.go();
+        robot
+            .mouseMove(CONSOLE_FIELD[0], CONSOLE_FIELD[1])
+        click(robot, 1)
+        robot.sleep(20)
+            .press('CTRL')
+            .type('a')
+            .sleep(20)
+            .release('CTRL')
+            .sleep(20)
+            .type('BACKSPACE');
+        robot.sleep(900);
+
+        // for (let i = 0; i < 2; i++) {
+        //     robot.press('CTRL')
+        //         .type('e')
+        //         .sleep(20)
+        //         .release('CTRL');
+        // }
+
+        robot.sleep(200);
+
+        const clickGerSubCode = `[...document.querySelectorAll('img')].find(e => e.alt.includes('Ger-Sub')).click();`
+        await writeToClipboard(clickGerSubCode);
+        robot.press('CTRL')
+            .type('v')
+            .sleep(50)
+            .release('CTRL')
+            .sleep(20)
+            .release('CTRL')
+            .sleep(100)
+            .type('\n')
+            .sleep(50);
+
+        await robot.go();
+
+        await wait(5900);
+        robot
+            .mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1])
+        click(robot, 1)
+        robot.sleep(200)
+            .mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1])
+        click(robot, 1)
+        click(robot, 3)
+        robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1])
+            .sleep(200);
+        click(robot, 3)
+        await robot.go();
+    }
+
 
     const m3u8URL = await readFromClipboard();
 
     robot.stopJar();
+    return;
 
     return m3u8URL;
 }
@@ -311,6 +369,8 @@ function serializeForRobot(string) {
     const mapper = {
         ':': '.',
         '/': '7',
+        '\'': '#',
+        '=': '0',
     }
 
     let typer = [];
@@ -347,6 +407,14 @@ async function deepM3u8Conversion(url, output) {
         .setInputFile(url)
         .setOutputFile(output)
         .start();
+}
+
+async function writeToClipboard(text) {
+    return new Promise((resolve, _) => {
+        import('clipboardy').then(clipboard => {
+            resolve(clipboard.default.writeSync(text));
+        });
+    })
 }
 
 async function readFromClipboard() {
