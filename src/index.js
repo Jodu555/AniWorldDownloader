@@ -245,9 +245,7 @@ async function getM3u8UrlFromURL(obj) {
     const URL_NETWORK_REQUEST_POS = fmt(process.env.URL_NETWORK_REQUEST_POS);
     const URL_COPY_BUTTON = fmt(process.env.URL_COPY_BuTTON);
     const CONSOLE_FIELD = fmt(process.env.CONSOLE_FIELD);
-
-    console.log(language, language == 'GerDub');
-
+    const NETWORK_REQUEST_CLEAR_BUTTON = fmt(process.env.NETWORK_REQUEST_CLEAR_BUTTON);
 
     robot.startJar();
 
@@ -274,7 +272,12 @@ async function getM3u8UrlFromURL(obj) {
         click(robot, 3)
         await robot.go();
     } else {
+        console.log('Detected other language initiate switch!');
         await wait(2000);
+
+        robot
+            .mouseMove(NETWORK_REQUEST_CLEAR_BUTTON[0], NETWORK_REQUEST_CLEAR_BUTTON[1])
+        click(robot, 1);
 
         robot
             .mouseMove(CONSOLE_FIELD[0], CONSOLE_FIELD[1])
@@ -286,16 +289,7 @@ async function getM3u8UrlFromURL(obj) {
             .release('CTRL')
             .sleep(20)
             .type('BACKSPACE');
-        robot.sleep(900);
-
-        // for (let i = 0; i < 2; i++) {
-        //     robot.press('CTRL')
-        //         .type('e')
-        //         .sleep(20)
-        //         .release('CTRL');
-        // }
-
-        robot.sleep(200);
+        robot.sleep(1200);
 
         const clickGerSubCode = `[...document.querySelectorAll('img')].find(e => e.alt.includes('Ger-Sub')).click();`
         await writeToClipboard(clickGerSubCode);
@@ -325,11 +319,9 @@ async function getM3u8UrlFromURL(obj) {
         await robot.go();
     }
 
-
     const m3u8URL = await readFromClipboard();
 
     robot.stopJar();
-    return;
 
     return m3u8URL;
 }
