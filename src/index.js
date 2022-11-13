@@ -203,6 +203,7 @@ async function collect() {
 		obj.m3u8 = url;
 
 		write();
+		process.exit(1);
 		await wait(1000);
 	}
 }
@@ -226,7 +227,7 @@ async function download() {
 }
 
 function fmt(env_VAR) {
-	return env_VAR.split(' ');
+	return env_VAR.split(' ').map((n) => Number(n));
 }
 
 async function getM3u8UrlFromURL(obj) {
@@ -236,8 +237,8 @@ async function getM3u8UrlFromURL(obj) {
 	const FIRST_NETWORK_REQUEST_POS = fmt(process.env.FIRST_NETWORK_REQUEST_POS);
 	const URL_NETWORK_REQUEST_POS = fmt(process.env.URL_NETWORK_REQUEST_POS);
 	const URL_COPY_BUTTON = fmt(process.env.URL_COPY_BuTTON);
-	const CONSOLE_FIELD = fmt(process.env.CONSOLE_FIELD);
-	const NETWORK_REQUEST_CLEAR_BUTTON = fmt(process.env.NETWORK_REQUEST_CLEAR_BUTTON);
+
+	// const NETWORK_REQUEST_CLEAR_BUTTON = fmt(process.env.NETWORK_REQUEST_CLEAR_BUTTON);
 
 	robot.startJar();
 
@@ -261,24 +262,16 @@ async function getM3u8UrlFromURL(obj) {
 		await robot.go();
 	} else {
 		console.log('Detected other language initiate switch!');
-		await wait(2000);
 
-		robot.mouseMove(NETWORK_REQUEST_CLEAR_BUTTON[0], NETWORK_REQUEST_CLEAR_BUTTON[1]);
-		click(robot, 1);
-
-		robot.mouseMove(CONSOLE_FIELD[0], CONSOLE_FIELD[1]);
-		click(robot, 1);
-		robot.sleep(20).press('CTRL').type('a').sleep(20).release('CTRL').sleep(20).type('BACKSPACE');
-		robot.sleep(1200);
+		robot.sleep(2000);
+		// robot.mouseMove(NETWORK_REQUEST_CLEAR_BUTTON[0], NETWORK_REQUEST_CLEAR_BUTTON[1]);
+		// click(robot, 1);
 
 		const clickGerSubCode = `[...document.querySelectorAll('img')].find(e => e.alt.includes('Ger-Sub')).click();`;
-		await writeToClipboard(clickGerSubCode);
-		robot.press('CTRL').type('v').sleep(50).release('CTRL').sleep(20).release('CTRL').sleep(100).type('\n').sleep(50);
-
-		await robot.go();
+		await executeManualConsoleCommand(robot, clickGerSubCode);
 
 		await wait(5900);
-		robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1]);
+		robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1] + 20);
 		click(robot, 1);
 		robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
 		click(robot, 1);
@@ -293,6 +286,19 @@ async function getM3u8UrlFromURL(obj) {
 	robot.stopJar();
 
 	return m3u8URL;
+}
+
+async function executeManualConsoleCommand(robot, command) {
+	const CONSOLE_FIELD = fmt(process.env.CONSOLE_FIELD);
+
+	robot.mouseMove(CONSOLE_FIELD[0], CONSOLE_FIELD[1]);
+	click(robot, 1);
+	robot.sleep(20).press('CTRL').type('a').sleep(20).release('CTRL').sleep(20).type('BACKSPACE');
+	robot.sleep(1200);
+	await writeToClipboard(command);
+	robot.press('CTRL').type('v').sleep(50).release('CTRL').sleep(20).release('CTRL').sleep(100).type('\n').sleep(50);
+
+	await robot.go();
 }
 
 function stopJava() {
