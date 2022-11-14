@@ -5,7 +5,8 @@ const axios = require('axios');
 const jsdom = require('jsdom');
 require('dotenv').config();
 const robot = require('kbm-robot');
-const { click, robotTypeAdvanced, serializeForRobot } = require('./robot_utils');
+const { click, robotTypeAdvanced, serializeForRobot, executeManualConsoleCommand } = require('./robot_utils');
+const { fmt, readFromClipboard } = require('./utils');
 
 // Series Info Loading
 const anime = process.env.ANIME;
@@ -226,10 +227,6 @@ async function download() {
 	}
 }
 
-function fmt(env_VAR) {
-	return env_VAR.split(' ').map((n) => Number(n));
-}
-
 async function getM3u8UrlFromURL(obj) {
 	const { url, file } = obj;
 	const language = file.split('_')[1];
@@ -295,19 +292,6 @@ async function getM3u8UrlFromURL(obj) {
 	return m3u8URL;
 }
 
-async function executeManualConsoleCommand(robot, command) {
-	const CONSOLE_FIELD = fmt(process.env.CONSOLE_FIELD);
-
-	robot.mouseMove(CONSOLE_FIELD[0], CONSOLE_FIELD[1]);
-	click(robot, 1);
-	robot.sleep(20).press('CTRL').type('a').sleep(20).release('CTRL').sleep(20).type('BACKSPACE');
-	robot.sleep(1200);
-	await writeToClipboard(command);
-	robot.press('CTRL').type('v').sleep(50).release('CTRL').sleep(20).release('CTRL').sleep(100).type('\n').sleep(50);
-
-	await robot.go();
-}
-
 function stopJava() {
 	exec('taskkill /f /im java.exe', (error, stdout, stderr) => {
 		console.log(error, stdout, stderr);
@@ -334,20 +318,4 @@ async function deepM3u8Conversion(url, output) {
 	const m3u8ToMp4 = require('m3u8-to-mp4');
 	const converter = new m3u8ToMp4();
 	await converter.setInputFile(url).setOutputFile(output).start();
-}
-
-async function writeToClipboard(text) {
-	return new Promise((resolve, _) => {
-		import('clipboardy').then((clipboard) => {
-			resolve(clipboard.default.writeSync(text));
-		});
-	});
-}
-
-async function readFromClipboard() {
-	return new Promise((resolve, _) => {
-		import('clipboardy').then((clipboard) => {
-			resolve(clipboard.default.readSync());
-		});
-	});
 }
