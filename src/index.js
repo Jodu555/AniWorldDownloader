@@ -248,10 +248,13 @@ async function getM3u8UrlFromURL(obj) {
 	robotTypeAdvanced(robot, url);
 	robot.press('ENTER').release('ENTER');
 
+	let networkTries = 0;
+
 	await robot.go();
 	if (language == 'GerDub') {
-		await wait(5900);
+		robot.sleep(5900);
 
+		//This Code is Duplicate with the one below
 		robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1]);
 		click(robot, 1);
 		robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
@@ -261,6 +264,7 @@ async function getM3u8UrlFromURL(obj) {
 		click(robot, 3);
 		await robot.go();
 	} else {
+		networkTries++; // Because the normal language got loaded and the change to lang also
 		console.log('Detected other language initiate switch!');
 
 		robot.sleep(2000);
@@ -270,7 +274,8 @@ async function getM3u8UrlFromURL(obj) {
 		const clickGerSubCode = `[...document.querySelectorAll('img')].find(e => e.alt.includes('Ger-Sub')).click();`;
 		await executeManualConsoleCommand(robot, clickGerSubCode);
 
-		await wait(5900);
+		robot.sleep(5900);
+
 		robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1] + 20);
 		click(robot, 1);
 		robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
