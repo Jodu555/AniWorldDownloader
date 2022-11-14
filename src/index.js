@@ -251,6 +251,8 @@ async function getM3u8UrlFromURL(obj) {
 	let networkTries = 0;
 
 	await robot.go();
+	//Make this expression more valid by checking the actual lang an entity is in
+	// This only should be true if the desired language to download needs video change
 	if (language == 'GerDub') {
 		robot.sleep(5900);
 
@@ -276,7 +278,7 @@ async function getM3u8UrlFromURL(obj) {
 
 		robot.sleep(5900);
 
-		robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1] + 20);
+		robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1] + networkTries * 20);
 		click(robot, 1);
 		robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
 		click(robot, 1);
