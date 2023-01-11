@@ -206,7 +206,6 @@ async function collect() {
 		obj.m3u8 = url;
 
 		write();
-		process.exit(1);
 		await wait(1000);
 	}
 }
