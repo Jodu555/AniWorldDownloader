@@ -10,8 +10,8 @@ const { fmt, readFromClipboard } = require('./utils');
 
 // Series Info Loading
 const anime = process.env.ANIME;
-const preferLangs = fmt(process.env.PREFER_LANGS);
-const fallbackLang = process.env.FALLBACK_LANG;
+const preferLangs = [process.env.PREFER_LANGS];
+const fallbackLang = [process.env.FALLBACK_LANG];
 const title = process.env.TITLE;
 const start = process.env.URL_START;
 
@@ -309,7 +309,11 @@ async function startDownloading(obj, m3u8URL) {
 
 	anime ? (downloadPath = path.join(downloadPath, 'Aniworld')) : (downloadPath = path.join(downloadPath, 'STO'));
 
-	downloadPath = path.join(downloadPath, title, obj.folder.replace(' ', '-'));
+	if (obj._animeFolder) {
+		downloadPath = path.join(downloadPath, obj._animeFolder, obj.folder.replace(' ', '-'));
+	} else {
+		downloadPath = path.join(downloadPath, title, obj.folder.replace(' ', '-'));
+	}
 	fs.mkdirSync(downloadPath, { recursive: true });
 	await deepM3u8Conversion(m3u8URL, path.join(downloadPath, obj.file.replaceAll('.', '#') + '.mp4'));
 }
