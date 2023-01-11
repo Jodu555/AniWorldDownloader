@@ -29,6 +29,8 @@ process.on('uncaughtException', (error) => {
 
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
+const listDlFile = process.env.LIST_NAME || title + '_dl.json';
+
 (async () => {
 	if (process.argv.find((v) => v.includes('help'))) {
 		console.log(`| ------------- AniWorldDownloader - Help -------------`);
@@ -86,13 +88,13 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 			});
 
 		fs.writeFileSync(title + '.json', JSON.stringify(output, null, 3), 'utf8');
-		fs.writeFileSync(title + '_dl.json', JSON.stringify(downloadObjects, null, 3), 'utf8');
+		fs.writeFileSync(listDlFile, JSON.stringify(downloadObjects, null, 3), 'utf8');
 	}
 
-	if (!fs.existsSync(title + '_dl.json')) {
+	if (!fs.existsSync(listDlFile)) {
 		console.log(title, 'Got not parsed yet please choose parse as the first option to use');
 	} else {
-		JSON.parse(fs.readFileSync(title + '_dl.json', 'utf8')).forEach((e) => urls.push(e));
+		JSON.parse(fs.readFileSync(listDlFile, 'utf8')).forEach((e) => urls.push(e));
 	}
 
 	if (process.argv.find((v) => v.includes('skip'))) {
@@ -185,7 +187,7 @@ function getListInformations(data) {
 }
 
 function write() {
-	fs.writeFileSync(title + '_dl.json', JSON.stringify(urls, null, 3), 'utf-8');
+	fs.writeFileSync(listDlFile, JSON.stringify(urls, null, 3), 'utf-8');
 }
 
 async function collect() {
@@ -210,7 +212,7 @@ async function collect() {
 }
 
 async function download() {
-	const possibleObjects = JSON.parse(fs.readFileSync(title + '_dl.json', 'utf-8'));
+	const possibleObjects = JSON.parse(fs.readFileSync(listDlFile, 'utf-8'));
 	const collectedObjects = possibleObjects.filter((o) => o.m3u8 !== '' && o.finished !== true);
 	console.log(`Stripped the whole ${possibleObjects.length} possible Videos down to the ${collectedObjects.length} downloadable Objects`);
 
@@ -222,7 +224,7 @@ async function download() {
 		console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
 		await startDownloading(obj, obj.m3u8);
 		obj.finished = true;
-		fs.writeFileSync(title + '_dl.json', JSON.stringify(possibleObjects, null, 3), 'utf-8');
+		fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
 		i++;
 	}
 }
@@ -248,9 +250,10 @@ async function getM3u8UrlFromURL(obj) {
 	let networkTries = 0;
 
 	await robot.go();
-	//Make this expression more valid by checking the actual lang an entity is in
+	// Make this expression more valid by checking the actual lang an entity is in
 	// This only should be true if the desired language to download needs video change
-	if (language == 'GerDub') {
+	// TODO: Figure this expression out, it just is not capable when the item has GerSub, EngSub or EngDub
+	if (true) {
 		robot.sleep(5900);
 
 		//This Code is Duplicate with the one below
