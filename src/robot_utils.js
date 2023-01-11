@@ -1,4 +1,4 @@
-const { writeToClipboard } = require('./utils');
+const { writeToClipboard, fmt } = require('./utils');
 
 function click(robot, btn) {
 	robot.mousePress(btn).mouseRelease(btn);
