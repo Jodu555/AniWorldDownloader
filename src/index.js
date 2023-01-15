@@ -293,6 +293,7 @@ async function getM3u8UrlFromURL(obj) {
 
 		if (!m3u8URL.includes('https://') || urls.find((v) => v.m3u8 == m3u8URL) !== undefined) {
 			console.log('Got suspicious program behaviour: Stopped!', !m3u8URL.includes('https://'), urls.find((v) => v.m3u8 == url) !== undefined);
+			console.log('Started Retrie', i, 'out of', 10);
 			continue;
 		}
 	}
