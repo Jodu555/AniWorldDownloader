@@ -252,42 +252,50 @@ async function getM3u8UrlFromURL(obj) {
 	// Make this expression more valid by checking the actual lang an entity is in
 	// This only should be true if the desired language to download needs video change
 	// TODO: Figure this expression out, it just is not capable when the item has GerSub, EngSub or EngDub
-	if (true) {
-		robot.sleep(5900);
+	let m3u8URL = '';
+	for (let i = 0; i < 10; i++) {
+		if (true) {
+			robot.sleep(5900);
 
-		//This Code is Duplicate with the one below
-		robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1]);
-		click(robot, 1);
-		robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
-		click(robot, 1);
-		click(robot, 3);
-		robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1]).sleep(200);
-		click(robot, 3);
-		await robot.go();
-	} else {
-		networkTries++; // Because the normal language got loaded and the change to lang also
-		console.log('Detected other language initiate switch!');
+			//This Code is Duplicate with the one below
+			robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1]);
+			click(robot, 1);
+			robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
+			click(robot, 1);
+			click(robot, 3);
+			robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1]).sleep(200);
+			click(robot, 3);
+			await robot.go();
+		} else {
+			networkTries++; // Because the normal language got loaded and the change to lang also
+			console.log('Detected other language initiate switch!');
 
-		robot.sleep(2000);
-		// robot.mouseMove(NETWORK_REQUEST_CLEAR_BUTTON[0], NETWORK_REQUEST_CLEAR_BUTTON[1]);
-		// click(robot, 1);
+			robot.sleep(2000);
+			// robot.mouseMove(NETWORK_REQUEST_CLEAR_BUTTON[0], NETWORK_REQUEST_CLEAR_BUTTON[1]);
+			// click(robot, 1);
 
-		const clickGerSubCode = `[...document.querySelectorAll('img')].find(e => e.alt.includes('Ger-Sub')).click();`;
-		await executeManualConsoleCommand(robot, clickGerSubCode);
+			const clickGerSubCode = `[...document.querySelectorAll('img')].find(e => e.alt.includes('Ger-Sub')).click();`;
+			await executeManualConsoleCommand(robot, clickGerSubCode);
 
-		robot.sleep(5900);
+			robot.sleep(5900);
 
-		robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1] + networkTries * 20);
-		click(robot, 1);
-		robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
-		click(robot, 1);
-		click(robot, 3);
-		robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1]).sleep(200);
-		click(robot, 3);
-		await robot.go();
+			robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1] + networkTries * 20);
+			click(robot, 1);
+			robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
+			click(robot, 1);
+			click(robot, 3);
+			robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1]).sleep(200);
+			click(robot, 3);
+			await robot.go();
+		}
+
+		m3u8URL = await readFromClipboard();
+
+		if (!m3u8URL.includes('https://') || urls.find((v) => v.m3u8 == m3u8URL) !== undefined) {
+			console.log('Got suspicious program behaviour: Stopped!', !m3u8URL.includes('https://'), urls.find((v) => v.m3u8 == url) !== undefined);
+			continue;
+		}
 	}
-
-	const m3u8URL = await readFromClipboard();
 
 	robot.stopJar();
 
