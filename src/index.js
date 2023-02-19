@@ -9,7 +9,7 @@ const { click, robotTypeAdvanced, serializeForRobot, executeManualConsoleCommand
 const { fmt, readFromClipboard } = require('./utils');
 
 // Series Info Loading
-const anime = process.env.ANIME;
+const anime = Boolean(process.env.ANIME);
 const preferLangs = [process.env.PREFER_LANGS];
 const fallbackLang = [process.env.FALLBACK_LANG];
 const title = process.env.TITLE;
@@ -175,6 +175,12 @@ function getListInformations(data) {
 					return 'EngSub';
 				default:
 					break;
+			}
+			if (l.includes('german.svg')) {
+				return 'GerDub';
+			}
+			if (l.includes('english.svg')) {
+				return 'EngDub';
 			}
 		});
 
