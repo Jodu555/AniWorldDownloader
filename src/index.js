@@ -10,6 +10,7 @@ const { fmt, readFromClipboard } = require('./utils');
 
 // Series Info Loading
 const anime = Boolean(process.env.ANIME);
+const upperfolder = Boolean(process.env.UPPERFOLDER) || true;
 const preferLangs = [process.env.PREFER_LANGS];
 const fallbackLang = [process.env.FALLBACK_LANG];
 const title = process.env.TITLE;
@@ -325,10 +326,19 @@ function stopJava() {
 async function startDownloading(obj, m3u8URL) {
 	let downloadPath = process.env.DOWNLOAD_PATH ? process.env.DOWNLOAD_PATH : path.join(process.cwd(), 'Downloads');
 
-	anime ? (downloadPath = path.join(downloadPath, 'Aniworld')) : (downloadPath = path.join(downloadPath, 'STO'));
+	console.log('DEBUG startDownloading() ', {
+		downloadPath,
+		upperfolder,
+		anime,
+		env: { ANIME: process.env.ANIME, UPPERFOLDER: process.env.UPPERFOLDER },
+	});
 
-	if (obj._animeFolder) {
-		downloadPath = path.join(downloadPath, obj._animeFolder, obj.folder.replace(' ', '-'));
+	if (upperfolder) {
+		anime ? (downloadPath = path.join(downloadPath, 'Aniworld')) : (downloadPath = path.join(downloadPath, 'STO'));
+	}
+
+	if (obj._animeFolder || obj._seriesFolder) {
+		downloadPath = path.join(downloadPath, obj._animeFolder || obj._seriesFolder, obj.folder.replace(' ', '-'));
 	} else {
 		downloadPath = path.join(downloadPath, title, obj.folder.replace(' ', '-'));
 	}
