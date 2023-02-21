@@ -326,12 +326,12 @@ function stopJava() {
 async function startDownloading(obj, m3u8URL) {
 	let downloadPath = process.env.DOWNLOAD_PATH ? process.env.DOWNLOAD_PATH : path.join(process.cwd(), 'Downloads');
 
-	console.log('DEBUG startDownloading() ', {
-		downloadPath,
-		upperfolder,
-		anime,
-		env: { ANIME: process.env.ANIME, UPPERFOLDER: process.env.UPPERFOLDER },
-	});
+	// console.log('DEBUG startDownloading() ', {
+	// 	downloadPath,
+	// 	upperfolder,
+	// 	anime,
+	// 	env: { ANIME: process.env.ANIME, UPPERFOLDER: process.env.UPPERFOLDER },
+	// });
 
 	if (upperfolder) {
 		anime ? (downloadPath = path.join(downloadPath, 'Aniworld')) : (downloadPath = path.join(downloadPath, 'STO'));
