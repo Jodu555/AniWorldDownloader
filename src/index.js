@@ -6,11 +6,11 @@ const jsdom = require('jsdom');
 require('dotenv').config();
 const robot = require('kbm-robot');
 const { click, robotTypeAdvanced, serializeForRobot, executeManualConsoleCommand } = require('./robot_utils');
-const { fmt, readFromClipboard } = require('./utils');
+const { fmt, readFromClipboard, parseToBoolean } = require('./utils');
 
 // Series Info Loading
-const anime = Boolean(process.env.ANIME);
-const upperfolder = Boolean(process.env.UPPERFOLDER) || true;
+const anime = parseToBoolean(process.env.ANIME);
+const upperfolder = parseToBoolean(process.env.UPPERFOLDER) || true;
 const preferLangs = [process.env.PREFER_LANGS];
 const fallbackLang = [process.env.FALLBACK_LANG];
 const title = process.env.TITLE;
