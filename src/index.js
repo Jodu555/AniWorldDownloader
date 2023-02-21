@@ -10,7 +10,7 @@ const { fmt, readFromClipboard, parseToBoolean } = require('./utils');
 
 // Series Info Loading
 const anime = parseToBoolean(process.env.ANIME);
-const upperfolder = parseToBoolean(process.env.UPPERFOLDER) || true;
+const upperfolder = parseToBoolean(process.env.UPPERFOLDER);
 const preferLangs = [process.env.PREFER_LANGS];
 const fallbackLang = [process.env.FALLBACK_LANG];
 const title = process.env.TITLE;
