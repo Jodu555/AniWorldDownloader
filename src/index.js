@@ -11,6 +11,7 @@ const { fmt, readFromClipboard, parseToBoolean } = require('./utils');
 // Series Info Loading
 const anime = parseToBoolean(process.env.ANIME);
 const upperfolder = parseToBoolean(process.env.UPPERFOLDER);
+const NEW_COLLECTOR = parseToBoolean(process.env.NEW_COLLECTOR);
 const preferLangs = [process.env.PREFER_LANGS];
 const fallbackLang = [process.env.FALLBACK_LANG];
 const title = process.env.TITLE;
@@ -261,39 +262,50 @@ async function getM3u8UrlFromURL(obj) {
 	// TODO: Figure this expression out, it just is not capable when the item has GerSub, EngSub or EngDub
 	let m3u8URL = '';
 	for (let i = 0; i < 10; i++) {
-		if (true) {
-			robot.sleep(5900);
-
-			//This Code is Duplicate with the one below
-			robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1]);
+		//False if no zooro / new dl way
+		if (NEW_COLLECTOR) {
+			robot.sleep(2900);
+			const NEW_COPY_BUTTON = fmt(process.env.COPY_BUTTON);
+			robot.mouseMove(NEW_COPY_BUTTON[0], NEW_COPY_BUTTON[1]);
 			click(robot, 1);
-			robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
-			click(robot, 1);
-			click(robot, 3);
-			robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1]).sleep(200);
-			click(robot, 3);
+			robot.sleep(300);
 			await robot.go();
 		} else {
-			networkTries++; // Because the normal language got loaded and the change to lang also
-			console.log('Detected other language initiate switch!');
+			//True if no lang switch
+			if (true) {
+				robot.sleep(5900);
 
-			robot.sleep(2000);
-			// robot.mouseMove(NETWORK_REQUEST_CLEAR_BUTTON[0], NETWORK_REQUEST_CLEAR_BUTTON[1]);
-			// click(robot, 1);
+				//This Code is Duplicate with the one below
+				robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1]);
+				click(robot, 1);
+				robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
+				click(robot, 1);
+				click(robot, 3);
+				robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1]).sleep(200);
+				click(robot, 3);
+				await robot.go();
+			} else {
+				networkTries++; // Because the normal language got loaded and the change to lang also
+				console.log('Detected other language initiate switch!');
 
-			const clickGerSubCode = `[...document.querySelectorAll('img')].find(e => e.alt.includes('Ger-Sub')).click();`;
-			await executeManualConsoleCommand(robot, clickGerSubCode);
+				robot.sleep(2000);
+				// robot.mouseMove(NETWORK_REQUEST_CLEAR_BUTTON[0], NETWORK_REQUEST_CLEAR_BUTTON[1]);
+				// click(robot, 1);
 
-			robot.sleep(5900);
+				const clickGerSubCode = `[...document.querySelectorAll('img')].find(e => e.alt.includes('Ger-Sub')).click();`;
+				await executeManualConsoleCommand(robot, clickGerSubCode);
 
-			robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1] + networkTries * 20);
-			click(robot, 1);
-			robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
-			click(robot, 1);
-			click(robot, 3);
-			robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1]).sleep(200);
-			click(robot, 3);
-			await robot.go();
+				robot.sleep(5900);
+
+				robot.mouseMove(FIRST_NETWORK_REQUEST_POS[0], FIRST_NETWORK_REQUEST_POS[1] + networkTries * 20);
+				click(robot, 1);
+				robot.sleep(200).mouseMove(URL_NETWORK_REQUEST_POS[0], URL_NETWORK_REQUEST_POS[1]);
+				click(robot, 1);
+				click(robot, 3);
+				robot.mouseMove(URL_COPY_BUTTON[0], URL_COPY_BUTTON[1]).sleep(200);
+				click(robot, 3);
+				await robot.go();
+			}
 		}
 
 		m3u8URL = await readFromClipboard();

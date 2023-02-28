@@ -8,7 +8,12 @@ function robotTypeAdvanced(robot, string) {
 	const typer = serializeForRobot(string);
 	typer.forEach((data) => {
 		if (data.advanced == true) {
-			robot.press('SHIFT').type(data.key).sleep(50).release('SHIFT');
+			if (data.key == '?') {
+				writeToClipboard('?');
+				robot.press('CTRL').type('V').sleep(50).release('CTRL');
+			} else {
+				robot.press('SHIFT').type(data.key).sleep(50).release('SHIFT');
+			}
 		} else {
 			robot.typeString(data);
 		}
@@ -21,6 +26,7 @@ function serializeForRobot(string) {
 		'/': '7',
 		"'": '#',
 		'=': '0',
+		'?': '?',
 	};
 
 	let typer = [];
