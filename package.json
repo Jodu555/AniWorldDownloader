@@ -4,9 +4,8 @@
 	"description": "Just a simple little program to download the aniworld videos",
 	"main": "index.js",
 	"scripts": {
-		"start": "node src/index.js",
-		"dev": "nodemon src/index.js",
-		"dev:old": "nodemon src/old.js"
+		"start": "ts-node src/index.ts",
+		"dev": "nodemon src/index.ts"
 	},
 	"repository": {
 		"type": "git",
@@ -26,9 +25,10 @@
 		"jsdom": "^20.0.0",
 		"kbm-robot": "^0.0.4",
 		"m3u8-to-mp4": "^1.0.0",
-		"puppeteer": "^14.0.0",
-		"puppeteer-extra": "^3.2.3",
-		"puppeteer-extra-plugin-adblocker": "^2.12.0",
-		"puppeteer-extra-plugin-stealth": "^2.9.0"
+		"puppeteer": "^19.11.1"
+	},
+	"devDependencies": {
+		"@types/node": "^18.16.3",
+		"ts-node": "^10.9.1"
 	}
 }
