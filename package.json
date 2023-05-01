@@ -20,11 +20,11 @@
 	"homepage": "https://github.com/Jodu555/AniWorldDownloader#readme",
 	"dependencies": {
 		"axios": "^0.27.2",
-		"clipboardy": "^3.0.0",
 		"dotenv": "^16.0.1",
 		"jsdom": "^20.0.0",
 		"kbm-robot": "^0.0.4",
 		"m3u8-to-mp4": "^1.0.0",
+		"node-clipboardy": "^1.0.3",
 		"puppeteer": "^19.11.1"
 	},
 	"devDependencies": {

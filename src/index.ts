@@ -1,6 +1,7 @@
 import NewM3u8Interceptor from './NewInterceptor';
 import OldM3u8Interceptor from './OldInterceptor';
 import { AniWorldSeriesInformations, ExtendedEpisodeDownload } from './types';
+import { fmt, readFromClipboard, parseToBoolean } from './utils';
 
 const fs = require('fs');
 const path = require('path');
@@ -8,7 +9,6 @@ const { exec } = require('child_process');
 const axios = require('axios');
 const jsdom = require('jsdom');
 require('dotenv').config();
-const { fmt, readFromClipboard, parseToBoolean } = require('./utils');
 
 // Series Info Loading
 const anime = parseToBoolean(process.env.ANIME);
