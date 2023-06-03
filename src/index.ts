@@ -235,6 +235,8 @@ async function collect() {
 		write();
 		await wait(1000);
 	}
+
+	newInterceptor.shutdown();
 }
 
 async function download() {
