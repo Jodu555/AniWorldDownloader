@@ -218,6 +218,7 @@ async function collect() {
 				url = await newInterceptor.intercept(obj.url);
 			} catch (error) {
 				console.log('NewInterceptor Timeout!');
+				newInterceptor.shutdown();
 				process.exit(1);
 			}
 		} else {
