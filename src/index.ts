@@ -190,8 +190,8 @@ function getListInformations(data) {
 			}
 		});
 
-		const mainName = ep.querySelector('.seasonEpisodeTitle strong').textContent;
-		const secondName = ep.querySelector('.seasonEpisodeTitle span').textContent;
+		const mainName = ep.querySelector('.seasonEpisodeTitle strong')?.textContent;
+		const secondName = ep.querySelector('.seasonEpisodeTitle span')?.textContent;
 
 		out.push({ mainName, secondName, langs });
 	});
