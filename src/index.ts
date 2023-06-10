@@ -218,8 +218,9 @@ async function collect() {
 				url = await newInterceptor.intercept(obj.url);
 			} catch (error) {
 				console.log('NewInterceptor Timeout!');
-				newInterceptor.shutdown();
-				process.exit(1);
+				url = await newInterceptor.intercept(obj.url);
+				// newInterceptor.shutdown();
+				// process.exit(1);
 			}
 		} else {
 			url = await oldInterceptor.getM3u8UrlFromURL(urls, obj);
