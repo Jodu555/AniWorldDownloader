@@ -8,6 +8,7 @@ lerna-debug.log*
 
 Downloads/
 
+!tsconfig.json
 *.json
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
