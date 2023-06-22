@@ -1,7 +1,7 @@
 import NewM3u8Interceptor from './NewInterceptor';
 import OldM3u8Interceptor from './OldInterceptor';
 import { AniWorldSeriesInformations, ExtendedEpisodeDownload } from './types';
-import { fmt, readFromClipboard, parseToBoolean } from './utils';
+import { fmt, readFromClipboard, parseToBoolean, wait } from './utils';
 
 const fs = require('fs');
 const path = require('path');
@@ -30,8 +30,6 @@ process.on('uncaughtException', (error) => {
 	console.log('uncaughtException');
 	throw error;
 });
-
-const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 const listDlFile = process.env.LIST_NAME || title + '_dl.json';
 

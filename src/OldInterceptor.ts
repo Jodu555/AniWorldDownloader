@@ -1,12 +1,10 @@
 import { ExtendedEpisodeDownload } from './types';
-import { fmt, parseToBoolean, readFromClipboard } from './utils';
+import { fmt, parseToBoolean, readFromClipboard, wait } from './utils';
 
 const NEW_COLLECTOR = parseToBoolean(process.env.NEW_COLLECTOR);
 
 const robot = require('kbm-robot');
 const { click, robotTypeAdvanced, serializeForRobot, executeManualConsoleCommand } = require('./robot_utils');
-
-const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 class OldM3u8Interceptor {
 	async getM3u8UrlFromURL(urls: ExtendedEpisodeDownload[], obj: ExtendedEpisodeDownload) {

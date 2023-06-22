@@ -41,9 +41,12 @@ function parseToBoolean(stringValue) {
 	}
 }
 
+const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
+
 module.exports = {
 	fmt,
 	writeToClipboard,
 	readFromClipboard,
 	parseToBoolean,
+	wait,
 };

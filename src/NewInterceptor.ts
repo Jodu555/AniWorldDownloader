@@ -1,7 +1,6 @@
 const fs = require('fs');
 import * as puppeteer from 'puppeteer';
-
-const wait = (ms: number) => new Promise((resolve, reject) => setTimeout(resolve, ms));
+import { wait } from './utils';
 
 class NewM3u8Interceptor {
 	startupParameters: object;
