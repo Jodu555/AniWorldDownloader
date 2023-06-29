@@ -4,6 +4,7 @@ Just a simple little program to download the aniworld videos
 
 ## TODO
 
+- [ ] Implement a provider Switch from VOE to some other
 - [ ] Work out a way to switch the languages for Aniworld
 - [ ] Add some socket integration so the instance can be treated in an stack of unique servers
 - [ ] Add some java stop assurance
