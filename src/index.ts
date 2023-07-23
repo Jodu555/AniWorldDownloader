@@ -3,11 +3,11 @@ import OldM3u8Interceptor from './OldInterceptor';
 import { AniWorldSeriesInformations, ExtendedEpisodeDownload } from './types';
 import { fmt, readFromClipboard, parseToBoolean, wait } from './utils';
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import axios from 'axios';
+import jsdom from 'jsdom';
 const { exec } = require('child_process');
-const axios = require('axios');
-const jsdom = require('jsdom');
 require('dotenv').config();
 
 // Series Info Loading

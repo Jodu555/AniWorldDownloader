@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from 'fs';
 import * as puppeteer from 'puppeteer';
 import { wait } from './utils';
 

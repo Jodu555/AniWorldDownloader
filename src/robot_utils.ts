@@ -1,10 +1,10 @@
 import { writeToClipboard, fmt } from './utils';
 
-function click(robot, btn) {
+function click(robot: any, btn: number) {
 	robot.mousePress(btn).mouseRelease(btn);
 }
 
-function robotTypeAdvanced(robot, string) {
+function robotTypeAdvanced(robot: any, string: string) {
 	const typer = serializeForRobot(string);
 	typer.forEach((data) => {
 		if (data.advanced == true) {
@@ -20,7 +20,7 @@ function robotTypeAdvanced(robot, string) {
 	});
 }
 
-function serializeForRobot(string) {
+function serializeForRobot(string: string) {
 	const mapper = {
 		':': '.',
 		'/': '7',
@@ -45,7 +45,7 @@ function serializeForRobot(string) {
 	return typer;
 }
 
-async function executeManualConsoleCommand(robot, command) {
+async function executeManualConsoleCommand(robot: any, command: string) {
 	const CONSOLE_FIELD = fmt(process.env.CONSOLE_FIELD);
 
 	robot.mouseMove(CONSOLE_FIELD[0], CONSOLE_FIELD[1]);
@@ -58,9 +58,4 @@ async function executeManualConsoleCommand(robot, command) {
 	await robot.go();
 }
 
-module.exports = {
-	click,
-	robotTypeAdvanced,
-	serializeForRobot,
-	executeManualConsoleCommand,
-};
+export { click, robotTypeAdvanced, serializeForRobot, executeManualConsoleCommand };
