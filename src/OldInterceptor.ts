@@ -1,9 +1,8 @@
 import { ExtendedEpisodeDownload } from './types';
-import { fmt, parseToBoolean, readFromClipboard, wait } from './utils';
-
-const NEW_COLLECTOR = parseToBoolean(process.env.NEW_COLLECTOR);
+import { fmt, readFromClipboard, wait } from './utils';
 
 const robot = require('kbm-robot');
+// import robot from 'kbm-robot'
 import { click, robotTypeAdvanced, executeManualConsoleCommand } from './robot_utils';
 
 class OldM3u8Interceptor {
