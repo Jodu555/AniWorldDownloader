@@ -7,6 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import jsdom from 'jsdom';
+import express from 'express';
 const { exec } = require('child_process');
 require('dotenv').config();
 
@@ -31,7 +32,62 @@ process.on('uncaughtException', (error) => {
 	throw error;
 });
 
-const listDlFile = process.env.LIST_NAME || title + '_dl.json';
+let listDlFile = process.env.LIST_NAME || title + '_dl.json';
+
+const app = express();
+
+app.use(express.json());
+
+if (process.argv.find((v) => v.includes('enable-http'))) {
+	app.post('/upload', (req, res) => {
+		console.log('Came');
+
+		const data: ExtendedEpisodeDownload[] = req.body.data;
+
+		if (Array.isArray(data)) {
+			const ID = Math.ceil(Math.random() * 100000);
+			console.log(`Recieved Upload on ${ID}`);
+
+			fs.writeFileSync(`${ID}.json`, JSON.stringify(data, null, 3));
+			res.json({ ID });
+		} else {
+			res.status(500).json({ error: 'Malformed Data' });
+		}
+	});
+
+	app.get('/collect/:ID', async (req, res) => {
+		const ID = req.params.ID;
+		if (fs.existsSync(`${ID}.json`)) {
+			listDlFile = `${ID}.json`;
+			const content: ExtendedEpisodeDownload[] = JSON.parse(fs.readFileSync(`${ID}.json`, 'utf-8'));
+			urls.length = 0;
+			content.forEach((e) => urls.push(e));
+			await collect();
+			res.json({ success: true });
+		} else {
+			res.status(500).json({ error: 'Invalid ID' });
+		}
+	});
+
+	app.get('/download/:ID', async (req, res) => {
+		const ID = req.params.ID;
+		if (fs.existsSync(`${ID}.json`)) {
+			listDlFile = `${ID}.json`;
+			const content: ExtendedEpisodeDownload[] = JSON.parse(fs.readFileSync(`${ID}.json`, 'utf-8'));
+			urls.length = 0;
+			content.forEach((e) => urls.push(e));
+			await download();
+			res.json({ success: true });
+		} else {
+			res.status(500).json({ error: 'Invalid ID' });
+		}
+	});
+
+	const PORT = process.env.PORT || 1779;
+	app.listen(PORT, () => {
+		console.log(`API Listening on ${PORT}`);
+	});
+}
 
 (async () => {
 	if (process.argv.find((v) => v.includes('help'))) {
@@ -124,7 +180,7 @@ const listDlFile = process.env.LIST_NAME || title + '_dl.json';
 
 	process.argv.find((v) => v.includes('download')) && (await download());
 
-	console.log('No Arguments Provided, Graceful Exit!');
+	console.log('No Arguments Provided!');
 })();
 
 async function parseInformationsFromURL(): Promise<AniWorldSeriesInformations> {
