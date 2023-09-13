@@ -38,10 +38,18 @@ const app = express();
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+	if (req.headers?.token) {
+		if (req.headers.token == process.env.API_TOKEN) {
+			next();
+			return;
+		}
+	}
+	res.status(401).json({ error: 'Invalid Token Provided' });
+});
+
 if (process.argv.find((v) => v.includes('enable-http'))) {
 	app.post('/upload', (req, res) => {
-		console.log('Came');
-
 		const data: ExtendedEpisodeDownload[] = req.body.data;
 
 		if (Array.isArray(data)) {
@@ -57,6 +65,7 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 
 	app.get('/collect/:ID', async (req, res) => {
 		const ID = req.params.ID;
+		console.log(`Recieved Collect on ${ID}`);
 		if (fs.existsSync(`${ID}.json`)) {
 			listDlFile = `${ID}.json`;
 			const content: ExtendedEpisodeDownload[] = JSON.parse(fs.readFileSync(`${ID}.json`, 'utf-8'));
@@ -71,6 +80,7 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 
 	app.get('/download/:ID', async (req, res) => {
 		const ID = req.params.ID;
+		console.log(`Recieved Download on ${ID}`);
 		if (fs.existsSync(`${ID}.json`)) {
 			listDlFile = `${ID}.json`;
 			const content: ExtendedEpisodeDownload[] = JSON.parse(fs.readFileSync(`${ID}.json`, 'utf-8'));
