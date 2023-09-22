@@ -93,6 +93,17 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 		}
 	});
 
+	app.get('/finish/:ID', async (req, res) => {
+		const ID = req.params.ID;
+		console.log(`Recieved Finish on ${ID}`);
+		if (fs.existsSync(`${ID}.json`)) {
+			fs.rmSync(`${ID}.json`);
+			res.json({ success: true });
+		} else {
+			res.status(500).json({ error: 'Invalid ID' });
+		}
+	});
+
 	const PORT = process.env.PORT || 1779;
 	app.listen(PORT, () => {
 		console.log(`API Listening on ${PORT}`);
