@@ -12,7 +12,7 @@ class NewM3u8Interceptor {
 		this.startupParameters = {
 			defaultViewport: null,
 			headless: false,
-			devtools: false,
+			devtools: true,
 			ignoreHTTPSErrors: true,
 			executablePath: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
 			args: [
@@ -20,6 +20,8 @@ class NewM3u8Interceptor {
 				`--load-extension=${pathToM3Extension}`,
 				'--ignore-certificate-errors',
 				'--ignore-certificate-errors-spki-list',
+				'--disable-web-security',
+				'--disable-features=IsolateOrigins,site-per-process',
 			],
 		};
 	}
@@ -37,9 +39,29 @@ class NewM3u8Interceptor {
 			wait(1000);
 
 			this.interval = setInterval(async () => {
-				const m3u8 = await this.page.evaluate(() => {
-					return document.querySelector<HTMLElement>('span#myM3u8DivId')?.innerText;
+				let m3u8: string | boolean;
+				m3u8 = await this.page.evaluate(() => {
+					const checkForHoster = (hoster: string) =>
+						document.querySelector('i.' + hoster).parentElement.parentElement.parentElement.style.display !== 'none';
+					if (checkForHoster('VOE')) {
+						//VOE Host is Present
+						console.log('VOE Host is Present');
+						return document.querySelector<HTMLElement>('span#myM3u8DivId')?.innerText;
+					} else if (checkForHoster('Vidoza')) {
+						//Vidoza Host is Present
+						console.log('Vidoza Host is Present');
+						return false;
+					}
 				});
+
+				if (m3u8 == false) {
+					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
+					const frame = await elementHandle.contentFrame();
+					m3u8 = await frame.evaluate(() => {
+						return document.querySelector('video')?.src;
+					});
+				}
+
 				if (m3u8 != undefined) {
 					clearInterval(this.interval);
 					resolve(m3u8);
