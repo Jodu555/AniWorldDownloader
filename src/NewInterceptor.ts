@@ -57,15 +57,15 @@ class NewM3u8Interceptor {
 
 					if (checkForHoster('VOE') && currentHoster.name == 'VOE') {
 						//VOE Host is Present and active
-						console.log('VOE Host is Present');
+						console.log('VOE Host is Present and Active');
 						return document.querySelector<HTMLElement>('span#myM3u8DivId')?.innerText;
 					} else if (checkForHoster('Vidoza') && currentHoster.name == 'Vidoza') {
 						//Vidoza Host is Present and active
-						console.log('Vidoza Host is Present');
+						console.log('Vidoza Host is Present and Active');
 						return false;
 					} else if (checkForHoster('Streamtape') && currentHoster.name == 'Streamtape') {
 						//Streamtape Host is Present and active
-						console.log('Streamtape Host is Present');
+						console.log('Streamtape Host is Present and Active');
 						return 'https:' + document.getElementById('botlink').innerText + '&stream=1';
 					}
 				});
