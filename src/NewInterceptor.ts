@@ -1,13 +1,15 @@
 import fs from 'fs';
 import * as puppeteer from 'puppeteer';
 import { wait } from './utils';
+import { AbstractInterceptor } from './types';
 
-class NewM3u8Interceptor {
+class NewM3u8Interceptor extends AbstractInterceptor {
 	startupParameters: object;
 	browser: puppeteer.Browser;
 	page: puppeteer.Page;
 	interval: NodeJS.Timer;
 	constructor() {
+		super();
 		const pathToM3Extension = process.env.PATH_TO_M3U8_EXTENSION;
 		this.startupParameters = {
 			defaultViewport: null,

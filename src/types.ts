@@ -57,3 +57,13 @@ export interface ExtendedEpisodeDownload {
 	url: string;
 	m3u8: string;
 }
+
+export abstract class AbstractInterceptor {
+	constructor() {
+		// Constructor logic here
+	}
+
+	abstract launch(): void;
+	abstract intercept(m3u8: string): void;
+	abstract shutdown(): void;
+}
