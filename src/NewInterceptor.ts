@@ -41,16 +41,32 @@ class NewM3u8Interceptor {
 			this.interval = setInterval(async () => {
 				let m3u8: string | boolean;
 				m3u8 = await this.page.evaluate(() => {
+					const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
+						.filter((e) => e.parentElement.parentElement.style.display !== 'none')
+						.map((e) => ({ name: e.querySelector('h4').textContent, redirectID: e.href.split('redirect/')[1] }));
+
+					const currentFrame = [...document.querySelectorAll('iframe')].find((f) => f.src.includes('redirect'));
+					const currentRedirectID = currentFrame.src.split('redirect/')[1];
+
+					const currentHoster = availableHosters.find((x) => x.redirectID == currentRedirectID);
+
+					console.log('currentHoster', currentHoster);
+
 					const checkForHoster = (hoster: string) =>
 						document.querySelector('i.' + hoster).parentElement.parentElement.parentElement.style.display !== 'none';
-					if (checkForHoster('VOE')) {
-						//VOE Host is Present
+
+					if (checkForHoster('VOE') && currentHoster.name == 'VOE') {
+						//VOE Host is Present and active
 						console.log('VOE Host is Present');
 						return document.querySelector<HTMLElement>('span#myM3u8DivId')?.innerText;
-					} else if (checkForHoster('Vidoza')) {
-						//Vidoza Host is Present
+					} else if (checkForHoster('Vidoza') && currentHoster.name == 'Vidoza') {
+						//Vidoza Host is Present and active
 						console.log('Vidoza Host is Present');
 						return false;
+					} else if (checkForHoster('Streamtape') && currentHoster.name == 'Streamtape') {
+						//Streamtape Host is Present and active
+						console.log('Streamtape Host is Present');
+						return 'https:' + document.getElementById('botlink').innerText + '&stream=1';
 					}
 				});
 
