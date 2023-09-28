@@ -39,7 +39,7 @@ class NewM3u8Interceptor {
 			wait(1000);
 
 			this.interval = setInterval(async () => {
-				let m3u8: string | boolean;
+				let m3u8: string | false;
 				m3u8 = await this.page.evaluate(() => {
 					const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
 						.filter((e) => e.parentElement.parentElement.style.display !== 'none')
