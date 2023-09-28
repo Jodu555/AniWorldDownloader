@@ -3,7 +3,7 @@
 		"module": "commonjs",
 		"esModuleInterop": true,
 		"target": "es6",
-		"lib": ["es6", "DOM", "dom.iterable"],
+		"lib": ["es6", "DOM", "dom.iterable", "es2021"],
 		"noImplicitAny": false,
 		"moduleResolution": "node",
 		"sourceMap": true,

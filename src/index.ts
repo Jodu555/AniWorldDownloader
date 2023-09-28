@@ -317,7 +317,7 @@ async function collect() {
 }
 
 async function download() {
-	const possibleObjects = JSON.parse(fs.readFileSync(listDlFile, 'utf-8'));
+	const possibleObjects = JSON.parse(fs.readFileSync(listDlFile, 'utf-8')) as ExtendedEpisodeDownload[];
 	const collectedObjects = possibleObjects.filter((o) => o.m3u8 !== '' && o.finished !== true);
 	console.log(`Stripped the whole ${possibleObjects.length} possible Videos down to the ${collectedObjects.length} downloadable Objects`);
 
@@ -334,7 +334,7 @@ async function download() {
 	}
 }
 
-async function startDownloading(obj, m3u8URL) {
+async function startDownloading(obj: ExtendedEpisodeDownload, m3u8URL: string) {
 	let downloadPath = process.env.DOWNLOAD_PATH ? process.env.DOWNLOAD_PATH : path.join(process.cwd(), 'Downloads');
 
 	// console.log('DEBUG startDownloading() ', {
@@ -357,7 +357,7 @@ async function startDownloading(obj, m3u8URL) {
 	await deepM3u8Conversion(m3u8URL, path.join(downloadPath, obj.file.replaceAll('.', '#') + '.mp4'));
 }
 
-async function deepM3u8Conversion(url, output) {
+async function deepM3u8Conversion(url: string, output: string) {
 	const m3u8ToMp4 = require('m3u8-to-mp4');
 	const converter = new m3u8ToMp4();
 	await converter.setInputFile(url).setOutputFile(output).start();
