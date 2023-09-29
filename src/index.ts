@@ -1,6 +1,6 @@
 import NewM3u8Interceptor from './NewInterceptor';
 import OldM3u8Interceptor from './OldInterceptor';
-import { AniWorldSeriesInformations, ExtendedEpisodeDownload } from './types';
+import { AbstractInterceptor, AniWorldSeriesInformations, ExtendedEpisodeDownload } from './types';
 import { fmt, readFromClipboard, parseToBoolean, wait } from './utils';
 
 import fs from 'fs';
@@ -278,27 +278,25 @@ function write() {
 }
 
 async function collect() {
-	const oldInterceptor = new OldM3u8Interceptor();
-	const newInterceptor = new NewM3u8Interceptor();
+	let interceptor: AbstractInterceptor = null;
 	if (NEW_COLLECTOR) {
-		await newInterceptor.launch();
+		interceptor = new NewM3u8Interceptor();
+	} else {
+		interceptor = new OldM3u8Interceptor();
 	}
+
+	interceptor.launch();
+
 	for (const obj of urls) {
 		if (obj.m3u8 !== '') continue;
 		if (obj.finished == true) continue;
 
 		let url: string;
-		if (NEW_COLLECTOR) {
-			try {
-				url = await newInterceptor.intercept(obj.url);
-			} catch (error) {
-				console.log('NewInterceptor Timeout!');
-				url = await newInterceptor.intercept(obj.url);
-				// newInterceptor.shutdown();
-				// process.exit(1);
-			}
-		} else {
-			url = await oldInterceptor.getM3u8UrlFromURL(urls, obj);
+		try {
+			url = await interceptor.intercept(obj.url);
+		} catch (error) {
+			console.log('NewInterceptor Timeout!');
+			url = await interceptor.intercept(obj.url);
 		}
 
 		console.log('Collected: ' + url);
@@ -313,7 +311,44 @@ async function collect() {
 		await wait(1000);
 	}
 
-	newInterceptor.shutdown();
+	interceptor.shutdown();
+
+	// const oldInterceptor = new OldM3u8Interceptor();
+	// const newInterceptor = new NewM3u8Interceptor();
+	// if (NEW_COLLECTOR) {
+	// 	await newInterceptor.launch();
+	// }
+	// for (const obj of urls) {
+	// 	if (obj.m3u8 !== '') continue;
+	// 	if (obj.finished == true) continue;
+
+	// 	let url: string;
+	// 	if (NEW_COLLECTOR) {
+	// 		try {
+	// 			url = await newInterceptor.intercept(obj.url);
+	// 		} catch (error) {
+	// 			console.log('NewInterceptor Timeout!');
+	// 			url = await newInterceptor.intercept(obj.url);
+	// 			// newInterceptor.shutdown();
+	// 			// process.exit(1);
+	// 		}
+	// 	} else {
+	// 		url = await oldInterceptor.getM3u8UrlFromURL(urls, obj);
+	// 	}
+
+	// 	console.log('Collected: ' + url);
+	// 	if (!url.includes('https://') || urls.find((v) => v.m3u8 == url) !== undefined) {
+	// 		console.log('Got suspicious program behaviour: Stopped!', !url.includes('https://'), urls.find((v) => v.m3u8 == url) !== undefined);
+	// 		process.exit(1);
+	// 	}
+
+	// 	obj.m3u8 = url;
+
+	// 	write();
+	// 	await wait(1000);
+	// }
+
+	// newInterceptor.shutdown();
 }
 
 async function download() {

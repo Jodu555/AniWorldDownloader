@@ -64,6 +64,6 @@ export abstract class AbstractInterceptor {
 	}
 
 	abstract launch(): void;
-	abstract intercept(m3u8: string): void;
+	abstract intercept(m3u8: string): Promise<string>;
 	abstract shutdown(): void;
 }
