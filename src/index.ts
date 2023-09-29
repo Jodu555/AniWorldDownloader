@@ -1,5 +1,5 @@
-import NewM3u8Interceptor from './NewInterceptor';
-import OldM3u8Interceptor from './OldInterceptor';
+import NewInterceptor from './NewInterceptor';
+import OldInterceptor from './OldInterceptor';
 import { AbstractInterceptor, AniWorldSeriesInformations, ExtendedEpisodeDownload } from './types';
 import { fmt, readFromClipboard, parseToBoolean, wait } from './utils';
 
@@ -8,6 +8,7 @@ import path from 'path';
 import axios from 'axios';
 import jsdom from 'jsdom';
 import express from 'express';
+import ClipboardInterceptor from './ClipboardInterceptor';
 const { exec } = require('child_process');
 require('dotenv').config();
 
@@ -279,10 +280,19 @@ function write() {
 
 async function collect() {
 	let interceptor: AbstractInterceptor = null;
-	if (NEW_COLLECTOR) {
-		interceptor = new NewM3u8Interceptor();
-	} else {
-		interceptor = new OldM3u8Interceptor();
+	type CollectorTypes = 'Old' | 'New' | 'Clipboard';
+	const collectorType: CollectorTypes = 'Clipboard' as CollectorTypes;
+
+	switch (collectorType) {
+		case 'Old':
+			interceptor = new OldInterceptor();
+			break;
+		case 'New':
+			interceptor = new NewInterceptor();
+			break;
+		case 'Clipboard':
+			interceptor = new ClipboardInterceptor();
+			break;
 	}
 
 	interceptor.launch();
@@ -293,10 +303,10 @@ async function collect() {
 
 		let url: string;
 		try {
-			url = await interceptor.intercept(obj.url);
+			url = await interceptor.intercept(obj.url, urls);
 		} catch (error) {
-			console.log('NewInterceptor Timeout!');
-			url = await interceptor.intercept(obj.url);
+			console.log('Interceptor Timeout!');
+			url = await interceptor.intercept(obj.url, urls);
 		}
 
 		console.log('Collected: ' + url);

@@ -3,7 +3,7 @@ import * as puppeteer from 'puppeteer';
 import { wait } from './utils';
 import { AbstractInterceptor } from './types';
 
-class NewM3u8Interceptor extends AbstractInterceptor {
+class NewInterceptor extends AbstractInterceptor {
 	startupParameters: object;
 	browser: puppeteer.Browser;
 	page: puppeteer.Page;
@@ -99,4 +99,4 @@ class NewM3u8Interceptor extends AbstractInterceptor {
 	}
 }
 
-export default NewM3u8Interceptor;
+export default NewInterceptor;

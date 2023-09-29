@@ -5,7 +5,7 @@ const robot = require('kbm-robot');
 // import robot from 'kbm-robot'
 import { click, robotTypeAdvanced, executeManualConsoleCommand } from './robot_utils';
 
-class OldM3u8Interceptor extends AbstractInterceptor {
+class OldInterceptor extends AbstractInterceptor {
 	launch(): void {}
 	shutdown(): void {}
 	async intercept(url: string): Promise<string> {
@@ -150,4 +150,4 @@ class OldM3u8Interceptor extends AbstractInterceptor {
 	}
 }
 
-export default OldM3u8Interceptor;
+export default OldInterceptor;
