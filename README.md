@@ -9,6 +9,9 @@ Just a simple little program to download the aniworld videos
 - [x] Add some socket integration so the instance can be treated in an stack of unique servers
 - [ ] Add some java stop assurance
 - [ ] Work on some code splitting (all in one file is awful)
+- [ ] Rename the NewInterceptor to PuppeteerInterceptor
+- [ ] Rename the OldInterceptor to LegacyInterceptor
+- [ ] Rename some variables and function collect is everything that calls the interceptors every thing else is Interceptor
 - [ ] Work out a way to only use on lang and if it isnt supported use the other but with the option too always download everything
 
 ## Weird Copy Error

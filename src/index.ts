@@ -1,5 +1,6 @@
 import NewInterceptor from './NewInterceptor';
 import OldInterceptor from './OldInterceptor';
+import ClipboardInterceptor from './ClipboardInterceptor';
 import { AbstractInterceptor, AniWorldSeriesInformations, ExtendedEpisodeDownload } from './types';
 import { fmt, readFromClipboard, parseToBoolean, wait } from './utils';
 
@@ -8,14 +9,13 @@ import path from 'path';
 import axios from 'axios';
 import jsdom from 'jsdom';
 import express from 'express';
-import ClipboardInterceptor from './ClipboardInterceptor';
 const { exec } = require('child_process');
 require('dotenv').config();
 
 // Series Info Loading
 const anime = parseToBoolean(process.env.ANIME);
 const upperfolder = parseToBoolean(process.env.UPPERFOLDER);
-const NEW_COLLECTOR = parseToBoolean(process.env.NEW_COLLECTOR);
+const COLLECTOR_TYPE = process.env.INTERCEPTOR_TYPE || 'Clipboard';
 const preferLangs = [process.env.PREFER_LANGS];
 const fallbackLang = process.env.FALLBACK_LANG;
 const title = process.env.TITLE;
@@ -281,7 +281,7 @@ function write() {
 async function collect() {
 	let interceptor: AbstractInterceptor = null;
 	type CollectorTypes = 'Old' | 'New' | 'Clipboard';
-	const collectorType: CollectorTypes = 'Clipboard' as CollectorTypes;
+	const collectorType: CollectorTypes = COLLECTOR_TYPE as CollectorTypes;
 
 	console.log('Using Collector:', collectorType);
 
