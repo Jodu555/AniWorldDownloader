@@ -1,38 +1,37 @@
 import { AbstractInterceptor, ExtendedEpisodeDownload } from './types';
 import ncp from 'node-clipboardy';
 
-async function writeToClipboard(text) {
+async function writeToClipboard(text: string) {
 	return ncp.writeSync(text);
 }
 
-async function readFromClipboard() {
+async function readFromClipboard(): Promise<string> {
 	return ncp.readSync();
 }
 
 class ClipboardInterceptor extends AbstractInterceptor {
-	preRead: string;
 	interval: NodeJS.Timer;
-	constructor() {
-		super();
-		this.preRead = '';
+	launch(): void {
+		writeToClipboard('');
 	}
-	launch(): void {}
-	intercept(m3u8: string, urls?: ExtendedEpisodeDownload[]): Promise<string> {
+	intercept(url: string, urls?: ExtendedEpisodeDownload[]): Promise<string> {
+		writeToClipboard(url);
 		return new Promise(async (resolve, reject) => {
 			this.interval = setInterval(async () => {
 				const curRead = await readFromClipboard();
-				if (this.preRead !== curRead && urls.find((v) => v.m3u8 == curRead) !== undefined) {
-					this.preRead = curRead;
+				if (curRead.trim() != url) {
 					resolve(curRead);
 				}
-			}, 100);
+			}, 400);
 			setTimeout(() => {
 				clearInterval(this.interval);
 				reject('Timeout');
 			}, 60 * 1000);
 		});
 	}
-	shutdown(): void {}
+	shutdown(): void {
+		writeToClipboard('');
+	}
 }
 
 export default ClipboardInterceptor;

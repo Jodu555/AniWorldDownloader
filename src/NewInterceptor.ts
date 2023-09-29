@@ -33,8 +33,6 @@ class NewInterceptor extends AbstractInterceptor {
 		await this.page.setCookie({ name: 'aniworld_session', value: process.env.ANIWORLD_SESSION, domain: 'aniworld.to' });
 	}
 	async intercept(url: string): Promise<string> {
-		console.log('Got Interception:', url);
-
 		return new Promise(async (resolve, reject) => {
 			await this.page.goto(url);
 

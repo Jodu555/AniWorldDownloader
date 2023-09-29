@@ -64,6 +64,6 @@ export abstract class AbstractInterceptor {
 	}
 
 	abstract launch(): void;
-	abstract intercept(m3u8: string, urls?: ExtendedEpisodeDownload[]): Promise<string>;
+	abstract intercept(url: string, urls?: ExtendedEpisodeDownload[]): Promise<string>;
 	abstract shutdown(): void;
 }

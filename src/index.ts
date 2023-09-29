@@ -283,6 +283,8 @@ async function collect() {
 	type CollectorTypes = 'Old' | 'New' | 'Clipboard';
 	const collectorType: CollectorTypes = 'Clipboard' as CollectorTypes;
 
+	console.log('Using Collector:', collectorType);
+
 	switch (collectorType) {
 		case 'Old':
 			interceptor = new OldInterceptor();
@@ -300,6 +302,8 @@ async function collect() {
 	for (const obj of urls) {
 		if (obj.m3u8 !== '') continue;
 		if (obj.finished == true) continue;
+
+		console.log('Got Interception:', obj.url);
 
 		let url: string;
 		try {
