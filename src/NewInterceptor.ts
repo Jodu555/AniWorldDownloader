@@ -14,7 +14,7 @@ class NewInterceptor extends AbstractInterceptor {
 		this.startupParameters = {
 			defaultViewport: null,
 			headless: false,
-			devtools: true,
+			// devtools: true,
 			ignoreHTTPSErrors: true,
 			executablePath: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
 			args: [
@@ -58,6 +58,8 @@ class NewInterceptor extends AbstractInterceptor {
 					if (checkForHoster('VOE') && currentHoster.name == 'VOE') {
 						//VOE Host is Present and active
 						console.log('VOE Host is Present and Active');
+						console.log('m3u8 element', document.querySelector<HTMLElement>('span#myM3u8DivId'));
+
 						return document.querySelector<HTMLElement>('span#myM3u8DivId')?.innerText;
 					} else if (checkForHoster('Vidoza') && currentHoster.name == 'Vidoza') {
 						//Vidoza Host is Present and active
