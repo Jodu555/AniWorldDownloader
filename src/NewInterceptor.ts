@@ -53,7 +53,7 @@ class NewInterceptor extends AbstractInterceptor {
 					console.log('currentHoster', currentHoster);
 
 					const checkForHoster = (hoster: string) =>
-						document.querySelector('i.' + hoster).parentElement.parentElement.parentElement.style.display !== 'none';
+						[...document.querySelectorAll('i.' + hoster)].some((e) => e.parentElement.parentElement.parentElement.style.display !== 'none');
 
 					console.log('Check VOE', checkForHoster('VOE'));
 					console.log('Check Vidoza', checkForHoster('Vidoza'));
