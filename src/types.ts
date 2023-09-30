@@ -63,7 +63,7 @@ export abstract class AbstractInterceptor {
 		// Constructor logic here
 	}
 
-	abstract launch(): void;
+	abstract launch(): void | Promise<void>;
 	abstract intercept(url: string, urls?: ExtendedEpisodeDownload[]): Promise<string>;
-	abstract shutdown(): void;
+	abstract shutdown(): void | Promise<void>;
 }

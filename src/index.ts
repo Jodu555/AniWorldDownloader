@@ -297,7 +297,7 @@ async function collect() {
 			break;
 	}
 
-	interceptor.launch();
+	await interceptor.launch();
 
 	for (const obj of urls) {
 		if (obj.m3u8 !== '') continue;
@@ -325,7 +325,7 @@ async function collect() {
 		await wait(1000);
 	}
 
-	interceptor.shutdown();
+	await interceptor.shutdown();
 
 	// const oldInterceptor = new OldM3u8Interceptor();
 	// const newInterceptor = new NewM3u8Interceptor();
