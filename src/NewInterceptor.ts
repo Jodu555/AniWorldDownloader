@@ -55,6 +55,10 @@ class NewInterceptor extends AbstractInterceptor {
 					const checkForHoster = (hoster: string) =>
 						document.querySelector('i.' + hoster).parentElement.parentElement.parentElement.style.display !== 'none';
 
+					console.log('Check VOE', checkForHoster('VOE'));
+					console.log('Check Vidoza', checkForHoster('Vidoza'));
+					console.log('Check Streamtape', checkForHoster('Streamtape'));
+
 					if (checkForHoster('VOE') && currentHoster.name == 'VOE') {
 						//VOE Host is Present and active
 						console.log('VOE Host is Present and Active');
