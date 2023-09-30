@@ -14,7 +14,7 @@ class NewInterceptor extends AbstractInterceptor {
 		this.startupParameters = {
 			defaultViewport: null,
 			headless: false,
-			// devtools: true,
+			devtools: true,
 			ignoreHTTPSErrors: true,
 			executablePath: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
 			args: [
@@ -39,7 +39,7 @@ class NewInterceptor extends AbstractInterceptor {
 			wait(1000);
 
 			this.interval = setInterval(async () => {
-				let m3u8: string | false;
+				let m3u8: 'Vidoza' | 'Streamtape' | string;
 				m3u8 = await this.page.evaluate(() => {
 					const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
 						.filter((e) => e.parentElement.parentElement.style.display !== 'none')
@@ -55,10 +55,6 @@ class NewInterceptor extends AbstractInterceptor {
 					const checkForHoster = (hoster: string) =>
 						[...document.querySelectorAll('i.' + hoster)].some((e) => e.parentElement.parentElement.parentElement.style.display !== 'none');
 
-					console.log('Check VOE', checkForHoster('VOE'));
-					console.log('Check Vidoza', checkForHoster('Vidoza'));
-					console.log('Check Streamtape', checkForHoster('Streamtape'));
-
 					if (checkForHoster('VOE') && currentHoster.name == 'VOE') {
 						//VOE Host is Present and active
 						console.log('VOE Host is Present and Active');
@@ -68,19 +64,29 @@ class NewInterceptor extends AbstractInterceptor {
 					} else if (checkForHoster('Vidoza') && currentHoster.name == 'Vidoza') {
 						//Vidoza Host is Present and active
 						console.log('Vidoza Host is Present and Active');
-						return false;
+						return 'Vidoza';
 					} else if (checkForHoster('Streamtape') && currentHoster.name == 'Streamtape') {
 						//Streamtape Host is Present and active
 						console.log('Streamtape Host is Present and Active');
-						return 'https:' + document.getElementById('botlink').innerText + '&stream=1';
+						// console.log('#botlink', document.getElementById('botlink'));
+						return 'Streamtape';
 					}
 				});
 
-				if (m3u8 == false) {
+				if (m3u8 == 'Vidoza') {
 					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
 					const frame = await elementHandle.contentFrame();
 					m3u8 = await frame.evaluate(() => {
 						return document.querySelector('video')?.src;
+					});
+				} else if (m3u8 == 'Streamtape') {
+					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
+					const frame = await elementHandle.contentFrame();
+					m3u8 = await frame.evaluate(() => {
+						console.log(document.getElementById('botlink'));
+						if (document.getElementById('botlink')) {
+							return 'https:' + document.getElementById('botlink')?.innerText + '&stream=1';
+						}
 					});
 				}
 
