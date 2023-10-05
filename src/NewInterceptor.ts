@@ -14,7 +14,7 @@ class NewInterceptor extends AbstractInterceptor {
 		this.startupParameters = {
 			defaultViewport: null,
 			headless: false,
-			devtools: true,
+			devtools: false,
 			ignoreHTTPSErrors: true,
 			executablePath: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
 			args: [
