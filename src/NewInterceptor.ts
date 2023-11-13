@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import * as puppeteer from 'puppeteer';
 import { wait } from './utils';
 import { AbstractInterceptor } from './types';
@@ -10,7 +11,12 @@ class NewInterceptor extends AbstractInterceptor {
 	interval: NodeJS.Timer;
 	constructor() {
 		super();
-		const pathToM3Extension = process.env.PATH_TO_M3U8_EXTENSION;
+		let pathToM3Extension = process.env.PATH_TO_M3U8_EXTENSION;
+		if (!fs.existsSync(path.join(pathToM3Extension, 'manifest.json'))) {
+			const dirs = fs.readdirSync(pathToM3Extension);
+			console.log('No Version Provided fallback to 1st version', dirs[0]);
+			pathToM3Extension = path.join(pathToM3Extension, dirs[0]);
+		}
 		this.startupParameters = {
 			defaultViewport: null,
 			headless: false,
