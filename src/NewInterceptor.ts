@@ -45,7 +45,7 @@ class NewInterceptor extends AbstractInterceptor {
 			wait(1000);
 
 			this.interval = setInterval(async () => {
-				let m3u8: 'Vidoza' | 'Streamtape' | string;
+				let m3u8: 'Vidoza' | 'Streamtape' | 'Doodstream' | string;
 				m3u8 = await this.page.evaluate(() => {
 					const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
 						.filter((e) => e.parentElement.parentElement.style.display !== 'none')
@@ -76,10 +76,15 @@ class NewInterceptor extends AbstractInterceptor {
 						console.log('Streamtape Host is Present and Active');
 						// console.log('#botlink', document.getElementById('botlink'));
 						return 'Streamtape';
+					} else if (checkForHoster('Doodstream') && currentHoster.name == 'Doodstream') {
+						//Streamtape Host is Present and active
+						console.log('Streamtape Host is Present and Active');
+						// console.log('#botlink', document.getElementById('botlink'));
+						return 'Doodstream';
 					}
 				});
 
-				if (m3u8 == 'Vidoza') {
+				if (m3u8 == 'Vidoza' || m3u8 == 'Doodstream') {
 					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
 					const frame = await elementHandle.contentFrame();
 					m3u8 = await frame.evaluate(() => {
