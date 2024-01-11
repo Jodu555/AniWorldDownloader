@@ -52,7 +52,7 @@ class NewInterceptor extends AbstractInterceptor {
 						.map((e) => ({ name: e.querySelector('h4').textContent, redirectID: e.href.split('redirect/')[1] }));
 
 					const currentFrame = [...document.querySelectorAll('iframe')].find((f) => f.src.includes('redirect'));
-					const currentRedirectID = currentFrame.src.split('redirect/')[1];
+					const currentRedirectID = currentFrame?.src.split('redirect/')[1];
 
 					const currentHoster = availableHosters.find((x) => x.redirectID == currentRedirectID);
 
