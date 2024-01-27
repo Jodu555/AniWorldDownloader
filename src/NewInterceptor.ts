@@ -78,7 +78,7 @@ class NewInterceptor extends AbstractInterceptor {
 						return 'Streamtape';
 					} else if (checkForHoster('Doodstream') && currentHoster.name == 'Doodstream') {
 						//Streamtape Host is Present and active
-						console.log('Streamtape Host is Present and Active');
+						console.log('Doodstream Host is Present and Active');
 						// console.log('#botlink', document.getElementById('botlink'));
 						return 'Doodstream';
 					}
@@ -101,7 +101,7 @@ class NewInterceptor extends AbstractInterceptor {
 					});
 				}
 
-				if (m3u8 != undefined) {
+				if (m3u8 != undefined || m3u8 != 'Doodstream') {
 					clearInterval(this.interval);
 					resolve(m3u8);
 				}
