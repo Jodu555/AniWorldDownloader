@@ -314,8 +314,8 @@ async function collect() {
 		}
 
 		console.log('Collected: ' + url);
-		if (!url.includes('https://') || urls.find((v) => v.m3u8 == url) !== undefined) {
-			console.log('Got suspicious program behaviour: Stopped!', !url.includes('https://'), urls.find((v) => v.m3u8 == url) !== undefined);
+		if (url == undefined && !url?.includes('https://') || urls.find((v) => v.m3u8 == url) !== undefined) {
+			console.log('Got suspicious program behaviour: Stopped!', !url?.includes('https://'), urls.find((v) => v.m3u8 == url) !== undefined);
 			process.exit(1);
 		}
 
