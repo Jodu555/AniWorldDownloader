@@ -104,9 +104,8 @@ class NewInterceptor extends AbstractInterceptor {
 				}
 
 				if (m3u8 != undefined && m3u8 != 'Doodstream') {
-
-					// clearInterval(this.interval);
-					// resolve(m3u8);
+					clearInterval(this.interval);
+					resolve(m3u8);
 				}
 			}, 1000);
 
