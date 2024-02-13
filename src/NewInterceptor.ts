@@ -51,7 +51,7 @@ class NewInterceptor extends AbstractInterceptor {
 				m3u8 = await this.page.evaluate(() => {
 					const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
 						.filter((e) => e.parentElement.parentElement.style.display !== 'none')
-						.map((e) => ({ name: e.querySelector('h4').textContent, redirectID: e.href.split('redirect/')[1], e: e.querySelector('.hosterSiteVideoButton') }));
+						.map((e) => ({ name: e.querySelector('h4').textContent, redirectID: e.href.split('redirect/')[1], button: e.querySelector('.hosterSiteVideoButton') }));
 
 					const currentFrame = [...document.querySelectorAll('iframe')].find((f) => f.src.includes('redirect'));
 					const currentRedirectID = currentFrame?.src.split('redirect/')[1];
@@ -105,30 +105,29 @@ class NewInterceptor extends AbstractInterceptor {
 
 				if (m3u8 != undefined && m3u8 != 'Doodstream') {
 
-					clearInterval(this.interval);
-					resolve(m3u8);
+					// clearInterval(this.interval);
+					// resolve(m3u8);
 				}
 			}, 1000);
 
-
-			setTimeout(() => {
-				currentHoster++;
-				this.page.evaluate(() => {
+			const switchHoster = () => {
+				console.log('Switching Hoster', currentHoster);
+				this.page.evaluate((currentHoster: string) => {
 					const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
 						.filter((e) => e.parentElement.parentElement.style.display !== 'none')
 						.map((e) => ({ name: e.querySelector('h4').textContent, redirectID: e.href.split('redirect/')[1], button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton') }));
-					availableHosters[currentHoster % availableHosters.length].button.click();
-				});
+					availableHosters[parseInt(currentHoster) % availableHosters.length].button.click();
+				}, String(currentHoster));
+			}
+
+			setTimeout(() => {
+				currentHoster++;
+				switchHoster();
 			}, 30 * 1000);
 
 			setTimeout(() => {
 				currentHoster++;
-				this.page.evaluate(() => {
-					const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
-						.filter((e) => e.parentElement.parentElement.style.display !== 'none')
-						.map((e) => ({ name: e.querySelector('h4').textContent, redirectID: e.href.split('redirect/')[1], button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton') }));
-					availableHosters[currentHoster % availableHosters.length].button.click();
-				});
+				switchHoster();
 			}, 60 * 1000);
 
 			setTimeout(() => {
