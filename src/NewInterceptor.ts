@@ -20,7 +20,7 @@ class NewInterceptor extends AbstractInterceptor {
 		this.startupParameters = {
 			defaultViewport: null,
 			headless: false,
-			devtools: false,
+			devtools: true,
 			ignoreHTTPSErrors: true,
 			executablePath: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
 			args: [
@@ -67,8 +67,7 @@ class NewInterceptor extends AbstractInterceptor {
 						//VOE Host is Present and active
 						console.log('VOE Host is Present and Active');
 						console.log('m3u8 element', document.querySelector<HTMLElement>('span#myM3u8DivId'));
-
-						return document.querySelector<HTMLElement>('span#myM3u8DivId')?.innerText;
+						return document.querySelector<HTMLElement>('span#myM3u8DivId')?.innerText || 'VOE';
 					} else if (checkForHoster('Vidoza') && currentHoster.name == 'Vidoza') {
 						//Vidoza Host is Present and active
 						console.log('Vidoza Host is Present and Active');
@@ -86,7 +85,17 @@ class NewInterceptor extends AbstractInterceptor {
 					}
 				});
 
-				if (m3u8 == 'Vidoza' || m3u8 == 'Doodstream') {
+				console.log('first m3u8 info return', m3u8);
+
+				if (m3u8 == 'VOE') {
+					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
+					const frame = await elementHandle.contentFrame();
+					await frame.evaluate(() => {
+						document.querySelector<HTMLButtonElement>('div.voe-play.play-centered')?.click();
+						console.log('TEST');
+						return;
+					});
+				} else if (m3u8 == 'Vidoza' || m3u8 == 'Doodstream') {
 					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
 					const frame = await elementHandle.contentFrame();
 					m3u8 = await frame.evaluate(() => {
@@ -103,7 +112,9 @@ class NewInterceptor extends AbstractInterceptor {
 					});
 				}
 
-				if (m3u8 != undefined && m3u8 != 'Doodstream') {
+				console.log('Came, m3u8 info return', m3u8);
+
+				if (m3u8 != undefined && m3u8 != 'Doodstream' && m3u8 != 'VOE') {
 					clearInterval(this.interval);
 					resolve(m3u8);
 				}
@@ -111,12 +122,16 @@ class NewInterceptor extends AbstractInterceptor {
 
 			const switchHoster = () => {
 				console.log('Switching Hoster', currentHoster);
-				this.page.evaluate((currentHoster: string) => {
-					const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
-						.filter((e) => e.parentElement.parentElement.style.display !== 'none')
-						.map((e) => ({ name: e.querySelector('h4').textContent, redirectID: e.href.split('redirect/')[1], button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton') }));
-					availableHosters[parseInt(currentHoster) % availableHosters.length].button.click();
-				}, String(currentHoster));
+				try {
+					this.page.evaluate((currentHoster: string) => {
+						const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
+							.filter((e) => e.parentElement.parentElement.style.display !== 'none')
+							.map((e) => ({ name: e.querySelector('h4').textContent, redirectID: e.href.split('redirect/')[1], button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton') }));
+						availableHosters[parseInt(currentHoster) % availableHosters.length].button.click();
+					}, String(currentHoster));
+				} catch (error) {
+					console.error('Error Switching Hoster to', currentHoster);
+				}
 			}
 
 			setTimeout(() => {

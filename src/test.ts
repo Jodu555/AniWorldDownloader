@@ -8,7 +8,7 @@ main();
 async function main() {
     await interceptor.launch();
 
-    const url = await interceptor.intercept('SOME DOODSTREAM SITE')
+    const url = await interceptor.intercept('')
 
     console.log(url);
 
