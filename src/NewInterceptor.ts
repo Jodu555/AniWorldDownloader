@@ -87,7 +87,7 @@ class NewInterceptor extends AbstractInterceptor {
 					}
 				});
 
-				console.log('first m3u8 info return', m3u8);
+				// console.log('first m3u8 info return', m3u8);
 
 				if (m3u8 == 'VOE') {
 					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
