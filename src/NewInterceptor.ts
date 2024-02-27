@@ -20,7 +20,7 @@ class NewInterceptor extends AbstractInterceptor {
 		this.startupParameters = {
 			defaultViewport: null,
 			headless: false,
-			devtools: true,
+			devtools: false,
 			ignoreHTTPSErrors: true,
 			executablePath: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
 			args: [
@@ -45,6 +45,8 @@ class NewInterceptor extends AbstractInterceptor {
 			wait(1000);
 
 			let currentHoster = 0;
+
+			let ints: NodeJS.Timer[] = [];
 
 			this.interval = setInterval(async () => {
 				let m3u8: 'Vidoza' | 'Streamtape' | 'Doodstream' | string;
@@ -92,7 +94,6 @@ class NewInterceptor extends AbstractInterceptor {
 					const frame = await elementHandle.contentFrame();
 					await frame.evaluate(() => {
 						document.querySelector<HTMLButtonElement>('div.voe-play.play-centered')?.click();
-						console.log('TEST');
 						return;
 					});
 				} else if (m3u8 == 'Vidoza' || m3u8 == 'Doodstream') {
@@ -112,10 +113,11 @@ class NewInterceptor extends AbstractInterceptor {
 					});
 				}
 
-				console.log('Came, m3u8 info return', m3u8);
-
 				if (m3u8 != undefined && m3u8 != 'Doodstream' && m3u8 != 'VOE') {
 					clearInterval(this.interval);
+					for (const int of ints) {
+						clearInterval(int);
+					}
 					resolve(m3u8);
 				}
 			}, 1000);
@@ -134,20 +136,20 @@ class NewInterceptor extends AbstractInterceptor {
 				}
 			}
 
-			setTimeout(() => {
+			ints.push(setTimeout(() => {
 				currentHoster++;
 				switchHoster();
-			}, 30 * 1000);
+			}, 30 * 1000));
 
-			setTimeout(() => {
+			ints.push(setTimeout(() => {
 				currentHoster++;
 				switchHoster();
-			}, 60 * 1000);
+			}, 60 * 1000));
 
-			setTimeout(() => {
+			ints.push(setTimeout(() => {
 				clearInterval(this.interval);
 				reject('Timeout');
-			}, 90 * 1000);
+			}, 90 * 1000));
 		});
 	}
 	async shutdown() {
