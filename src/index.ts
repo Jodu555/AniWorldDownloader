@@ -371,16 +371,42 @@ async function download() {
 	console.log(`Stripped the whole ${possibleObjects.length} possible Videos down to the ${collectedObjects.length} downloadable Objects`);
 
 	let i = 0;
-	for (const obj of possibleObjects) {
-		if (obj.m3u8 == '') continue;
-		if (obj.finished == true) continue;
-		console.log(`Started the download of ${obj.file}`);
-		console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
-		await startDownloading(obj, obj.m3u8);
-		obj.finished = true;
-		fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
-		i++;
-	}
+	const pmap = possibleObjects.map(async obj => {
+		return new Promise<void>(async (resolve, reject) => {
+			if (obj.m3u8 == '') resolve();
+			if (obj.finished == true) resolve();
+			console.log(`Started the download of ${obj.file}`);
+			console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
+			await startDownloading(obj, obj.m3u8);
+			obj.finished = true;
+			fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
+			i++;
+			resolve();
+		})
+
+	});
+	await Promise.all(pmap);
+	console.log('All Downloads Finished');
+	// for (const obj of possibleObjects) {
+	// 	if (obj.m3u8 == '') continue;
+	// 	if (obj.finished == true) continue;
+	// 	console.log(`Started the download of ${obj.file}`);
+	// 	console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
+	// 	await startDownloading(obj, obj.m3u8);
+	// 	obj.finished = true;
+	// 	fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
+	// 	i++;
+	// }
+	// for (const obj of possibleObjects) {
+	// 	if (obj.m3u8 == '') continue;
+	// 	if (obj.finished == true) continue;
+	// 	console.log(`Started the download of ${obj.file}`);
+	// 	console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
+	// 	await startDownloading(obj, obj.m3u8);
+	// 	obj.finished = true;
+	// 	fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
+	// 	i++;
+	// }
 }
 
 async function startDownloading(obj: ExtendedEpisodeDownload, m3u8URL: string) {
