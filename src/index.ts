@@ -38,21 +38,22 @@ process.on('uncaughtException', (error) => {
 
 let listDlFile = process.env.LIST_NAME || title + '_dl.json';
 
-const app = express();
-
-app.use(express.json());
-
-app.use((req, res, next) => {
-	if (req.headers?.token) {
-		if (req.headers.token == process.env.API_TOKEN) {
-			next();
-			return;
-		}
-	}
-	res.status(401).json({ error: 'Invalid Token Provided' });
-});
-
 if (process.argv.find((v) => v.includes('enable-http'))) {
+
+	const app = express();
+
+	app.use(express.json());
+
+	app.use((req, res, next) => {
+		if (req.headers?.token) {
+			if (req.headers.token == process.env.API_TOKEN) {
+				next();
+				return;
+			}
+		}
+		res.status(401).json({ error: 'Invalid Token Provided' });
+	});
+
 	app.post('/upload', (req, res) => {
 		const data: ExtendedEpisodeDownload[] = req.body.data;
 
