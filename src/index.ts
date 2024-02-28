@@ -9,12 +9,15 @@ import path from 'path';
 import axios from 'axios';
 import jsdom from 'jsdom';
 import express from 'express';
+import pLimit from 'p-limit';
 const { exec } = require('child_process');
 require('dotenv').config();
 
 // Series Info Loading
 const anime = parseToBoolean(process.env.ANIME);
 const upperfolder = parseToBoolean(process.env.UPPERFOLDER);
+const simulDownload = parseToBoolean(process.env.SIMUL_DOWNLOAD);
+const simulDownloadLimit = Number(process.env.SIMUL_DOWNLOAD_LIMIT || 1);
 const COLLECTOR_TYPE = process.env.INTERCEPTOR_TYPE || 'Clipboard';
 const preferLangs = [process.env.PREFER_LANGS];
 const fallbackLang = process.env.FALLBACK_LANG;
@@ -370,43 +373,40 @@ async function download() {
 	const collectedObjects = possibleObjects.filter((o) => o.m3u8 !== '' && o.finished !== true);
 	console.log(`Stripped the whole ${possibleObjects.length} possible Videos down to the ${collectedObjects.length} downloadable Objects`);
 
-	let i = 0;
-	const pmap = possibleObjects.map(async obj => {
-		return new Promise<void>(async (resolve, reject) => {
-			if (obj.m3u8 == '') resolve();
-			if (obj.finished == true) resolve();
+	const limit = pLimit(simulDownloadLimit);
+	if (simulDownload) {
+		const pmap = possibleObjects.map(async (obj, idx) => {
+			return limit(() => new Promise<void>(async (resolve, reject) => {
+				if (obj.m3u8 == '') resolve();
+				if (obj.finished == true) resolve();
+				console.log(`Started the download of ${obj.file}`);
+				console.log(`  Download: ${idx + 1} / ${collectedObjects.length}`);
+				await startDownloading(obj, obj.m3u8);
+				obj.finished = true;
+				fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
+				resolve();
+			}))
+		});
+		await Promise.all(pmap);
+	} else {
+		let i = 0;
+		//Download one item every time
+		for (const obj of possibleObjects) {
+			if (obj.m3u8 == '') continue;
+			if (obj.finished == true) continue;
 			console.log(`Started the download of ${obj.file}`);
 			console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
 			await startDownloading(obj, obj.m3u8);
 			obj.finished = true;
 			fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
 			i++;
-			resolve();
-		})
+		}
+	}
 
-	});
-	await Promise.all(pmap);
+
+
 	console.log('All Downloads Finished');
-	// for (const obj of possibleObjects) {
-	// 	if (obj.m3u8 == '') continue;
-	// 	if (obj.finished == true) continue;
-	// 	console.log(`Started the download of ${obj.file}`);
-	// 	console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
-	// 	await startDownloading(obj, obj.m3u8);
-	// 	obj.finished = true;
-	// 	fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
-	// 	i++;
-	// }
-	// for (const obj of possibleObjects) {
-	// 	if (obj.m3u8 == '') continue;
-	// 	if (obj.finished == true) continue;
-	// 	console.log(`Started the download of ${obj.file}`);
-	// 	console.log(`  Download: ${i + 1} / ${collectedObjects.length}`);
-	// 	await startDownloading(obj, obj.m3u8);
-	// 	obj.finished = true;
-	// 	fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
-	// 	i++;
-	// }
+
 }
 
 async function startDownloading(obj: ExtendedEpisodeDownload, m3u8URL: string) {
