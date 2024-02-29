@@ -378,8 +378,8 @@ async function download() {
 	if (simulDownload) {
 		const pmap = possibleObjects.map(async (obj, idx) => {
 			return limit(() => new Promise<void>(async (resolve, reject) => {
-				if (obj.m3u8 == '') resolve();
-				if (obj.finished == true) resolve();
+				if (obj.m3u8 == '') return resolve();
+				if (obj.finished == true) return resolve();
 				console.log(`Started the download of ${obj.file}`);
 				console.log(`  Download: ${idx + 1} / ${collectedObjects.length}`);
 				await startDownloading(obj, obj.m3u8);
