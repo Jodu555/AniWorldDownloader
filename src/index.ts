@@ -10,6 +10,7 @@ import axios from 'axios';
 import jsdom from 'jsdom';
 import express from 'express';
 import pLimit from 'p-limit';
+import RobotInterceptor from './RobotInterceptor';
 const { exec } = require('child_process');
 require('dotenv').config();
 
@@ -39,7 +40,6 @@ process.on('uncaughtException', (error) => {
 let listDlFile = process.env.LIST_NAME || title + '_dl.json';
 
 if (process.argv.find((v) => v.includes('enable-http'))) {
-
 	const app = express();
 
 	app.use(express.json());
@@ -284,7 +284,7 @@ function write() {
 
 async function collect() {
 	let interceptor: AbstractInterceptor = null;
-	type CollectorTypes = 'Old' | 'New' | 'Clipboard';
+	type CollectorTypes = 'Old' | 'New' | 'Clipboard' | 'Robot';
 	const collectorType: CollectorTypes = COLLECTOR_TYPE as CollectorTypes;
 
 	console.log('Using Collector:', collectorType);
@@ -298,6 +298,9 @@ async function collect() {
 			break;
 		case 'Clipboard':
 			interceptor = new ClipboardInterceptor();
+			break;
+		case 'Robot':
+			interceptor = new RobotInterceptor();
 			break;
 	}
 
@@ -318,7 +321,7 @@ async function collect() {
 		}
 
 		console.log('Collected: ' + url);
-		if (url == undefined && !url?.includes('https://') || urls.find((v) => v.m3u8 == url) !== undefined) {
+		if ((url == undefined && !url?.includes('https://')) || urls.find((v) => v.m3u8 == url) !== undefined) {
 			console.log('Got suspicious program behaviour: Stopped!', !url?.includes('https://'), urls.find((v) => v.m3u8 == url) !== undefined);
 			process.exit(1);
 		}
@@ -377,16 +380,19 @@ async function download() {
 	const limit = pLimit(simulDownloadLimit);
 	if (simulDownload) {
 		const pmap = possibleObjects.map(async (obj, idx) => {
-			return limit(() => new Promise<void>(async (resolve, reject) => {
-				if (obj.m3u8 == '') return resolve();
-				if (obj.finished == true) return resolve();
-				console.log(`Started the download of ${obj.file}`);
-				console.log(`  Download: ${idx + 1} / ${collectedObjects.length}`);
-				await startDownloading(obj, obj.m3u8);
-				obj.finished = true;
-				fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
-				resolve();
-			}))
+			return limit(
+				() =>
+					new Promise<void>(async (resolve, reject) => {
+						if (obj.m3u8 == '') return resolve();
+						if (obj.finished == true) return resolve();
+						console.log(`Started the download of ${obj.file}`);
+						console.log(`  Download: ${idx + 1} / ${collectedObjects.length}`);
+						await startDownloading(obj, obj.m3u8);
+						obj.finished = true;
+						fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
+						resolve();
+					})
+			);
 		});
 		await Promise.all(pmap);
 	} else {
@@ -404,10 +410,7 @@ async function download() {
 		}
 	}
 
-
-
 	console.log('All Downloads Finished');
-
 }
 
 async function startDownloading(obj: ExtendedEpisodeDownload, m3u8URL: string) {
