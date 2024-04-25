@@ -379,7 +379,7 @@ async function download() {
 
 	const limit = pLimit(simulDownloadLimit);
 	if (simulDownload) {
-		const pmap = possibleObjects.map(async (obj, idx) => {
+		const pmap = collectedObjects.map(async (obj, idx) => {
 			return limit(
 				() =>
 					new Promise<void>(async (resolve, reject) => {
