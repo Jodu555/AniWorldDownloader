@@ -22,12 +22,12 @@ export default class RobotInterceptor extends AbstractInterceptor {
 		await wait(200);
 		robot.keyTap('enter');
 		await wait(9000);
-		robot.moveMouse(-1080, 533);
-		await wait(6000);
-		robot.mouseClick();
-		await wait(1000);
-		robot.moveMouse(-106, 117);
-		// robot.moveMouse(-118, 146);
+		// robot.moveMouse(-1080, 533);
+		// await wait(6000);
+		// robot.mouseClick();
+		// await wait(1000);
+		// robot.moveMouse(-106, 117);
+		robot.moveMouse(-118, 146);
 
 		const m3u8 = await new Promise<string>((resolve, reject) => {
 			let i = 0;

@@ -50,52 +50,59 @@ class NewInterceptor extends AbstractInterceptor {
 
 			this.interval = setInterval(async () => {
 				let m3u8: 'Vidoza' | 'Streamtape' | 'Doodstream' | string;
-				const forceHoster = process.env.FORCE_HOSTER
-				m3u8 = await this.page.evaluate(({ FORCE_HOSTER }) => {
-					const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
-						.filter((e) => e.parentElement.parentElement.style.display !== 'none')
-						.map((e) => ({ name: e.querySelector('h4').textContent, redirectID: e.href.split('redirect/')[1], button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton') }));
+				const forceHoster = process.env.FORCE_HOSTER;
+				m3u8 = await this.page.evaluate(
+					({ FORCE_HOSTER }) => {
+						const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
+							.filter((e) => e.parentElement.parentElement.style.display !== 'none')
+							.map((e) => ({
+								name: e.querySelector('h4').textContent,
+								redirectID: e.href.split('redirect/')[1],
+								button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton'),
+							}));
 
-					const currentFrame = [...document.querySelectorAll('iframe')].find((f) => f.src.includes('redirect'));
-					const currentRedirectID = currentFrame?.src.split('redirect/')[1];
+						const currentFrame = [...document.querySelectorAll('iframe')].find((f) => f.src.includes('redirect'));
+						const currentRedirectID = currentFrame?.src.split('redirect/')[1];
 
-					const currentHoster = availableHosters.find((x) => x.redirectID == currentRedirectID);
+						const currentHoster = availableHosters.find((x) => x.redirectID == currentRedirectID);
 
-					if (currentHoster.name !== FORCE_HOSTER) {
-						if (availableHosters.find((x) => x.name == FORCE_HOSTER)) {
-							availableHosters.find((x) => x.name == FORCE_HOSTER).button.click();
-							return;
-						} else {
-							console.log('Force Hoster not available');;
+						if (currentHoster.name !== FORCE_HOSTER) {
+							if (availableHosters.find((x) => x.name == FORCE_HOSTER)) {
+								availableHosters.find((x) => x.name == FORCE_HOSTER).button.click();
+								return;
+							} else {
+								console.log('Force Hoster not available');
+							}
 						}
-					}
 
-					console.log('currentHoster', currentHoster);
+						console.log('currentHoster', currentHoster);
 
-					const checkForHoster = (hoster: string) =>
-						[...document.querySelectorAll('i.' + hoster)].some((e) => e.parentElement.parentElement.parentElement.style.display !== 'none');
+						const checkForHoster = (hoster: string) =>
+							[...document.querySelectorAll('i.' + hoster)].some((e) => e.parentElement.parentElement.parentElement.style.display !== 'none');
 
-					if (checkForHoster('VOE') && currentHoster.name == 'VOE') {
-						//VOE Host is Present and active
-						console.log('VOE Host is Present and Active');
-						console.log('m3u8 element', document.querySelector<HTMLElement>('span#myM3u8DivId'));
-						return document.querySelector<HTMLElement>('span#myM3u8DivId')?.innerText || 'VOE';
-					} else if (checkForHoster('Vidoza') && currentHoster.name == 'Vidoza') {
-						//Vidoza Host is Present and active
-						console.log('Vidoza Host is Present and Active');
-						return 'Vidoza';
-					} else if (checkForHoster('Streamtape') && currentHoster.name == 'Streamtape') {
-						//Streamtape Host is Present and active
-						console.log('Streamtape Host is Present and Active');
-						// console.log('#botlink', document.getElementById('botlink'));
-						return 'Streamtape';
-					} else if (checkForHoster('Doodstream') && currentHoster.name == 'Doodstream') {
-						//Streamtape Host is Present and active
-						console.log('Doodstream Host is Present and Active');
-						// console.log('#botlink', document.getElementById('botlink'));
-						return 'Doodstream';
-					}
-				}, { FORCE_HOSTER: forceHoster });
+						if (checkForHoster('VOE') && currentHoster.name == 'VOE') {
+							//VOE Host is Present and active
+							console.log('VOE Host is Present and Active');
+							console.log('m3u8 element', document.querySelector<HTMLElement>('span#m3u8LinkText'));
+							return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText || 'VOE';
+						} else if (checkForHoster('Vidoza') && currentHoster.name == 'Vidoza') {
+							//Vidoza Host is Present and active
+							console.log('Vidoza Host is Present and Active');
+							return 'Vidoza';
+						} else if (checkForHoster('Streamtape') && currentHoster.name == 'Streamtape') {
+							//Streamtape Host is Present and active
+							console.log('Streamtape Host is Present and Active');
+							// console.log('#botlink', document.getElementById('botlink'));
+							return 'Streamtape';
+						} else if (checkForHoster('Doodstream') && currentHoster.name == 'Doodstream') {
+							//Streamtape Host is Present and active
+							console.log('Doodstream Host is Present and Active');
+							// console.log('#botlink', document.getElementById('botlink'));
+							return 'Doodstream';
+						}
+					},
+					{ FORCE_HOSTER: forceHoster }
+				);
 
 				// console.log('first m3u8 info return', m3u8);
 
@@ -138,28 +145,38 @@ class NewInterceptor extends AbstractInterceptor {
 					this.page.evaluate((currentHoster: string) => {
 						const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
 							.filter((e) => e.parentElement.parentElement.style.display !== 'none')
-							.map((e) => ({ name: e.querySelector('h4').textContent, redirectID: e.href.split('redirect/')[1], button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton') }));
+							.map((e) => ({
+								name: e.querySelector('h4').textContent,
+								redirectID: e.href.split('redirect/')[1],
+								button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton'),
+							}));
 						availableHosters[parseInt(currentHoster) % availableHosters.length].button.click();
 					}, String(currentHoster));
 				} catch (error) {
 					console.error('Error Switching Hoster to', currentHoster);
 				}
-			}
+			};
 
-			ints.push(setTimeout(() => {
-				currentHoster++;
-				switchHoster();
-			}, 30 * 1000));
+			ints.push(
+				setTimeout(() => {
+					currentHoster++;
+					switchHoster();
+				}, 30 * 1000)
+			);
 
-			ints.push(setTimeout(() => {
-				currentHoster++;
-				switchHoster();
-			}, 60 * 1000));
+			ints.push(
+				setTimeout(() => {
+					currentHoster++;
+					switchHoster();
+				}, 60 * 1000)
+			);
 
-			ints.push(setTimeout(() => {
-				clearInterval(this.interval);
-				reject('Timeout');
-			}, 90 * 1000));
+			ints.push(
+				setTimeout(() => {
+					clearInterval(this.interval);
+					reject('Timeout');
+				}, 90 * 1000)
+			);
 		});
 	}
 	async shutdown() {
