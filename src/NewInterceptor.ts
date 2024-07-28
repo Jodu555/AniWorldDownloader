@@ -8,7 +8,7 @@ class NewInterceptor extends AbstractInterceptor {
 	startupParameters: object;
 	browser: puppeteer.Browser;
 	page: puppeteer.Page;
-	interval: NodeJS.Timer;
+	interval: NodeJS.Timeout;
 	constructor() {
 		super();
 		let pathToM3Extension = process.env.PATH_TO_M3U8_EXTENSION;
@@ -22,7 +22,7 @@ class NewInterceptor extends AbstractInterceptor {
 			headless: false,
 			devtools: false,
 			ignoreHTTPSErrors: true,
-			executablePath: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
+			executablePath: process.env.PATH_TO_BRAVE_EXE || 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
 			args: [
 				`--disable-extensions-except=${pathToM3Extension}`,
 				`--load-extension=${pathToM3Extension}`,
@@ -46,7 +46,7 @@ class NewInterceptor extends AbstractInterceptor {
 
 			let currentHoster = 0;
 
-			let ints: NodeJS.Timer[] = [];
+			let ints: NodeJS.Timeout[] = [];
 
 			this.interval = setInterval(async () => {
 				let m3u8: 'Vidoza' | 'Streamtape' | 'Doodstream' | string;
