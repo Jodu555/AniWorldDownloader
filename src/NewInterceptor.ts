@@ -110,7 +110,8 @@ class NewInterceptor extends AbstractInterceptor {
 					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
 					const frame = await elementHandle.contentFrame();
 					await frame.evaluate(() => {
-						document.querySelector<HTMLButtonElement>('div.voe-play.play-centered')?.click();
+						document.querySelector<HTMLButtonElement>('.vds-button.voe-play.play-centered')?.click();
+						// document.querySelector<HTMLButtonElement>('div.voe-play.play-centered')?.click();
 						return;
 					});
 				} else if (m3u8 == 'Vidoza' || m3u8 == 'Doodstream') {
