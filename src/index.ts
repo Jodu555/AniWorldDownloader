@@ -428,12 +428,12 @@ async function startDownloading(obj: ExtendedEpisodeDownload, m3u8URL: string) {
 	}
 
 	if (obj._animeFolder || obj._seriesFolder) {
-		downloadPath = path.join(downloadPath, obj._animeFolder || obj._seriesFolder, obj.folder);
+		downloadPath = path.join(downloadPath, obj._animeFolder || obj._seriesFolder, obj.folder.replace(' ', '-'));
 	} else {
-		downloadPath = path.join(downloadPath, title, obj.folder);
+		downloadPath = path.join(downloadPath, title, obj.folder.replace(' ', '-'));
 	}
 	fs.mkdirSync(downloadPath, { recursive: true });
-	await deepM3u8Conversion(m3u8URL, path.join(downloadPath, obj.file + '.mp4'));
+	await deepM3u8Conversion(m3u8URL, path.join(downloadPath, obj.file.replaceAll('.', '#') + '.mp4'));
 }
 
 async function deepM3u8Conversion(url: string, output: string) {
