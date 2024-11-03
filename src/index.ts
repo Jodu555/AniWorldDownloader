@@ -6,12 +6,11 @@ import { fmt, readFromClipboard, parseToBoolean, wait } from './utils';
 
 import fs from 'fs';
 import path from 'path';
-import axios from 'axios';
-import jsdom from 'jsdom';
 import express from 'express';
 import pLimit from 'p-limit';
 import RobotInterceptor from './RobotInterceptor';
-const { exec } = require('child_process');
+import { getExtendedEpisodeDownloadFromAniworld } from './parser';
+import { exec } from 'child_process';
 require('dotenv').config();
 
 // Series Info Loading
@@ -128,48 +127,7 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 	}
 
 	if (process.argv.find((v) => v.includes('parse'))) {
-		const output: AniWorldSeriesInformations = await parseInformationsFromURL();
-
-		const downloadObjects: ExtendedEpisodeDownload[] = [];
-
-		output.seasons.forEach((season, se) => {
-			season.forEach((ent, ep) => {
-				const add = (lng) => {
-					downloadObjects.push({
-						finished: false,
-						folder: `Season ${se + 1}`,
-						file: `${title} St.${se + 1} Flg.${ep + 1}_${lng}`,
-						url: start + `staffel-${se + 1}/episode-${ep + 1}`,
-						m3u8: '',
-					});
-				};
-
-				const languages = ent.langs.filter((e) => preferLangs.find((x) => x.includes(e)));
-				if (languages.length == 0) {
-					// The preferLangs dont match
-					if (ent.langs.filter((e) => e.includes(fallbackLang))) {
-						add(fallbackLang);
-					}
-				}
-				languages.forEach((language) => {
-					add(language);
-				});
-			});
-		});
-
-		if (output.hasMovies)
-			output.movies.forEach((ent, movie) => {
-				const languages = ent.langs.filter((e) => preferLangs.find((x) => x.includes(e)));
-				languages.forEach((language) => {
-					downloadObjects.push({
-						finished: false,
-						folder: `Movies`,
-						file: `${ent.mainName}_${language}`,
-						url: start + `filme/film-${movie + 1}`,
-						m3u8: '',
-					});
-				});
-			});
+		const { output, downloadObjects } = await getExtendedEpisodeDownloadFromAniworld(start, title, preferLangs, fallbackLang);
 
 		fs.writeFileSync(title + '.json', JSON.stringify(output, null, 3), 'utf8');
 		fs.writeFileSync(listDlFile, JSON.stringify(downloadObjects, null, 3), 'utf8');
@@ -207,76 +165,9 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 	process.argv.find((v) => v.includes('download')) && (await download());
 
 	console.log('No Arguments Provided!');
+	process.exit(0);
 })();
 
-async function parseInformationsFromURL(): Promise<AniWorldSeriesInformations> {
-	const response = await axios.get(start);
-	const { document } = new jsdom.JSDOM(response.data).window;
-
-	const seasonsUl = [...document.querySelectorAll('span')].find((e) => e.textContent.includes('Staffeln:')).parentElement.parentElement;
-	const seasonsTab = [...seasonsUl.querySelectorAll('li')].map((e) => e.querySelector('a')?.title).filter((e) => e != undefined);
-
-	const numberOfSeasons = seasonsTab.filter((e) => e.includes('Staffel')).length;
-	const hasMovies = seasonsTab.find((e) => e.includes('Film')) != null;
-
-	const output: AniWorldSeriesInformations = { url: start, hasMovies, seasons: new Array(numberOfSeasons) };
-
-	console.log('Parsed: ');
-	console.log(' ' + start);
-	console.log(`   => Seasons: ${numberOfSeasons} - Movies: ${hasMovies}`);
-
-	if (hasMovies) {
-		const movResponse = await axios.get(`${start}/filme`);
-		output.movies = getListInformations(movResponse.data);
-		console.log(`    => Got ${output.movies.length} Movies`);
-	}
-
-	output.seasons[0] = getListInformations(response.data);
-	console.log(`    => Got Season ${0} with ${output.seasons[0].length} Episodes`);
-	for (let i = 1; i < numberOfSeasons; i++) {
-		const seaResponse = await axios.get(`${start}/staffel-${i + 1}`);
-		output.seasons[i] = getListInformations(seaResponse.data);
-		console.log(`    => Got Season ${i} with ${output.seasons[i].length} Episodes`);
-	}
-	return output;
-}
-
-function getListInformations(data) {
-	const { document } = new jsdom.JSDOM(data).window;
-	const episodes = [...document.querySelectorAll('tr[itemprop="episode"]')];
-	const out = [];
-	episodes.forEach((ep) => {
-		let langs = [];
-		[...ep.querySelectorAll('.editFunctions img')].forEach((lang) => {
-			langs.push(lang.src);
-		});
-
-		langs = langs.map((l) => {
-			switch (l) {
-				case '/public/img/german.svg':
-					return 'GerDub';
-				case '/public/img/japanese-german.svg':
-					return 'GerSub';
-				case '/public/img/japanese-english.svg':
-					return 'EngSub';
-				default:
-					break;
-			}
-			if (l.includes('german.svg')) {
-				return 'GerDub';
-			}
-			if (l.includes('english.svg')) {
-				return 'EngDub';
-			}
-		});
-
-		const mainName = ep.querySelector('.seasonEpisodeTitle strong')?.textContent;
-		const secondName = ep.querySelector('.seasonEpisodeTitle span')?.textContent;
-
-		out.push({ mainName, secondName, langs });
-	});
-	return out;
-}
 
 function write() {
 	fs.writeFileSync(listDlFile, JSON.stringify(urls, null, 3), 'utf-8');
@@ -423,8 +314,18 @@ async function startDownloading(obj: ExtendedEpisodeDownload, m3u8URL: string) {
 	// 	env: { ANIME: process.env.ANIME, UPPERFOLDER: process.env.UPPERFOLDER },
 	// });
 
+	let categorie: string;
 	if (upperfolder) {
-		anime ? (downloadPath = path.join(downloadPath, 'Aniworld')) : (downloadPath = path.join(downloadPath, 'STO'));
+		// anime ? (downloadPath = path.join(downloadPath, 'Aniworld')) : (downloadPath = path.join(downloadPath, 'STO'));
+		if (anime) {
+			categorie = 'Aniworld';
+		} else {
+			categorie = 'STO';
+		}
+		if (obj._categorie) {
+			categorie = obj._categorie;
+		}
+		downloadPath = path.join(downloadPath, categorie);
 	}
 
 	if (obj._animeFolder || obj._seriesFolder) {
