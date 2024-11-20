@@ -274,12 +274,17 @@ async function download() {
 			return limit(
 				() =>
 					new Promise<void>(async (resolve, reject) => {
-						if (obj.m3u8 == '') return resolve();
-						if (obj.finished == true) return resolve();
-						console.log(`Started the download of ${obj.file}`);
-						console.log(`  Download: ${idx + 1} / ${collectedObjects.length}`);
-						await startDownloading(obj, obj.m3u8);
-						obj.finished = true;
+						try {
+							if (obj.m3u8 == '') return resolve();
+							if (obj.finished == true) return resolve();
+							console.log(`Started the download of ${obj.file}`);
+							console.log(`  Download: ${idx + 1} / ${collectedObjects.length}`);
+							await startDownloading(obj, obj.m3u8);
+							obj.finished = true;
+						} catch (error) {
+							obj.finished = false;
+							console.log(`Error while downloading ${obj.file}`);
+						}
 						fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
 						resolve();
 					})
