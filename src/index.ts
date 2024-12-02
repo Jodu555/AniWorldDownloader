@@ -160,6 +160,19 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 		write();
 	}
 
+	if (process.argv.find((v) => v.includes('removeFinished'))) {
+		const newUrls = JSON.parse(JSON.stringify(urls)) as ExtendedEpisodeDownload[];
+		while (urls.length > 0) {
+			urls.pop();
+		}
+		for (const url of newUrls) {
+			if (url.finished == false) {
+				urls.push(url);
+			}
+		}
+		write();
+	}
+
 	process.argv.find((v) => v.includes('collect')) && (await collect());
 
 	process.argv.find((v) => v.includes('download')) && (await download());

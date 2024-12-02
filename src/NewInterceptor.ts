@@ -11,12 +11,15 @@ class NewInterceptor extends AbstractInterceptor {
 	interval: NodeJS.Timeout;
 	constructor() {
 		super();
-		let pathToM3Extension = process.env.PATH_TO_M3U8_EXTENSION;
-		if (!fs.existsSync(path.join(pathToM3Extension, 'manifest.json'))) {
-			const dirs = fs.readdirSync(pathToM3Extension);
-			console.log('No Version Provided fallback to 1st version', dirs[0]);
-			pathToM3Extension = path.join(pathToM3Extension, dirs[0]);
-		}
+
+		const pathToM3Extension = this._handleExtensionPath(process.env.PATH_TO_M3U8_EXTENSION);
+		const pathToAdGuardExtension = this._handleExtensionPath(process.env.PATH_TO_ADGUARD_EXTENSION);
+		// let pathToM3Extension = process.env.PATH_TO_M3U8_EXTENSION;
+		// if (!fs.existsSync(path.join(pathToM3Extension, 'manifest.json'))) {
+		// 	const dirs = fs.readdirSync(pathToM3Extension);
+		// 	console.log('No Version Provided fallback to 1st version', dirs[0]);
+		// 	pathToM3Extension = path.join(pathToM3Extension, dirs[0]);
+		// }
 		this.startupParameters = {
 			defaultViewport: null,
 			headless: false,
@@ -24,14 +27,22 @@ class NewInterceptor extends AbstractInterceptor {
 			ignoreHTTPSErrors: true,
 			executablePath: process.env.PATH_TO_BRAVE_EXE || 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe', // Windows
 			args: [
-				`--disable-extensions-except=${pathToM3Extension}`,
-				`--load-extension=${pathToM3Extension}`,
+				`--disable-extensions-except=${pathToM3Extension},${pathToAdGuardExtension}`,
+				`--load-extension=${pathToM3Extension},${pathToAdGuardExtension}`,
 				'--ignore-certificate-errors',
 				'--ignore-certificate-errors-spki-list',
 				'--disable-web-security',
 				'--disable-features=IsolateOrigins,site-per-process',
 			],
 		};
+	}
+	_handleExtensionPath(extPath: string): string {
+		if (!fs.existsSync(path.join(extPath, 'manifest.json'))) {
+			const dirs = fs.readdirSync(extPath);
+			console.log('No Version Provided fallback to 1st version', dirs[0]);
+			extPath = path.join(extPath, dirs[0]);
+		}
+		return extPath;
 	}
 	async launch() {
 		this.browser = await puppeteer.launch(this.startupParameters);
@@ -83,6 +94,7 @@ class NewInterceptor extends AbstractInterceptor {
 
 							if (checkForHoster('VOE') && currentHoster.name == 'VOE') {
 								//VOE Host is Present and active
+								document.querySelector<HTMLDivElement>('div.plyr__video-wrapper')?.click();
 								console.log('VOE Host is Present and Active');
 								console.log('m3u8 element', document.querySelector<HTMLElement>('span#m3u8LinkText'));
 								return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText || 'VOE';
