@@ -178,7 +178,7 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 	process.argv.find((v) => v.includes('download')) && (await download());
 
 	console.log('No Arguments Provided!');
-	process.exit(0);
+	// process.exit(0);
 })();
 
 
@@ -282,6 +282,7 @@ async function download() {
 	console.log(`Stripped the whole ${possibleObjects.length} possible Videos down to the ${collectedObjects.length} downloadable Objects`);
 
 	const limit = pLimit(simulDownloadLimit);
+	const errored: string[] = [];
 	if (simulDownload) {
 		const pmap = collectedObjects.map(async (obj, idx) => {
 			return limit(
@@ -297,6 +298,7 @@ async function download() {
 						} catch (error) {
 							obj.finished = false;
 							console.log(`Error while downloading ${obj.file}`);
+							errored.push(obj.file);
 						}
 						fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
 						resolve();
@@ -304,6 +306,17 @@ async function download() {
 			);
 		});
 		await Promise.all(pmap);
+		while (errored.length > 0) {
+			const file = errored.pop();
+			console.log('Retrying Download of', file);
+			try {
+				await startDownloading(possibleObjects.find((o) => o.file == file), possibleObjects.find((o) => o.file == file).m3u8);
+				console.log('Re-Downloaded', file);
+			} catch (error) {
+				console.log('Re-Download Failed RETRYING', file);
+				errored.push(file);
+			}
+		}
 	} else {
 		let i = 0;
 		//Download one item every time
