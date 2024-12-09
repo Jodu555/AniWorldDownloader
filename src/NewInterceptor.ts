@@ -45,13 +45,18 @@ class NewInterceptor extends AbstractInterceptor {
 		return extPath;
 	}
 	async launch() {
+		const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 		this.browser = await puppeteer.launch(this.startupParameters);
 		this.page = await this.browser.newPage();
 		await this.page.setCookie({ name: 'aniworld_session', value: process.env.ANIWORLD_SESSION, domain: 'aniworld.to' });
+		await sleep(5000);
+		console.log('Launched and waited!');
 	}
 	async intercept(url: string): Promise<string> {
 		return new Promise(async (resolve, reject) => {
 			await this.page.goto(url);
+
+			await this.page.waitForNetworkIdle();
 
 			wait(1000);
 
@@ -65,6 +70,9 @@ class NewInterceptor extends AbstractInterceptor {
 				m3u8 = await this.page.evaluate(
 					({ FORCE_HOSTER }) => {
 						try {
+
+							const listOfSupportedHosters = ['VOE', 'Vidoza', 'Streamtape', 'SpeedFiles'];
+
 							const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
 								.filter((e) => e.parentElement.parentElement.style.display !== 'none')
 								.map((e) => ({
@@ -77,6 +85,14 @@ class NewInterceptor extends AbstractInterceptor {
 							const currentRedirectID = currentFrame?.src.split('redirect/')[1];
 
 							const currentHoster = availableHosters.find((x) => x.redirectID == currentRedirectID);
+
+							if (listOfSupportedHosters.find((x) => x == currentHoster.name) == undefined) {
+								console.log('Hoster not supported');
+								const valuableHoster = availableHosters.filter((x) => listOfSupportedHosters.find((y) => y == x.name));
+								console.log('Valuable Hoster', valuableHoster);
+								valuableHoster[0].button.click();
+								return;
+							}
 
 							if (currentHoster.name !== FORCE_HOSTER) {
 								if (availableHosters.find((x) => x.name == FORCE_HOSTER)) {
@@ -112,6 +128,10 @@ class NewInterceptor extends AbstractInterceptor {
 								console.log('Doodstream Host is Present and Active');
 								// console.log('#botlink', document.getElementById('botlink'));
 								return 'Doodstream';
+							} else if (checkForHoster('SpeedFiles') && currentHoster.name == 'SpeedFiles') {
+								//SpeedFiles Host is Present and active
+								console.log('SpeedFiles Host is Present and Active');
+								return 'SpeedFiles';
 							}
 						} catch (error) {
 							return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText;
@@ -130,7 +150,8 @@ class NewInterceptor extends AbstractInterceptor {
 						// document.querySelector<HTMLButtonElement>('div.voe-play.play-centered')?.click();
 						return;
 					});
-				} else if (m3u8 == 'Vidoza' || m3u8 == 'Doodstream') {
+				} else if (m3u8 == 'Vidoza' || m3u8 == 'SpeedFiles') {
+					// } else if (m3u8 == 'Vidoza' || m3u8 == 'Doodstream') {
 					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
 					const frame = await elementHandle.contentFrame();
 					m3u8 = await frame.evaluate(() => {
@@ -153,6 +174,8 @@ class NewInterceptor extends AbstractInterceptor {
 						clearInterval(int);
 					}
 					resolve(m3u8);
+					// console.log(m3u8);
+
 				}
 			}, 1000);
 
