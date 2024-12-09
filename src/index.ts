@@ -133,10 +133,10 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 		fs.writeFileSync(listDlFile, JSON.stringify(downloadObjects, null, 3), 'utf8');
 	}
 
-	if (!fs.existsSync(listDlFile)) {
+	if (!fs.existsSync(listDlFile) && title != undefined) {
 		console.log(title, 'Got not parsed yet please choose parse as the first option to use');
 	} else {
-		JSON.parse(fs.readFileSync(listDlFile, 'utf8')).forEach((e) => urls.push(e));
+		(JSON.parse(fs.readFileSync(listDlFile, 'utf8')) as ExtendedEpisodeDownload[]).forEach((e) => urls.push(e));
 	}
 
 	if (process.argv.find((v) => v.includes('skip'))) {
@@ -312,6 +312,7 @@ async function download() {
 			try {
 				await startDownloading(possibleObjects.find((o) => o.file == file), possibleObjects.find((o) => o.file == file).m3u8);
 				console.log('Re-Downloaded', file);
+				possibleObjects.find((o) => o.file == file).finished = true;
 			} catch (error) {
 				console.log('Re-Download Failed RETRYING', file);
 				errored.push(file);
