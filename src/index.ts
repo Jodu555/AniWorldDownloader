@@ -133,7 +133,10 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 		fs.writeFileSync(listDlFile, JSON.stringify(downloadObjects, null, 3), 'utf8');
 	}
 
-	if (!fs.existsSync(listDlFile) || title != undefined) {
+	console.log(fs.existsSync(listDlFile), listDlFile, title);
+
+
+	if (!fs.existsSync(listDlFile) || title == undefined) {
 		console.log(title, 'Got not parsed yet please choose parse as the first option to use');
 	} else {
 		(JSON.parse(fs.readFileSync(listDlFile, 'utf8')) as ExtendedEpisodeDownload[]).forEach((e) => urls.push(e));
