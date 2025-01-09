@@ -335,7 +335,7 @@ async function download() {
 			i++;
 		}
 	}
-
+	write();
 	console.log('All Downloads Finished');
 }
 
