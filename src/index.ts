@@ -335,7 +335,7 @@ async function download() {
 			i++;
 		}
 	}
-	write();
+	fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
 	console.log('All Downloads Finished');
 }
 
