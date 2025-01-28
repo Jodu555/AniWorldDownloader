@@ -65,7 +65,7 @@ class NewInterceptor extends AbstractInterceptor {
 			let ints: NodeJS.Timeout[] = [];
 
 			this.interval = setInterval(async () => {
-				let m3u8: 'Vidoza' | 'Streamtape' | 'Doodstream' | string;
+				let m3u8: 'Vidoza' | 'Streamtape' | 'Doodstream' | 'SKIP' | string;
 				const forceHoster = process.env.FORCE_HOSTER;
 				m3u8 = await this.page.evaluate(
 					({ FORCE_HOSTER }) => {
@@ -86,6 +86,14 @@ class NewInterceptor extends AbstractInterceptor {
 
 							const currentHoster = availableHosters.find((x) => x.redirectID == currentRedirectID);
 
+							console.log('availableHosters', availableHosters);
+							console.log('currentHoster', currentHoster);
+
+							if (availableHosters.length == 0 || currentHoster == undefined) {
+								console.log('No Hosters Available');
+								return 'SKIP';
+							}
+
 							if (listOfSupportedHosters.find((x) => x == currentHoster.name) == undefined) {
 								console.log('Hoster not supported');
 								const valuableHoster = availableHosters.filter((x) => listOfSupportedHosters.find((y) => y == x.name));
@@ -102,8 +110,6 @@ class NewInterceptor extends AbstractInterceptor {
 									console.log('Force Hoster not available');
 								}
 							}
-
-							console.log('currentHoster', currentHoster);
 
 							const checkForHoster = (hoster: string) =>
 								[...document.querySelectorAll('i.' + hoster)].some((e) => e.parentElement.parentElement.parentElement.style.display !== 'none');
@@ -134,6 +140,7 @@ class NewInterceptor extends AbstractInterceptor {
 								return 'SpeedFiles';
 							}
 						} catch (error) {
+							console.log('Error while getting m3u8 info', error);
 							return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText;
 						}
 					},
@@ -166,6 +173,14 @@ class NewInterceptor extends AbstractInterceptor {
 							return 'https:' + document.getElementById('botlink')?.innerText + '&stream=1';
 						}
 					});
+				}
+
+				if (m3u8 == 'SKIP') {
+					clearInterval(this.interval);
+					for (const int of ints) {
+						clearInterval(int);
+					}
+					resolve('');
 				}
 
 				if (m3u8 != undefined && m3u8 != 'Doodstream' && m3u8 != 'VOE') {

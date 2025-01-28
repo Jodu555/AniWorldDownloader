@@ -13,7 +13,7 @@ async function main() {
 
 	await sleep(5000);
 
-	const url = await interceptor.intercept('https://aniworld.to/anime/stream/seirei-gensouki-spirit-chronicles/staffel-2/episode-10');
+	const url = await interceptor.intercept('https://aniworld.to/anime/stream/ascendance-of-a-bookworm/filme/film-3');
 
 	// const url = await robotInterceptor.intercept('');
 
