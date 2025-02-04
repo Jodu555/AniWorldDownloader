@@ -49,8 +49,24 @@ class NewInterceptor extends AbstractInterceptor {
 		this.browser = await puppeteer.launch(this.startupParameters);
 		this.page = await this.browser.newPage();
 		await this.page.setCookie({ name: 'aniworld_session', value: process.env.ANIWORLD_SESSION, domain: 'aniworld.to' });
-		await sleep(5000);
+		await this.waitForAdGuardToBeLaunchedAndClosed();
+		await sleep(1000);
 		console.log('Launched and waited!');
+	}
+
+	private async waitForAdGuardToBeLaunchedAndClosed() {
+		return new Promise<void>((resolve, reject) => {
+			let interval = setInterval(async () => {
+				(await this.browser.pages()).map(async x => {
+					const title = await x.title();
+					if (title == 'Vielen Dank für die Installation von AdGuard!') {
+						await x.close();
+						clearInterval(interval);
+						resolve();
+					}
+				});
+			}, 1000 * 1);
+		});
 	}
 	async intercept(url: string): Promise<string> {
 		return new Promise(async (resolve, reject) => {
@@ -180,7 +196,7 @@ class NewInterceptor extends AbstractInterceptor {
 					for (const int of ints) {
 						clearInterval(int);
 					}
-					resolve('');
+					resolve('SKIP');
 				}
 
 				if (m3u8 != undefined && m3u8 != 'Doodstream' && m3u8 != 'VOE') {
