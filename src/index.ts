@@ -310,6 +310,9 @@ async function download() {
 			);
 		});
 		await Promise.all(pmap);
+		if (errored.length > 0)
+			console.log(`There were ${errored.length} errors while downloading! Retrying...`);
+
 		while (errored.length > 0) {
 			const file = errored.pop();
 			console.log('Retrying Download of', file);
