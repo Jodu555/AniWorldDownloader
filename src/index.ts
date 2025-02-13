@@ -167,11 +167,16 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 		while (urls.length > 0) {
 			urls.pop();
 		}
+		let i = 0;
 		for (const url of newUrls) {
 			if (url.finished == false) {
 				urls.push(url);
+			} else {
+				i++;
 			}
 		}
+		console.log('Removed ' + i + ' entrys');
+
 		write();
 	}
 
