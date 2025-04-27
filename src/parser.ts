@@ -99,6 +99,16 @@ function getListInformations(data: string) {
                     return 'GerSub';
                 case '/public/img/japanese-english.svg':
                     return 'EngSub';
+                case '/public/img/english-german.svg':
+                    return 'GerSub';
+                case '/public/svg/german.svg':
+                    return 'GerDub';
+                case '/public/svg/japanese-german.svg':
+                    return 'GerSub';
+                case '/public/svg/japanese-english.svg':
+                    return 'EngSub';
+                case '/public/svg/english-german.svg':
+                    return 'GerSub';
                 default:
                     break;
             }
