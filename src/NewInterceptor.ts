@@ -87,6 +87,12 @@ class NewInterceptor extends AbstractInterceptor {
 					({ FORCE_HOSTER }) => {
 						try {
 
+							if (!document.URL.includes('/serie/stream') && !document.URL.includes('/anime/stream')) {
+								console.log('VOE Host is Present and Active');
+								console.log('m3u8 element', document.querySelector<HTMLElement>('span#m3u8LinkText'));
+								return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText;
+							}
+
 							const listOfSupportedHosters = ['VOE', 'Vidoza', 'Streamtape', 'SpeedFiles'];
 
 							const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
