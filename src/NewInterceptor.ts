@@ -48,6 +48,7 @@ class NewInterceptor extends AbstractInterceptor {
 		const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 		this.browser = await puppeteer.launch(this.startupParameters);
 		this.page = await this.browser.newPage();
+		this.page.setDefaultNavigationTimeout(0);
 		await this.page.setCookie({ name: 'aniworld_session', value: process.env.ANIWORLD_SESSION, domain: 'aniworld.to' });
 		await this.waitForAdGuardToBeLaunchedAndClosed();
 		await sleep(1000);
