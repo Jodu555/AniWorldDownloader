@@ -147,6 +147,7 @@ class NewInterceptor extends AbstractInterceptor {
 					const frame = await elementHandle.contentFrame();
 					await frame.evaluate(() => {
 						document.querySelector<HTMLButtonElement>('.vds-button.voe-play.play-centered')?.click();
+						document.querySelector<HTMLButtonElement>('div.jwplayer > div.spin')?.click();
 						// document.querySelector<HTMLButtonElement>('div.voe-play.play-centered')?.click();
 						return;
 					});

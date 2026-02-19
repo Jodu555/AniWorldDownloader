@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import express from 'express';
 import pLimit from 'p-limit';
-import RobotInterceptor from './RobotInterceptor';
+// import RobotInterceptor from './RobotInterceptor';
 import { getExtendedEpisodeDownloadFromAniworld } from './parser';
 import { exec } from 'child_process';
 require('dotenv').config();
@@ -207,7 +207,7 @@ async function collect() {
 			interceptor = new ClipboardInterceptor();
 			break;
 		case 'Robot':
-			interceptor = new RobotInterceptor();
+			// interceptor = new RobotInterceptor();
 			break;
 	}
 
