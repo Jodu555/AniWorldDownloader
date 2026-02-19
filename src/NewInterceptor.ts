@@ -178,7 +178,7 @@ class NewInterceptor extends AbstractInterceptor {
 					await frame.evaluate(() => {
 						const playSelectors = [
 							'.vds-button.voe-play.play-centered',
-							'.spin > .icon'
+							'.jwplayer > .spin > .icon'
 						];
 						for (const selector of playSelectors) {
 							const element = document.querySelector<HTMLButtonElement>(selector);
