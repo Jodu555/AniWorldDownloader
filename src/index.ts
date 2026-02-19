@@ -135,8 +135,7 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 
 	console.log(fs.existsSync(listDlFile), listDlFile, title);
 
-
-	if (!fs.existsSync(listDlFile) || title == undefined) {
+	if (!fs.existsSync(listDlFile) && title !== undefined) {
 		console.log(title, 'Got not parsed yet please choose parse as the first option to use');
 	} else {
 		(JSON.parse(fs.readFileSync(listDlFile, 'utf8')) as ExtendedEpisodeDownload[]).forEach((e) => urls.push(e));
@@ -168,11 +167,16 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 		while (urls.length > 0) {
 			urls.pop();
 		}
+		let i = 0;
 		for (const url of newUrls) {
 			if (url.finished == false) {
 				urls.push(url);
+			} else {
+				i++;
 			}
 		}
+		console.log('Removed ' + i + ' entrys');
+
 		write();
 	}
 
@@ -228,11 +232,13 @@ async function collect() {
 		}
 
 		console.log('Collected: ' + url);
-		if ((url == undefined && !url?.includes('https://')) || urls.find((v) => v.m3u8 == url) !== undefined) {
+		if (url !== 'SKIP' && (url == undefined && !url?.includes('https://')) || urls.find((v) => v.m3u8 == url) !== undefined) {
 			console.log('Got suspicious program behaviour: Stopped!', !url?.includes('https://'), urls.find((v) => v.m3u8 == url) !== undefined);
 			process.exit(1);
 		}
 
+		if (url === 'SKIP')
+			url = '';
 		obj.m3u8 = url;
 
 		write();
@@ -309,6 +315,9 @@ async function download() {
 			);
 		});
 		await Promise.all(pmap);
+		if (errored.length > 0)
+			console.log(`There were ${errored.length} errors while downloading! Retrying...`);
+
 		while (errored.length > 0) {
 			const file = errored.pop();
 			console.log('Retrying Download of', file);
@@ -335,7 +344,7 @@ async function download() {
 			i++;
 		}
 	}
-
+	fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
 	console.log('All Downloads Finished');
 }
 

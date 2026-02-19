@@ -48,9 +48,26 @@ class NewInterceptor extends AbstractInterceptor {
 		const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 		this.browser = await puppeteer.launch(this.startupParameters);
 		this.page = await this.browser.newPage();
+		this.page.setDefaultNavigationTimeout(0);
 		await this.page.setCookie({ name: 'aniworld_session', value: process.env.ANIWORLD_SESSION, domain: 'aniworld.to' });
-		await sleep(5000);
+		await this.waitForAdGuardToBeLaunchedAndClosed();
+		await sleep(1000);
 		console.log('Launched and waited!');
+	}
+
+	private async waitForAdGuardToBeLaunchedAndClosed() {
+		return new Promise<void>((resolve, reject) => {
+			let interval = setInterval(async () => {
+				(await this.browser.pages()).map(async x => {
+					const title = await x.title();
+					if (title == 'Vielen Dank für die Installation von AdGuard!') {
+						await x.close();
+						clearInterval(interval);
+						resolve();
+					}
+				});
+			}, 1000 * 1);
+		});
 	}
 	async intercept(url: string): Promise<string> {
 		return new Promise(async (resolve, reject) => {
@@ -65,11 +82,17 @@ class NewInterceptor extends AbstractInterceptor {
 			let ints: NodeJS.Timeout[] = [];
 
 			this.interval = setInterval(async () => {
-				let m3u8: 'Vidoza' | 'Streamtape' | 'Doodstream' | string;
+				let m3u8: 'Vidoza' | 'Streamtape' | 'Doodstream' | 'SKIP' | string;
 				const forceHoster = process.env.FORCE_HOSTER;
 				m3u8 = await this.page.evaluate(
 					({ FORCE_HOSTER }) => {
 						try {
+
+							if (!document.URL.includes('/serie/stream') && !document.URL.includes('/anime/stream')) {
+								console.log('VOE Host is Present and Active');
+								console.log('m3u8 element', document.querySelector<HTMLElement>('span#m3u8LinkText'));
+								return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText;
+							}
 
 							const listOfSupportedHosters = ['VOE', 'Vidoza', 'Streamtape', 'SpeedFiles'];
 
@@ -85,6 +108,14 @@ class NewInterceptor extends AbstractInterceptor {
 							const currentRedirectID = currentFrame?.src.split('redirect/')[1];
 
 							const currentHoster = availableHosters.find((x) => x.redirectID == currentRedirectID);
+
+							console.log('availableHosters', availableHosters);
+							console.log('currentHoster', currentHoster);
+
+							if (availableHosters.length == 0 || currentHoster == undefined) {
+								console.log('No Hosters Available');
+								return 'SKIP';
+							}
 
 							if (listOfSupportedHosters.find((x) => x == currentHoster.name) == undefined) {
 								console.log('Hoster not supported');
@@ -102,8 +133,6 @@ class NewInterceptor extends AbstractInterceptor {
 									console.log('Force Hoster not available');
 								}
 							}
-
-							console.log('currentHoster', currentHoster);
 
 							const checkForHoster = (hoster: string) =>
 								[...document.querySelectorAll('i.' + hoster)].some((e) => e.parentElement.parentElement.parentElement.style.display !== 'none');
@@ -134,6 +163,7 @@ class NewInterceptor extends AbstractInterceptor {
 								return 'SpeedFiles';
 							}
 						} catch (error) {
+							console.log('Error while getting m3u8 info', error);
 							return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText;
 						}
 					},
@@ -146,9 +176,17 @@ class NewInterceptor extends AbstractInterceptor {
 					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
 					const frame = await elementHandle.contentFrame();
 					await frame.evaluate(() => {
-						document.querySelector<HTMLButtonElement>('.vds-button.voe-play.play-centered')?.click();
-						document.querySelector<HTMLButtonElement>('div.jwplayer > div.spin')?.click();
-						// document.querySelector<HTMLButtonElement>('div.voe-play.play-centered')?.click();
+						const playSelectors = [
+							'.vds-button.voe-play.play-centered',
+							'.spin > .icon'
+						];
+						for (const selector of playSelectors) {
+							const element = document.querySelector<HTMLButtonElement>(selector);
+							if (element) {
+								element.click();
+								continue;
+							}
+						}
 						return;
 					});
 				} else if (m3u8 == 'Vidoza' || m3u8 == 'SpeedFiles') {
@@ -167,6 +205,14 @@ class NewInterceptor extends AbstractInterceptor {
 							return 'https:' + document.getElementById('botlink')?.innerText + '&stream=1';
 						}
 					});
+				}
+
+				if (m3u8 == 'SKIP') {
+					clearInterval(this.interval);
+					for (const int of ints) {
+						clearInterval(int);
+					}
+					resolve('SKIP');
 				}
 
 				if (m3u8 != undefined && m3u8 != 'Doodstream' && m3u8 != 'VOE') {

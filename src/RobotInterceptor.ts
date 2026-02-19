@@ -1,5 +1,5 @@
 import { AbstractInterceptor, ExtendedEpisodeDownload } from './types';
-import robot from 'robotjs';
+import robot from '@hurdlegroup/robotjs';
 import { wait } from './utils';
 import ncp from 'node-clipboardy';
 
