@@ -1,9 +1,16 @@
 import axios from 'axios';
 import jsdom from 'jsdom';
 import { AniWorldSeriesInformations, ExtendedEpisodeDownload } from './types';
+import Aniworld from './Aniworld';
 
 export async function getExtendedEpisodeDownloadFromAniworld(url: string, title: string, preferLangs: string[], fallbackLang: string): Promise<{ output: AniWorldSeriesInformations, downloadObjects: ExtendedEpisodeDownload[]; }> {
-    const output: AniWorldSeriesInformations = await parseInformationsFromURL(url);
+
+    const serie = new Aniworld(url);
+    const output = await serie.parseInformations();
+
+    if (!output) return { output: null as any, downloadObjects: [] };
+
+    // const output: AniWorldSeriesInformations = await parseInformationsFromURL(url);
 
     const downloadObjects: ExtendedEpisodeDownload[] = [];
 

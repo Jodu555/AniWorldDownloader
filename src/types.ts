@@ -1,8 +1,17 @@
 export interface AniWorldSeriesInformations {
 	url: string;
 	hasMovies: boolean;
+	informations?: AniWorldAdditionalSeriesInformations;
 	movies?: AniWorldEntity[];
 	seasons: AniWorldEntity[][];
+}
+
+export interface AniWorldAdditionalSeriesInformations {
+	infos: string;
+	startDate: string;
+	endDate: string;
+	description: string;
+	image: string | boolean;
 }
 
 export interface AniWorldEntity {
@@ -41,7 +50,7 @@ export interface SerieInfo {
 
 export type SerieReference = Record<'aniworld' | 'zoro' | 'sto' | string, string | Record<string, string>>;
 
-export type Langs = 'GerDub' | 'GerSub' | 'EngDub' | 'EngSub';
+export type Langs = 'GerDub' | 'GerSub' | 'EngDub' | 'EngSub' | 'JapDub';
 
 export interface IgnoranceItem {
 	ID?: string;
