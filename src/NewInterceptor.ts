@@ -60,7 +60,7 @@ class NewInterceptor extends AbstractInterceptor {
 			let interval = setInterval(async () => {
 				(await this.browser.pages()).map(async x => {
 					const title = await x.title();
-					if (title == 'Vielen Dank für die Installation von AdGuard!') {
+					if (title == 'Vielen Dank für die Installation von AdGuard!' || title == 'Thank you for installing AdGuard!') {
 						await x.close();
 						clearInterval(interval);
 						resolve();
@@ -142,7 +142,9 @@ class NewInterceptor extends AbstractInterceptor {
 								document.querySelector<HTMLDivElement>('div.plyr__video-wrapper')?.click();
 								console.log('VOE Host is Present and Active');
 								console.log('m3u8 element', document.querySelector<HTMLElement>('span#m3u8LinkText'));
-								return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText || 'VOE';
+								const m3u8 = document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText;
+
+								return m3u8 == undefined || m3u8 == '' ? 'VOE' : m3u8;
 							} else if (checkForHoster('Vidoza') && currentHoster.name == 'Vidoza') {
 								//Vidoza Host is Present and active
 								console.log('Vidoza Host is Present and Active');
@@ -164,24 +166,37 @@ class NewInterceptor extends AbstractInterceptor {
 							}
 						} catch (error) {
 							console.log('Error while getting m3u8 info', error);
-							return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText;
+							return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText || 'VOE';
 						}
 					},
 					{ FORCE_HOSTER: forceHoster }
 				);
 
 				// console.log('first m3u8 info return', m3u8);
+				if (m3u8 == undefined || m3u8 == '') {
+					m3u8 = 'VOE';
+				}
 
 				if (m3u8 == 'VOE') {
-					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
-					const frame = await elementHandle.contentFrame();
+					let frame: puppeteer.Frame | null = null;
+					if (frame == null) {
+						const elementHandle = await this.page.$('div.inSiteWebStream iframe');
+						frame = await elementHandle?.contentFrame();
+					}
+					if (frame == null) {
+						const elementHandle = await this.page.$('iframe#player-iframe');
+						frame = await elementHandle?.contentFrame();
+					}
+
 					await frame.evaluate(() => {
 						const playSelectors = [
 							'.vds-button.voe-play.play-centered',
-							'.spin > .icon'
+							'.jwplayer > .spin > .icon'
 						];
 						for (const selector of playSelectors) {
 							const element = document.querySelector<HTMLButtonElement>(selector);
+							// console.log('Found Play Element', selector, element);
+
 							if (element) {
 								element.click();
 								continue;
