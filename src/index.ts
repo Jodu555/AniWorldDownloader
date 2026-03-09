@@ -269,7 +269,7 @@ async function download() {
 							obj.finished = true;
 						} catch (error) {
 							obj.finished = false;
-							console.log(`Error while downloading ${obj.file}`);
+							console.log(`Error while downloading ${obj.file} Retrying...`, error);
 							errored.push(obj.file);
 						}
 						fs.writeFileSync(listDlFile, JSON.stringify(possibleObjects, null, 3), 'utf-8');
@@ -279,8 +279,9 @@ async function download() {
 		});
 		await Promise.all(pmap);
 		if (errored.length > 0)
-			console.log(`There were ${errored.length} errors while downloading! Retrying...`);
+			console.log(`There were ${errored.length} errors while downloading! Waiting 5 Seconds and Retrying...`);
 
+		await wait(1000 * 5);
 		while (errored.length > 0) {
 			const file = errored.pop();
 			console.log('Retrying Download of', file);
