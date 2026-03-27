@@ -27,13 +27,13 @@ const start = process.env.URL_START;
 const urls: ExtendedEpisodeDownload[] = [];
 
 process.on('unhandledRejection', (error) => {
-	console.log('unhandledRejection');
-	throw error;
+	console.log('unhandledRejection', error);
+	process.exit(1);
 });
 
 process.on('uncaughtException', (error) => {
-	console.log('uncaughtException');
-	throw error;
+	console.log('uncaughtException', error);
+	process.exit(1);
 });
 
 let listDlFile = process.env.LIST_NAME || title + '_dl.json';
