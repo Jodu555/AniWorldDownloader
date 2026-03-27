@@ -10,7 +10,7 @@ async function readFromClipboard(): Promise<string> {
 }
 
 class ClipboardInterceptor extends AbstractInterceptor {
-	interval: NodeJS.Timer;
+	interval!: NodeJS.Timer;
 	launch(): void {
 		writeToClipboard('');
 	}

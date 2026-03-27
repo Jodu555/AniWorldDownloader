@@ -6,14 +6,14 @@ import { AbstractInterceptor } from './types';
 
 class NewInterceptor extends AbstractInterceptor {
 	startupParameters: object;
-	browser: puppeteer.Browser;
-	page: puppeteer.Page;
-	interval: NodeJS.Timeout;
+	browser!: puppeteer.Browser;
+	page!: puppeteer.Page;
+	interval!: NodeJS.Timeout;
 	constructor() {
 		super();
 
-		const pathToM3Extension = this._handleExtensionPath(process.env.PATH_TO_M3U8_EXTENSION);
-		const pathToAdGuardExtension = this._handleExtensionPath(process.env.PATH_TO_ADGUARD_EXTENSION);
+		const pathToM3Extension = this._handleExtensionPath(process.env.PATH_TO_M3U8_EXTENSION!);
+		const pathToAdGuardExtension = this._handleExtensionPath(process.env.PATH_TO_ADGUARD_EXTENSION!);
 		// let pathToM3Extension = process.env.PATH_TO_M3U8_EXTENSION;
 		// if (!fs.existsSync(path.join(pathToM3Extension, 'manifest.json'))) {
 		// 	const dirs = fs.readdirSync(pathToM3Extension);
@@ -49,7 +49,7 @@ class NewInterceptor extends AbstractInterceptor {
 		this.browser = await puppeteer.launch(this.startupParameters);
 		this.page = await this.browser.newPage();
 		this.page.setDefaultNavigationTimeout(0);
-		await this.page.setCookie({ name: 'aniworld_session', value: process.env.ANIWORLD_SESSION, domain: 'aniworld.to' });
+		await this.page.setCookie({ name: 'aniworld_session', value: process.env.ANIWORLD_SESSION!, domain: 'aniworld.to' });
 		await this.waitForAdGuardToBeLaunchedAndClosed();
 		await sleep(1000);
 		console.log('Launched and waited!');
@@ -82,7 +82,7 @@ class NewInterceptor extends AbstractInterceptor {
 			let ints: NodeJS.Timeout[] = [];
 
 			this.interval = setInterval(async () => {
-				let m3u8: 'Vidoza' | 'Streamtape' | 'Doodstream' | 'SKIP' | string;
+				let m3u8: 'Vidoza' | 'Streamtape' | 'Doodstream' | 'SKIP' | string | undefined;
 				const forceHoster = process.env.FORCE_HOSTER;
 				m3u8 = await this.page.evaluate(
 					({ FORCE_HOSTER }) => {
@@ -97,9 +97,9 @@ class NewInterceptor extends AbstractInterceptor {
 							const listOfSupportedHosters = ['VOE', 'Vidoza', 'Streamtape', 'SpeedFiles'];
 
 							const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
-								.filter((e) => e.parentElement.parentElement.style.display !== 'none')
+								.filter((e) => e.parentElement?.parentElement?.style.display !== 'none')
 								.map((e) => ({
-									name: e.querySelector('h4').textContent,
+									name: e.querySelector('h4')?.textContent,
 									redirectID: e.href.split('redirect/')[1],
 									button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton'),
 								}));
@@ -121,13 +121,13 @@ class NewInterceptor extends AbstractInterceptor {
 								console.log('Hoster not supported');
 								const valuableHoster = availableHosters.filter((x) => listOfSupportedHosters.find((y) => y == x.name));
 								console.log('Valuable Hoster', valuableHoster);
-								valuableHoster[0].button.click();
+								valuableHoster[0].button?.click();
 								return;
 							}
 
 							if (currentHoster.name !== FORCE_HOSTER) {
 								if (availableHosters.find((x) => x.name == FORCE_HOSTER)) {
-									availableHosters.find((x) => x.name == FORCE_HOSTER).button.click();
+									availableHosters.find((x) => x.name == FORCE_HOSTER)?.button?.click();
 									return;
 								} else {
 									console.log('Force Hoster not available');
@@ -135,7 +135,7 @@ class NewInterceptor extends AbstractInterceptor {
 							}
 
 							const checkForHoster = (hoster: string) =>
-								[...document.querySelectorAll('i.' + hoster)].some((e) => e.parentElement.parentElement.parentElement.style.display !== 'none');
+								[...document.querySelectorAll('i.' + hoster)].some((e) => e.parentElement?.parentElement?.parentElement?.style.display !== 'none');
 
 							if (checkForHoster('VOE') && currentHoster.name == 'VOE') {
 								//VOE Host is Present and active
@@ -181,14 +181,14 @@ class NewInterceptor extends AbstractInterceptor {
 					let frame: puppeteer.Frame | null = null;
 					if (frame == null) {
 						const elementHandle = await this.page.$('div.inSiteWebStream iframe');
-						frame = await elementHandle?.contentFrame();
+						frame = await elementHandle?.contentFrame()!;
 					}
 					if (frame == null) {
 						const elementHandle = await this.page.$('iframe#player-iframe');
-						frame = await elementHandle?.contentFrame();
+						frame = await elementHandle?.contentFrame()!;
 					}
 
-					await frame.evaluate(() => {
+					await frame?.evaluate(() => {
 						const playSelectors = [
 							'.vds-button.voe-play.play-centered',
 							'.jwplayer > .spin > .icon'
@@ -207,14 +207,14 @@ class NewInterceptor extends AbstractInterceptor {
 				} else if (m3u8 == 'Vidoza' || m3u8 == 'SpeedFiles') {
 					// } else if (m3u8 == 'Vidoza' || m3u8 == 'Doodstream') {
 					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
-					const frame = await elementHandle.contentFrame();
-					m3u8 = await frame.evaluate(() => {
+					const frame = await elementHandle?.contentFrame();
+					m3u8 = await frame?.evaluate(() => {
 						return document.querySelector('video')?.src;
 					});
 				} else if (m3u8 == 'Streamtape') {
 					const elementHandle = await this.page.$('div.inSiteWebStream iframe');
-					const frame = await elementHandle.contentFrame();
-					m3u8 = await frame.evaluate(() => {
+					const frame = await elementHandle?.contentFrame();
+					m3u8 = await frame?.evaluate(() => {
 						console.log(document.getElementById('botlink'));
 						if (document.getElementById('botlink')) {
 							return 'https:' + document.getElementById('botlink')?.innerText + '&stream=1';
@@ -246,13 +246,13 @@ class NewInterceptor extends AbstractInterceptor {
 				try {
 					this.page.evaluate((currentHoster: string) => {
 						const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
-							.filter((e) => e.parentElement.parentElement.style.display !== 'none')
+							.filter((e) => e.parentElement?.parentElement?.style.display !== 'none')
 							.map((e) => ({
-								name: e.querySelector('h4').textContent,
+								name: e.querySelector('h4')?.textContent,
 								redirectID: e.href.split('redirect/')[1],
 								button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton'),
 							}));
-						availableHosters[parseInt(currentHoster) % availableHosters.length].button.click();
+						availableHosters[parseInt(currentHoster) % availableHosters.length].button?.click();
 					}, String(currentHoster));
 				} catch (error) {
 					console.error('Error Switching Hoster to', currentHoster);

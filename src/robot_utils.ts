@@ -7,7 +7,7 @@ function click(robot: any, btn: number) {
 function robotTypeAdvanced(robot: any, string: string) {
 	const typer = serializeForRobot(string);
 	typer.forEach((data) => {
-		if (data.advanced == true) {
+		if (typeof data !== 'string' && 'advanced' in data && data.advanced == true) {
 			if (data.key == '?') {
 				writeToClipboard('?');
 				robot.press('CTRL').type('V').sleep(50).release('CTRL');
@@ -29,7 +29,9 @@ function serializeForRobot(string: string) {
 		'?': '?',
 	};
 
-	let typer = [];
+	type typeType = { advanced: boolean; key: string; };
+
+	let typer: (typeType | string)[] = [];
 
 	let typeIdx = 0;
 

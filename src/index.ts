@@ -1,7 +1,7 @@
 import NewInterceptor from './NewInterceptor';
 import OldInterceptor from './OldInterceptor';
 import ClipboardInterceptor from './ClipboardInterceptor';
-import { AbstractInterceptor, AniWorldSeriesInformations, ExtendedEpisodeDownload } from './types';
+import { AbstractInterceptor, AniWorldSeriesInformations, ExtendedEpisodeDownload, Langs } from './types';
 import { fmt, readFromClipboard, parseToBoolean, wait } from './utils';
 
 import fs from 'fs';
@@ -127,7 +127,7 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 	}
 
 	if (process.argv.find((v) => v.includes('parse'))) {
-		const { output, downloadObjects } = await getExtendedEpisodeDownloadFromAniworld(start, title, preferLangs, fallbackLang);
+		const { output, downloadObjects } = await getExtendedEpisodeDownloadFromAniworld(start!, title!, preferLangs as Langs[], fallbackLang as Langs);
 
 		fs.writeFileSync(title + '.json', JSON.stringify(output, null, 3), 'utf8');
 		fs.writeFileSync(listDlFile, JSON.stringify(downloadObjects, null, 3), 'utf8');
@@ -194,7 +194,7 @@ function write() {
 }
 
 async function collect() {
-	let interceptor: AbstractInterceptor = null;
+	let interceptor: AbstractInterceptor;
 	type CollectorTypes = 'Old' | 'New' | 'Clipboard' | 'Robot';
 	const collectorType: CollectorTypes = COLLECTOR_TYPE as CollectorTypes;
 
@@ -211,6 +211,8 @@ async function collect() {
 			interceptor = new ClipboardInterceptor();
 			break;
 		case 'Robot':
+			console.log('Robot Interceptor is not implemented yet');
+			process.exit(1);
 			// interceptor = new RobotInterceptor();
 			break;
 	}
@@ -232,7 +234,7 @@ async function collect() {
 		}
 
 		console.log('Collected: ' + url);
-		if (url !== 'SKIP' && (url == undefined && !url?.includes('https://')) || urls.find((v) => v.m3u8 == url) !== undefined) {
+		if (url !== 'SKIP' && (url == undefined || !url.includes('https://')) || urls.find((v) => v.m3u8 == url) !== undefined) {
 			console.log('Got suspicious program behaviour: Stopped!', !url?.includes('https://'), urls.find((v) => v.m3u8 == url) !== undefined);
 			process.exit(1);
 		}
@@ -286,12 +288,17 @@ async function download() {
 			const file = errored.pop();
 			console.log('Retrying Download of', file);
 			try {
-				await startDownloading(possibleObjects.find((o) => o.file == file), possibleObjects.find((o) => o.file == file).m3u8);
+				const extendedEpisode = possibleObjects.find((o) => o.file == file);
+				if (extendedEpisode == undefined) {
+					console.log('Extended Episode not found');
+					continue;
+				}
+				await startDownloading(extendedEpisode, extendedEpisode.m3u8);
 				console.log('Re-Downloaded', file);
-				possibleObjects.find((o) => o.file == file).finished = true;
+				extendedEpisode.finished = true;
 			} catch (error) {
 				console.log('Re-Download Failed RETRYING', file);
-				errored.push(file);
+				errored.push(file!);
 			}
 		}
 	} else {
@@ -337,9 +344,9 @@ async function startDownloading(obj: ExtendedEpisodeDownload, m3u8URL: string) {
 	}
 
 	if (obj._animeFolder || obj._seriesFolder) {
-		downloadPath = path.join(downloadPath, obj._animeFolder || obj._seriesFolder, obj.folder.replace(' ', '-'));
+		downloadPath = path.join(downloadPath, obj._animeFolder! || obj._seriesFolder!, obj.folder.replace(' ', '-'));
 	} else {
-		downloadPath = path.join(downloadPath, title, obj.folder.replace(' ', '-'));
+		downloadPath = path.join(downloadPath, title!, obj.folder.replace(' ', '-'));
 	}
 	fs.mkdirSync(downloadPath, { recursive: true });
 	await deepM3u8Conversion(m3u8URL, path.join(downloadPath, obj.file.replaceAll('.', '#') + '.mp4'));

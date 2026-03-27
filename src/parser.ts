@@ -38,11 +38,11 @@ export async function getExtendedEpisodeDownloadFromAniworld(url: string, title:
     });
 
     if (output.hasMovies)
-        output.movies.forEach((ent, movie) => {
+        output.movies?.forEach((ent, movie) => {
             const languages = ent.langs.filter((e) => preferLangs.find((x) => x.includes(e)));
             languages.forEach((language) => {
-                const v2MovieURL = `${url}staffel-0/episode-${movie + 1}`
-                const v1MovieURL = `${url}filme/episode-${movie + 1}`
+                const v2MovieURL = `${url}staffel-0/episode-${movie + 1}`;
+                const v1MovieURL = `${url}filme/episode-${movie + 1}`;
                 downloadObjects.push({
                     finished: false,
                     folder: `Movies`,

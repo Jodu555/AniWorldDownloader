@@ -4,7 +4,7 @@ import { wait } from './utils';
 import ncp from 'node-clipboardy';
 
 export default class RobotInterceptor extends AbstractInterceptor {
-	previosClip: string;
+	previosClip!: string;
 	launch(): void {
 		this.previosClip = ncp.readSync();
 	}
