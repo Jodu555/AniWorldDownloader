@@ -69,6 +69,12 @@ class NewInterceptor extends AbstractInterceptor {
 			}, 1000 * 1);
 		});
 	}
+	/**
+	 * UnhandledRejection Error: Execution context was destroyed, most likely because of a navigation.
+	 * 
+	 * Fix: https://stackoverflow.com/questions/55877263/puppeteer-execution-context-was-destroyed-most-likely-because-of-a-navigation
+	 * Very good and useful explanation for this error!
+	 */
 	async intercept(url: string): Promise<string> {
 		return new Promise(async (resolve, reject) => {
 			await this.page.goto(url);
