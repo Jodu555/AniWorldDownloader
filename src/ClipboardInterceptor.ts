@@ -18,9 +18,13 @@ class ClipboardInterceptor extends AbstractInterceptor {
 		writeToClipboard(url);
 		return new Promise(async (resolve, reject) => {
 			this.interval = setInterval(async () => {
-				const curRead = await readFromClipboard();
-				if (curRead.trim() != url) {
-					resolve(curRead);
+				try {
+					const curRead = await readFromClipboard();
+					if (curRead.trim() != url) {
+						resolve(curRead);
+					}
+				} catch (error) {
+					console.log(error);
 				}
 			}, 400);
 			setTimeout(() => {

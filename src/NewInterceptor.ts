@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import * as puppeteer from 'puppeteer';
+import puppeteerExtra from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 import { wait } from './utils';
 import { AbstractInterceptor } from './types';
 
@@ -46,7 +48,7 @@ class NewInterceptor extends AbstractInterceptor {
 	}
 	async launch() {
 		const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-		this.browser = await puppeteer.launch(this.startupParameters);
+		this.browser = await puppeteerExtra.use(StealthPlugin()).launch(this.startupParameters);
 		this.page = await this.browser.newPage();
 		this.page.setDefaultNavigationTimeout(0);
 		await this.page.setCookie({ name: 'aniworld_session', value: process.env.ANIWORLD_SESSION!, domain: 'aniworld.to' });
