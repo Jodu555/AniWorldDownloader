@@ -76,7 +76,7 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 			urls.length = 0;
 			content.forEach((e) => urls.push(e));
 			await collect();
-			res.json({ success: true });
+			res.json({ success: true, urls });
 		} else {
 			res.status(500).json({ error: 'Invalid ID' });
 		}
@@ -91,7 +91,7 @@ if (process.argv.find((v) => v.includes('enable-http'))) {
 			urls.length = 0;
 			content.forEach((e) => urls.push(e));
 			await download();
-			res.json({ success: true });
+			res.json({ success: true, urls });
 		} else {
 			res.status(500).json({ error: 'Invalid ID' });
 		}

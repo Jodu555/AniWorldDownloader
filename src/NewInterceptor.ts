@@ -61,11 +61,15 @@ class NewInterceptor extends AbstractInterceptor {
 		return new Promise<void>((resolve, reject) => {
 			let interval = setInterval(async () => {
 				(await this.browser.pages()).map(async x => {
-					const title = await x.title();
-					if (title == 'Vielen Dank für die Installation von AdGuard!' || title == 'Thank you for installing AdGuard!') {
-						await x.close();
-						clearInterval(interval);
-						resolve();
+					try {
+						const title = await x.title();
+						if (title == 'Vielen Dank für die Installation von AdGuard!' || title == 'Thank you for installing AdGuard!') {
+							await x.close();
+							clearInterval(interval);
+							resolve();
+						}
+					} catch (error) {
+						console.log(error);
 					}
 				});
 			}, 1000 * 1);
@@ -110,33 +114,80 @@ class NewInterceptor extends AbstractInterceptor {
 					m3u8 = await this.page.evaluate(
 						({ FORCE_HOSTER }) => {
 							try {
-								if (!document.URL.includes('/serie/stream') && !document.URL.includes('/anime/stream')) {
-									console.log('VOE Host is Present and Active');
+								const isV2 = !document.URL.includes('/anime/stream');
+								console.log('isV2', isV2);
+
+								if (!document.URL.includes('/serie/') && !document.URL.includes('/anime/stream')) {
+									console.log('Not /serie/ or /anime/stream');
 									console.log('m3u8 element', document.querySelector<HTMLElement>('span#m3u8LinkText'));
 									return document.querySelector<HTMLElement>('span#m3u8LinkText')?.innerText;
 								}
 
 								const listOfSupportedHosters = ['VOE', 'Vidoza', 'Streamtape', 'SpeedFiles'];
 
-								const availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
-									.filter((e) => e.parentElement?.parentElement?.style.display !== 'none')
-									.map((e) => ({
-										name: e.querySelector('h4')?.textContent,
-										redirectID: e.href.split('redirect/')[1],
-										button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton'),
-									}));
+								interface AvailableHoster {
+									name: string | null | undefined;
+									redirectID: string | null;
+									button?: HTMLButtonElement | null;
+								}
 
-								const currentFrame = [...document.querySelectorAll('iframe')].find((f) => f.src.includes('redirect'));
-								const currentRedirectID = currentFrame?.src.split('redirect/')[1];
+								let availableHosters = [] as AvailableHoster[];
+								if (isV2) {
+									availableHosters = [...document.querySelectorAll<HTMLButtonElement>('button.link-box')]
+										.map(e => {
+											return {
+												button: e,
+												name: e.getAttribute('data-provider-name'),
+												redirectID: e.getAttribute('data-play-url')
+											}
+										})
+								} else {
+									availableHosters = [...document.querySelectorAll<HTMLAnchorElement>('a.watchEpisode[itemprop=url]')]
+										.filter((e) => e.parentElement?.parentElement?.style.display !== 'none')
+										.map((e) => ({
+											name: e.querySelector('h4')?.textContent,
+											redirectID: e.href.split('redirect/')[1],
+											button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton'),
+										}));
+								}
 
-								const currentHoster = availableHosters.find((x) => x.redirectID == currentRedirectID);
+								let currentHoster: AvailableHoster | undefined;
+								let currentRedirectID: string | undefined;
+								if (isV2) {
+									const currentFrame = document.querySelector<HTMLIFrameElement>('iframe#player-iframe');
+
+									currentRedirectID = currentFrame?.src;
+									currentHoster = availableHosters.find((x) => currentRedirectID?.includes(x.redirectID!));
+								} else {
+									const currentFrame = [...document.querySelectorAll('iframe')].find((f) => f.src.includes('redirect'));
+
+									currentRedirectID = currentFrame?.src.split('redirect/')[1];
+									currentHoster = availableHosters.find((x) => x.redirectID == currentRedirectID);
+								}
 
 								console.log('availableHosters', availableHosters);
 								console.log('currentHoster', currentHoster);
+								console.log(availableHosters.map(e => e.redirectID));
+								console.log(currentRedirectID);
+
 
 								if (availableHosters.length == 0 || currentHoster == undefined) {
 									console.log('No Hosters Available');
-									return 'SKIP';
+									return 'SKIP - No Hosters Available';
+								}
+
+								//Check for if the captha is present and just SKIP
+
+								const modal = document.querySelector<HTMLDivElement>('#playerPrepareModal');
+								console.log('Checking for player prepare Modal', modal);
+								if (modal != null && modal.classList.contains('show')) {
+									console.log('Found playerPrepareModal');
+									const modalheader = document.querySelector<HTMLHeadingElement>('h5#playerPrepareModalLabel');
+									console.log('modalheader', modalheader);
+									if (modalheader != null) {
+										console.log(modalheader.innerText);
+										return 'SKIP Captcha - ' + modalheader.innerText;
+									}
 								}
 
 								if (listOfSupportedHosters.find((x) => x == currentHoster.name) == undefined) {
@@ -264,7 +315,8 @@ class NewInterceptor extends AbstractInterceptor {
 					}
 				}
 
-				if (m3u8 == 'SKIP') {
+				if (m3u8 == 'SKIP' || m3u8?.startsWith('SKIP')) {
+					console.log('Skipped due to: ', m3u8);
 					clearInterval(this.interval);
 					for (const int of ints) {
 						clearInterval(int);
@@ -299,19 +351,19 @@ class NewInterceptor extends AbstractInterceptor {
 				}
 			};
 
-			ints.push(
-				setTimeout(() => {
-					currentHoster++;
-					switchHoster();
-				}, 30 * 1000)
-			);
+			// ints.push(
+			// 	setTimeout(() => {
+			// 		currentHoster++;
+			// 		switchHoster();
+			// 	}, 30 * 1000)
+			// );
 
-			ints.push(
-				setTimeout(() => {
-					currentHoster++;
-					switchHoster();
-				}, 60 * 1000)
-			);
+			// ints.push(
+			// 	setTimeout(() => {
+			// 		currentHoster++;
+			// 		switchHoster();
+			// 	}, 60 * 1000)
+			// );
 
 			ints.push(
 				setTimeout(() => {
