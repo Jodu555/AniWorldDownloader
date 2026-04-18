@@ -129,6 +129,7 @@ class NewInterceptor extends AbstractInterceptor {
 									name: string | null | undefined;
 									redirectID: string | null;
 									button?: HTMLButtonElement | null;
+									active: boolean;
 								}
 
 								let availableHosters = [] as AvailableHoster[];
@@ -138,7 +139,8 @@ class NewInterceptor extends AbstractInterceptor {
 											return {
 												button: e,
 												name: e.getAttribute('data-provider-name'),
-												redirectID: e.getAttribute('data-play-url')
+												redirectID: e.getAttribute('data-play-url'),
+												active: e.classList.contains('active')
 											}
 										})
 								} else {
@@ -148,6 +150,7 @@ class NewInterceptor extends AbstractInterceptor {
 											name: e.querySelector('h4')?.textContent,
 											redirectID: e.href.split('redirect/')[1],
 											button: e.querySelector<HTMLButtonElement>('.hosterSiteVideoButton'),
+											active: e.classList.contains('active')
 										}));
 								}
 
@@ -167,9 +170,6 @@ class NewInterceptor extends AbstractInterceptor {
 
 								console.log('availableHosters', availableHosters);
 								console.log('currentHoster', currentHoster);
-								console.log(availableHosters.map(e => e.redirectID));
-								console.log(currentRedirectID);
-
 
 								if (availableHosters.length == 0 || currentHoster == undefined) {
 									console.log('No Hosters Available');
@@ -177,10 +177,9 @@ class NewInterceptor extends AbstractInterceptor {
 								}
 
 								//Check for if the captha is present and just SKIP
-
 								const modal = document.querySelector<HTMLDivElement>('#playerPrepareModal');
-								console.log('Checking for player prepare Modal', modal);
 								if (modal != null && modal.classList.contains('show')) {
+									console.log('Checking for player prepare Modal', modal);
 									console.log('Found playerPrepareModal');
 									const modalheader = document.querySelector<HTMLHeadingElement>('h5#playerPrepareModalLabel');
 									console.log('modalheader', modalheader);
@@ -198,7 +197,7 @@ class NewInterceptor extends AbstractInterceptor {
 									return;
 								}
 
-								if (currentHoster.name !== FORCE_HOSTER) {
+								if (FORCE_HOSTER != undefined && currentHoster.name !== FORCE_HOSTER) {
 									if (availableHosters.find((x) => x.name == FORCE_HOSTER)) {
 										availableHosters.find((x) => x.name == FORCE_HOSTER)?.button?.click();
 										return;
@@ -207,8 +206,16 @@ class NewInterceptor extends AbstractInterceptor {
 									}
 								}
 
-								const checkForHoster = (hoster: string) =>
-									[...document.querySelectorAll('i.' + hoster)].some((e) => e.parentElement?.parentElement?.parentElement?.style.display !== 'none');
+								const checkForHoster = (hoster: string) => {
+									if (isV2) {
+										return availableHosters.find((x) => x.name == hoster)?.active;
+									} else {
+										return [...document.querySelectorAll('i.' + hoster)]
+											.some((e) => e.parentElement?.parentElement?.parentElement?.style.display !== 'none');
+									}
+								}
+
+								console.log('checkForHoster VOE', checkForHoster('VOE'));
 
 								if (checkForHoster('VOE') && currentHoster.name == 'VOE') {
 									document.querySelector<HTMLDivElement>('div.plyr__video-wrapper')?.click();
